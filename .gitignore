@@ -44,3 +44,4 @@ CMakeLists.txt.user*
 
 bin/*
 *.exe
+build/*

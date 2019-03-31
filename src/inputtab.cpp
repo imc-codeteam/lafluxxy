@@ -1,15 +1,15 @@
-/**************************************************************************
+ /**************************************************************************
  *   This file is part of LaFluxxy                                        *
  *   https://github.com/imc-codeteam/lafluxxy                             *
  *                                                                        *
  *   Author: Ivo Filot <i.a.w.filot@tue.nl>                               *
  *                                                                        *
- *   Bravais is free software: you can redistribute it and/or modify      *
+ *   LaFluxxy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
  *   by the Free Software Foundation, either version 3 of the License,    *
  *   or (at your option) any later version.                               *
  *                                                                        *
- *   Bravais is distributed in the hope that it will be useful,           *
+ *   LaFluxxy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty          *
  *   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.              *
  *   See the GNU General Public License for more details.                 *
@@ -79,7 +79,6 @@ void InputTab::build_reaction_settings(QGridLayout *gridlayout) {
 
     this->reaction_selector->addItem(tr("Please select a reaction..."));
     this->reaction_selector->addItem(tr("Lotka-Volterra"));
-    this->reaction_selector->addItem(tr("Gierer-Meinhardt"));
     this->reaction_selector->addItem(tr("Gray-Scott"));
     this->reaction_selector->addItem(tr("Fitzhugh-Nagumo"));
     this->reaction_selector->addItem(tr("Brusselator"));
@@ -164,10 +163,16 @@ void InputTab::set_reaction_input(int reactype) {
     switch(reactype) {
         case 1:
             this->reaction_settings = new InputLotkaVolterra();
-            this->gridlayout_reaction->addWidget(this->reaction_settings, 2, 0);
+        break;
+        case 2:
+            this->reaction_settings = new InputGrayScott();
         break;
         default:
             // do nothing
         break;
+    }
+
+    if(this->reaction_settings != nullptr) {
+        this->gridlayout_reaction->addWidget(this->reaction_settings, 2, 0);
     }
 }

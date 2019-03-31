@@ -1,15 +1,15 @@
-/**************************************************************************
+ /**************************************************************************
  *   This file is part of LaFluxxy                                        *
  *   https://github.com/imc-codeteam/lafluxxy                             *
  *                                                                        *
  *   Author: Ivo Filot <i.a.w.filot@tue.nl>                               *
  *                                                                        *
- *   Bravais is free software: you can redistribute it and/or modify      *
+ *   LaFluxxy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
  *   by the Free Software Foundation, either version 3 of the License,    *
  *   or (at your option) any later version.                               *
  *                                                                        *
- *   Bravais is distributed in the hope that it will be useful,           *
+ *   LaFluxxy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty          *
  *   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.              *
  *   See the GNU General Public License for more details.                 *
@@ -32,6 +32,7 @@
 #include <QDoubleSpinBox>
 
 #include "input_lotka_volterra.h"
+#include "input_gray_scott.h"
 
 class InputTab : public QWidget {
     Q_OBJECT

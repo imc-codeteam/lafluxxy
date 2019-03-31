@@ -19,14 +19,25 @@
  *                                                                        *
  **************************************************************************/
 
-#include "mainwindow.h"
-#include <QApplication>
+#include "input_reaction.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
+    this->layout = new QVBoxLayout();
+    this->setLayout(this->layout);
 
-    return a.exec();
+    // build input boxes
+    QWidget *widget = new QWidget();
+    layout->addWidget(widget);
+    this->gridlayout = new QGridLayout();
+    widget->setLayout(this->gridlayout);
+}
+
+void InputReaction::build_input_boxes() {
+    for(unsigned int i=0; i<input_names.size(); i++) {
+        this->gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
+        QDoubleSpinBox *box = new QDoubleSpinBox();
+        this->input_boxes.emplace(input_names[i], box);
+        box->setValue(this->input_default_values[i]);
+        this->gridlayout->addWidget(box, i, 1);
+    }
 }

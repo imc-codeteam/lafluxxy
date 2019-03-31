@@ -19,14 +19,21 @@
  *                                                                        *
  **************************************************************************/
 
-#include "mainwindow.h"
-#include <QApplication>
+#include "input_gray_scott.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+/**
+ * @brief Input tab constructor
+ * @param parent widget
+ */
+InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
+    this->input_names = {"alpha", "beta", "gamma", "delta"};
+    this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
+    this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};
 
-    return a.exec();
+    this->set_label();
+    this->build_input_boxes();
+}
+
+void InputGrayScott::set_label() {
+    this->layout->addWidget(new QLabel(tr("<i>Gray Scott kinetic parameters</i>")));
 }

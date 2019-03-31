@@ -19,14 +19,34 @@
  *                                                                        *
  **************************************************************************/
 
-#include "mainwindow.h"
-#include <QApplication>
+#ifndef _INPUT_GRAY_SCOTT
+#define _INPUT_GRAY_SCOTT
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QLabel>
+#include <QDoubleSpinBox>
+#include <unordered_map>
 
-    return a.exec();
-}
+#include "input_reaction.h"
+
+class InputGrayScott : public InputReaction {
+
+private:
+
+public:
+    /**
+     * @brief Input tab constructor
+     * @param parent widget
+     */
+    explicit InputGrayScott(QWidget *parent = 0);
+
+private:
+    void set_label() override;
+
+private slots:
+
+};
+
+#endif // _INPUT_GRAY_SCOTT

@@ -24,6 +24,7 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QPixmap>
 
 #include "two_dim_rd.h"
 #include "reaction_lotka_volterra.h"
@@ -33,6 +34,7 @@ class RenderArea : public QWidget {
 
 private:
     std::shared_ptr<TwoDimRD> rd_system;
+    std::vector<QPixmap> graphs;
 
 public:
     /**

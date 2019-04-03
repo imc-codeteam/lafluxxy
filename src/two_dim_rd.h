@@ -24,6 +24,7 @@
 #include <Eigen/Dense>
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
 
+#include <QByteArray>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -114,6 +115,12 @@ public:
         this->reaction_system->set_parameters(params);
         this->init();
     }
+
+    inline size_t get_num_img() const {
+        return this->ta.size();
+    }
+
+    QByteArray get_qbyte_array(unsigned int i) const;
 
 private:
     /**

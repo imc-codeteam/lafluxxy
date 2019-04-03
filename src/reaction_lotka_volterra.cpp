@@ -87,10 +87,10 @@ void ReactionLotkaVolterra::set_parameters(const std::string& params) {
         throw std::runtime_error("Cannot find parameter delta");
     }
 
-    std::vector<std::string> paramlist = {"alpha", "beta", "gamma", "delta"};
-    std::cout << "Succesfully loaded the following parameters" << std::endl;
-    for(const std::string& variable : paramlist) {
-        auto got = map.find(variable);
-        std::cout << "    " << variable << " = " << got->second << std::endl;
-    }
+    // std::vector<std::string> paramlist = {"alpha", "beta", "gamma", "delta"};
+    // std::cout << "Succesfully loaded the following parameters" << std::endl;
+    // for(const std::string& variable : paramlist) {
+    //     auto got = map.find(variable);
+    //     std::cout << "    " << variable << " = " << got->second << std::endl;
+    // }
 }

@@ -45,8 +45,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     this->setWindowTitle(tr(PROGRAM_NAME) + tr(" v.") + QString(PROGRAM_VERSION));    // set window label
     this->setMinimumSize(1024, 768);                     // set minimum size of the window
     this->resize(1024, 768);                             // resize the windows
-
-    // connect signals
 }
 
 void MainWindow::create_tabs() {

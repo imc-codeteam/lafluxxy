@@ -25,6 +25,10 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     this->layout = new QVBoxLayout();
     this->setLayout(this->layout);
 
+    // set QLabel
+    this->reaction_label = new QLabel();
+    this->layout->addWidget(this->reaction_label);
+
     // build input boxes
     QWidget *widget = new QWidget();
     layout->addWidget(widget);

@@ -38,6 +38,7 @@ private:
 
 protected:
     QVBoxLayout* layout;
+    QLabel* reaction_label;
     std::vector<std::string> input_names;
     std::vector<std::string> input_labels;
     std::vector<double> input_default_values;

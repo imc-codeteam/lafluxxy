@@ -158,6 +158,7 @@ void InputTab::set_reaction_input(int reactype) {
     if(this->reaction_settings != nullptr) {
         this->gridlayout_reaction->removeWidget(this->reaction_settings);
         delete this->reaction_settings;
+        this->reaction_settings = nullptr;
     }
 
     switch(reactype) {

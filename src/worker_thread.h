@@ -31,6 +31,7 @@ class WorkerThread : public QThread {
 
 private:
     TwoDimRD* reaction_system;
+    bool continue_running;
 
 public:
     WorkerThread(TwoDimRD* _reaction_system);
@@ -40,7 +41,14 @@ public:
 signals:
     void simulation_finished();
 
+    void simulation_cancelled();
+
     void step_finished(unsigned int i);
+
+public slots:
+    void kill_job() {
+        this->continue_running = false;
+    }
 };
 
 #endif // _WORKER_THREAD_H

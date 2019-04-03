@@ -46,13 +46,19 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     // add Widget to ScrollArea
     scroll_area->setWidget(widget);
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    widget->setLayout(layout);
+    // set concentrations layout
+    QGridLayout *concentrations_layout = new QGridLayout;
+    widget->setLayout(concentrations_layout);
 
-    layout->addWidget(new QLabel(tr("Domain")));
-    this->renderarea = new RenderArea();
-    layout->addWidget(this->renderarea);
+    concentrations_layout->addWidget(new QLabel(tr("Concentration X")), 0, 0);
+    this->renderarea_X = new RenderArea();
+    concentrations_layout->addWidget(this->renderarea_X, 1, 0);
 
+    concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
+    this->renderarea_Y = new RenderArea();
+    concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
+
+    // set up frame interface
     QWidget *gridwidget = new QWidget;
     QGridLayout *gridlayout = new QGridLayout;
     gridwidget->setLayout(gridlayout);
@@ -70,10 +76,21 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->frame_label = new QLabel(this);
     gridlayout->addWidget(this->frame_label, 0, 2);
 
-    layout->addWidget(gridwidget);
+    main_layout->addWidget(gridwidget);
 
+    // set up progress bar
+    QWidget *progress_widget = new QWidget;
+    QGridLayout *progress_layout = new QGridLayout;
+    progress_widget->setLayout(progress_layout);
     this->progress_bar = new QProgressBar;
-    layout->addWidget(this->progress_bar);
+    progress_layout->addWidget(this->progress_bar, 0, 0);
+    this->button_stop = new QToolButton(this);
+    this->button_stop->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
+    this->button_stop->setWhatsThis(tr("Cancel simulation"));
+    this->button_stop->setEnabled(false);
+    progress_layout->addWidget(this->button_stop, 0, 1);
+
+    main_layout->addWidget(progress_widget);
 }
 
 void ResultsTab::update_progress(unsigned int i, unsigned int total) {
@@ -82,22 +99,30 @@ void ResultsTab::update_progress(unsigned int i, unsigned int total) {
 }
 
 void ResultsTab::next_img() {
-    this->renderarea->next_img();
-    this->frame_label->setText(QString::number(this->renderarea->get_ctr()+1) + "/" + QString::number(this->renderarea->get_num_graphs()));
+    this->renderarea_X->next_img();
+    this->renderarea_Y->next_img();
+    this->frame_label->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
 void ResultsTab::prev_img() {
-    this->renderarea->prev_img();
-    this->frame_label->setText(QString::number(this->renderarea->get_ctr()+1) + "/" + QString::number(this->renderarea->get_num_graphs()));
+    this->renderarea_X->prev_img();
+    this->renderarea_Y->prev_img();
+    this->frame_label->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
 void ResultsTab::add_frame(unsigned int i) {
-    QByteArray data = this->reaction_system->get_qbyte_array(i);
-    QImage img((const uchar*)(data.constData()), 256, 256, QImage::Format_RGB888);
-    this->renderarea->add_graph(QPixmap::fromImage(img));
+    QByteArray data_X = this->reaction_system->get_qbyte_array_X(i);
+    QByteArray data_Y = this->reaction_system->get_qbyte_array_Y(i);
+
+    QImage img_X((const uchar*)(data_X.constData()), 256, 256, QImage::Format_RGB888);
+    QImage img_Y((const uchar*)(data_Y.constData()), 256, 256, QImage::Format_RGB888);
+
+    this->renderarea_X->add_graph(QPixmap::fromImage(img_X));
+    this->renderarea_Y->add_graph(QPixmap::fromImage(img_Y));
 
     // update render area
     if(i == 0) {
-        this->renderarea->update();
+        this->renderarea_X->update();
+        this->renderarea_Y->update();
     }
 }

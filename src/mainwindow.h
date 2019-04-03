@@ -72,7 +72,12 @@ private slots:
     /**
      * @brief      Handle results when the simulation is finished
      */
-    void handle_results();
+    void handle_simulation_finished();
+
+    /**
+     * @brief      Handle results when the simulation is canceled
+     */
+    void handle_simulation_canceled();
 
     /**
      * @brief      Handle the results of a single frame

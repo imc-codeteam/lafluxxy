@@ -129,7 +129,9 @@ public:
         return this->steps;
     }
 
-    QByteArray get_qbyte_array(unsigned int i) const;
+    QByteArray get_qbyte_array_X(unsigned int i) const;
+
+    QByteArray get_qbyte_array_Y(unsigned int i) const;
 
 private:
     /**

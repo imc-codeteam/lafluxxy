@@ -36,11 +36,13 @@ class ResultsTab : public QWidget {
     Q_OBJECT
 
 private:
-    RenderArea *renderarea;
+    RenderArea *renderarea_X;
+    RenderArea *renderarea_Y;
     QToolButton *button_next;
     QToolButton *button_prev;
     QProgressBar *progress_bar;
     QLabel *frame_label;
+    QToolButton *button_stop;
 
     TwoDimRD* reaction_system;
 
@@ -55,6 +57,10 @@ public:
 
     inline void set_reaction_system(TwoDimRD* _reaction_system) {
         this->reaction_system = _reaction_system;
+    }
+
+    inline QToolButton* get_stop_button() const {
+        return this->button_stop;
     }
 
     void add_frame(unsigned int i);

@@ -23,10 +23,16 @@
 
 WorkerThread::WorkerThread(TwoDimRD* _reaction_system) {
     this->reaction_system = _reaction_system;
+    this->continue_running = true;
 }
 
 void WorkerThread::run() {
     for(unsigned int i=0; i<this->reaction_system->get_num_steps(); i++) {
+
+        if(this->continue_running == false) {
+            emit simulation_cancelled();
+            return;
+        }
 
         this->reaction_system->update();
 

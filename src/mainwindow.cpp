@@ -70,15 +70,18 @@ void MainWindow::launch_calculation() {
     this->results_tab->set_reaction_system(this->tdrd.get());
 
     this->input_tab->get_button_submit()->setEnabled(false);
+    this->results_tab->get_stop_button()->setEnabled(true);
 
     // already set initial conditions image
     this->results_tab->update_progress(0, this->tdrd->get_num_steps());
     this->results_tab->add_frame(0);
 
     WorkerThread *workerThread = new WorkerThread(this->tdrd.get());
-    connect(workerThread, &WorkerThread::simulation_finished, this, &MainWindow::handle_results);
+    connect(workerThread, &WorkerThread::simulation_finished, this, &MainWindow::handle_simulation_finished);
+    connect(workerThread, &WorkerThread::simulation_cancelled, this, &MainWindow::handle_simulation_canceled);
     connect(workerThread, &WorkerThread::step_finished, this, &MainWindow::handle_results_step);
     connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
+    connect(this->results_tab->get_stop_button(), SIGNAL(clicked()), workerThread, SLOT(kill_job()));
     workerThread->start();
 
     this->tabs->setCurrentIndex(1);
@@ -88,9 +91,19 @@ void MainWindow::launch_calculation() {
 /**
  * @brief      Handle results when the simulation is finished
  */
-void MainWindow::handle_results() {
+void MainWindow::handle_simulation_finished() {
     this->input_tab->get_button_submit()->setEnabled(true);
+    this->results_tab->get_stop_button()->setEnabled(false);
     statusBar()->showMessage(tr("Simulation complete."));
+}
+
+/**
+ * @brief      Handle results when the simulation is cancelled
+ */
+void MainWindow::handle_simulation_canceled() {
+    this->input_tab->get_button_submit()->setEnabled(true);
+    this->results_tab->get_stop_button()->setEnabled(false);
+    statusBar()->showMessage(tr("Simulation canceled."));
 }
 
 /**

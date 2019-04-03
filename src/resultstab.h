@@ -28,6 +28,7 @@
 #include <QLabel>
 #include <QToolButton>
 #include <QStyle>
+#include <QProgressBar>
 
 #include "renderarea.h"
 
@@ -38,6 +39,10 @@ private:
     RenderArea *renderarea;
     QToolButton *button_next;
     QToolButton *button_prev;
+    QProgressBar *progress_bar;
+    QLabel *frame_label;
+
+    TwoDimRD* reaction_system;
 
 public:
     /**
@@ -45,6 +50,14 @@ public:
      * @param parent widget
      */
     explicit ResultsTab(QWidget *parent = 0);
+
+    void update_progress(unsigned int i, unsigned int total);
+
+    inline void set_reaction_system(TwoDimRD* _reaction_system) {
+        this->reaction_system = _reaction_system;
+    }
+
+    void add_frame(unsigned int i);
 
 private:
 

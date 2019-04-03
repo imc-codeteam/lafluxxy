@@ -100,6 +100,11 @@ public:
     void time_integrate();
 
     /**
+     * @brief      Perform a time-step
+     */
+    void update();
+
+    /**
      * @brief      Write the current state of compound A to the file
      *
      * @param[in]  filename  The filename
@@ -120,6 +125,10 @@ public:
         return this->ta.size();
     }
 
+    inline unsigned int get_num_steps() const {
+        return this->steps;
+    }
+
     QByteArray get_qbyte_array(unsigned int i) const;
 
 private:
@@ -127,11 +136,6 @@ private:
      * @brief      Initialize the system
      */
     void init();
-
-    /**
-     * @brief      Perform a time-step
-     */
-    void update();
 
     /**
      * @brief      Calculate Laplacian using central finite difference with periodic boundary conditions

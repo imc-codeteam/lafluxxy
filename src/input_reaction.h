@@ -30,6 +30,8 @@
 #include <QPushButton>
 #include <unordered_map>
 
+#include "config.h"
+
 class InputReaction : public QWidget {
     Q_OBJECT
 
@@ -38,6 +40,8 @@ private:
     QGridLayout* gridlayout;
 
 protected:
+    unsigned int reaction_type;
+
     QVBoxLayout* layout;
     QLabel* reaction_label;
     std::vector<std::string> input_names;
@@ -50,6 +54,10 @@ public:
      * @param parent widget
      */
     explicit InputReaction(QWidget *parent = 0);
+
+    inline unsigned int get_reaction_type() const {
+        return this->reaction_type;
+    }
 
 protected:
     void build_input_boxes();

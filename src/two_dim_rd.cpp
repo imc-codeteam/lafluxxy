@@ -60,12 +60,7 @@ void TwoDimRD::time_integrate() {
     this->t = 0;
 
     for(unsigned int i=0; i<this->steps; i++) {
-        for(unsigned int j=0; j<this->tsteps; j++) {
-            this->update();
-        }
-
-        this->ta.push_back(this->a);
-        this->tb.push_back(this->b);
+        this->update();
     }
 
     // give newline after tqdm progress bar
@@ -145,32 +140,40 @@ void TwoDimRD::init() {
  * @brief      Perform a time-step
  */
 void TwoDimRD::update() {
-    // calculate laplacian
-    if(this->pbc) {
-        this->laplacian_2d_pbc(this->delta_a, this->a);
-        this->laplacian_2d_pbc(this->delta_b, this->b);
-    } else {
-        this->laplacian_2d_zeroflux(this->delta_a, this->a);
-        this->laplacian_2d_zeroflux(this->delta_b, this->b);
+
+    // loop over number of time steps
+    for(unsigned int j=0; j<this->tsteps; j++) {
+
+        // calculate laplacian
+        if(this->pbc) {
+            this->laplacian_2d_pbc(this->delta_a, this->a);
+            this->laplacian_2d_pbc(this->delta_b, this->b);
+        } else {
+            this->laplacian_2d_zeroflux(this->delta_a, this->a);
+            this->laplacian_2d_zeroflux(this->delta_b, this->b);
+        }
+
+        // multiply with diffusion coefficient
+        this->delta_a *= this->Da;
+        this->delta_b *= this->Db;
+
+        // add reaction term
+        this->add_reaction();
+
+        // multiply with time step
+        this->delta_a *= this->dt;
+        this->delta_b *= this->dt;
+
+        // add delta term to concentrations
+        this->a += this->delta_a;
+        this->b += this->delta_b;
+
+        // update time step
+        this->t += this->dt;
     }
 
-    // multiply with diffusion coefficient
-    this->delta_a *= this->Da;
-    this->delta_b *= this->Db;
-
-    // add reaction term
-    this->add_reaction();
-
-    // multiply with time step
-    this->delta_a *= this->dt;
-    this->delta_b *= this->dt;
-
-    // add delta term to concentrations
-    this->a += this->delta_a;
-    this->b += this->delta_b;
-
-    // update time step
-    this->t += this->dt;
+    this->ta.push_back(this->a);
+    this->tb.push_back(this->b);
 }
 
 /**
@@ -185,7 +188,7 @@ void TwoDimRD::laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c) {
     const double idx2 = 1.0 / (this->dx * this->dx);
 
     #pragma omp parallel for schedule(static)
-    for(int i=0; i<this->height; i++) {
+    for(unsigned int i=0; i<this->height; i++) {
         // indices
         unsigned i1;
         unsigned i2;
@@ -202,7 +205,7 @@ void TwoDimRD::laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c) {
         }
 
         // loop over x axis
-        for(int j=0; j<this->width; j++) {
+        for(unsigned int j=0; j<this->width; j++) {
             // indices
             unsigned j1;
             unsigned j2;

@@ -26,25 +26,25 @@
  * @param parent widget
  */
 ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    this->setLayout(mainLayout);
+    QVBoxLayout *main_layout = new QVBoxLayout;
+    this->setLayout(main_layout);
     this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     // add a ScrollArea widget and define properties
-    QScrollArea *scrollArea = new QScrollArea(this);     //Create scroll area Widget
-    scrollArea->setContentsMargins(0,0,0,0);
-    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    scrollArea->setWidgetResizable(true);
+    QScrollArea *scroll_area = new QScrollArea(this);     //Create scroll area Widget
+    scroll_area->setContentsMargins(0,0,0,0);
+    scroll_area->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    scroll_area->setWidgetResizable(true);
 
     // add ScrollArea to QWidget
-    mainLayout->addWidget(scrollArea);
+    main_layout->addWidget(scroll_area);
 
     // create new Widget for in the QScrollArea and set properties
     QWidget* widget = new QWidget();
     widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // add Widget to ScrollArea
-    scrollArea->setWidget(widget);
+    scroll_area->setWidget(widget);
 
     QVBoxLayout *layout = new QVBoxLayout;
     widget->setLayout(layout);
@@ -53,8 +53,8 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->renderarea = new RenderArea();
     layout->addWidget(this->renderarea);
 
-    QWidget *gridwidget = new QWidget(this);
-    QGridLayout *gridlayout = new QGridLayout(this);
+    QWidget *gridwidget = new QWidget;
+    QGridLayout *gridlayout = new QGridLayout;
     gridwidget->setLayout(gridlayout);
 
     this->button_prev = new QToolButton(this);
@@ -67,13 +67,37 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     gridlayout->addWidget(this->button_next, 0, 1);
     connect(this->button_next, SIGNAL(clicked()), this, SLOT(next_img()));
 
+    this->frame_label = new QLabel(this);
+    gridlayout->addWidget(this->frame_label, 0, 2);
+
     layout->addWidget(gridwidget);
+
+    this->progress_bar = new QProgressBar;
+    layout->addWidget(this->progress_bar);
+}
+
+void ResultsTab::update_progress(unsigned int i, unsigned int total) {
+    this->progress_bar->setRange(0, total);
+    this->progress_bar->setValue(i);
 }
 
 void ResultsTab::next_img() {
     this->renderarea->next_img();
+    this->frame_label->setText(QString::number(this->renderarea->get_ctr()+1) + "/" + QString::number(this->renderarea->get_num_graphs()));
 }
 
 void ResultsTab::prev_img() {
     this->renderarea->prev_img();
+    this->frame_label->setText(QString::number(this->renderarea->get_ctr()+1) + "/" + QString::number(this->renderarea->get_num_graphs()));
+}
+
+void ResultsTab::add_frame(unsigned int i) {
+    QByteArray data = this->reaction_system->get_qbyte_array(i);
+    QImage img((const uchar*)(data.constData()), 256, 256, QImage::Format_RGB888);
+    this->renderarea->add_graph(QPixmap::fromImage(img));
+
+    // update render area
+    if(i == 0) {
+        this->renderarea->update();
+    }
 }

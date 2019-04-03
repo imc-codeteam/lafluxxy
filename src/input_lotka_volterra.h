@@ -29,6 +29,7 @@
 #include <QDoubleSpinBox>
 #include <unordered_map>
 
+#include "config.h"
 #include "input_reaction.h"
 
 class InputLotkaVolterra : public InputReaction {

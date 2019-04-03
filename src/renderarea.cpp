@@ -29,19 +29,6 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 
-    this->rd_system = std::make_shared<TwoDimRD>(2e-5, 1e-5, 256, 256, 0.005, 0.01, 10, 100);
-    this->rd_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
-    this->rd_system->set_pbc(true);
-    this->rd_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
-    this->rd_system->time_integrate();
-
-    // std::cout << "Constructing and saving pixmap" << std::endl;
-    for(unsigned int i=0; i<this->rd_system->get_num_img(); i++) {
-        QByteArray data = this->rd_system->get_qbyte_array(i);
-        QImage img((const uchar*)(data.constData()), 256, 256, QImage::Format_RGB888);
-        this->graphs.push_back(QPixmap::fromImage(img));
-    }
-
     this->ctr = 0;
     this->update();
 }
@@ -59,7 +46,9 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setPen(palette().dark().color());
     painter.setBrush(Qt::NoBrush);
-    painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs[ctr], 0, 0, this->graphs[ctr].width(), this->graphs[ctr].height());
+    if(this->graphs.size() > 0) {
+        painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs[ctr], 0, 0, this->graphs[ctr].width(), this->graphs[ctr].height());
+    }
     painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
 }
 

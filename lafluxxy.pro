@@ -45,7 +45,8 @@ SOURCES += src/main.cpp\
            src/renderarea.cpp \
            src/two_dim_rd.cpp \
            src/reaction_lotka_volterra.cpp \
-           src/reaction_system.cpp
+           src/reaction_system.cpp \
+           src/worker_thread.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
@@ -57,7 +58,8 @@ HEADERS  += src/mainwindow.h \
             src/renderarea.h \
             src/two_dim_rd.h \
             src/reaction_lotka_volterra.h \
-            src/reaction_system.h
+            src/reaction_system.h \
+            src/worker_thread.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

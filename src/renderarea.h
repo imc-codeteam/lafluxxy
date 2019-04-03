@@ -33,7 +33,6 @@ class RenderArea : public QWidget {
     Q_OBJECT
 
 private:
-    std::shared_ptr<TwoDimRD> rd_system;
     std::vector<QPixmap> graphs;
     unsigned int ctr;
 
@@ -51,6 +50,18 @@ public:
     void next_img();
 
     void prev_img();
+
+    inline void add_graph(const QPixmap& graph) {
+        this->graphs.push_back(graph);
+    }
+
+    inline unsigned int get_ctr() const {
+        return this->ctr;
+    }
+
+    inline unsigned int get_num_graphs() const {
+        return this->graphs.size();
+    }
 
 protected:
     void paintEvent(QPaintEvent *event) override;

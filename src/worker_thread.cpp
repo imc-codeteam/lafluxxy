@@ -19,78 +19,19 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QtWidgets/QApplication>
-#include <QMainWindow>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QStatusBar>
-#include <QTabWidget>
-#include <QMenuBar>
-#include <QMenu>
-
-#include <iostream>
-
-#include "inputtab.h"
-#include "resultstab.h"
-#include "two_dim_rd.h"
 #include "worker_thread.h"
 
-namespace Ui {
-class MainWindow;
+WorkerThread::WorkerThread(TwoDimRD* _reaction_system) {
+    this->reaction_system = _reaction_system;
 }
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+void WorkerThread::run() {
+    for(unsigned int i=0; i<this->reaction_system->get_num_steps(); i++) {
 
-private:
-    QTabWidget *tabs;
-    InputTab *input_tab;
-    ResultsTab *results_tab;
+        this->reaction_system->update();
 
-    std::unique_ptr<TwoDimRD> tdrd;
+        emit step_finished(i);
+    }
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-
-    ~MainWindow();
-
-private slots:
-    /**
-     * @brief      Close the application
-     */
-    void exit();
-
-    /**
-     * @brief      Launch an RD simulation
-     */
-    void launch_calculation();
-
-    /**
-     * @brief      Handle results when the simulation is finished
-     */
-    void handle_results();
-
-    /**
-     * @brief      Handle the results of a single frame
-     *
-     * @param[in]  i     Frame index i
-     */
-    void handle_results_step(unsigned int i);
-
-private:
-    /**
-     * @brief      Create tabs
-     */
-    void create_tabs();
-
-    /**
-     * @brief      Build the drop-down menus
-     */
-    void build_menu();
-};
-
-#endif // MAINWINDOW_H
+    emit simulation_finished();
+}

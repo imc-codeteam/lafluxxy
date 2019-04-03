@@ -26,6 +26,7 @@
  * @param parent widget
  */
 InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
+    this->reaction_type = GRAY_SCOTT;
     this->input_names = {"alpha", "beta", "gamma", "delta"};
     this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
     this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};

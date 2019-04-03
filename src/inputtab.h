@@ -31,8 +31,10 @@
 #include <QPushButton>
 #include <QDoubleSpinBox>
 
+#include "two_dim_rd.h"
 #include "input_lotka_volterra.h"
 #include "input_gray_scott.h"
+#include "reaction_lotka_volterra.h"
 
 class InputTab : public QWidget {
     Q_OBJECT
@@ -60,6 +62,12 @@ public:
      * @param parent widget
      */
     explicit InputTab(QWidget *parent = 0);
+
+    inline QPushButton* get_button_submit() const {
+        return this->button_submit;
+    }
+
+    TwoDimRD* build_reaction_system();
 
 private:
     /**

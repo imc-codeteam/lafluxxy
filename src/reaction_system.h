@@ -120,11 +120,9 @@ protected:
     /**
      * @brief      provide normal distribution
      *
-     * @param[in]  dummy  A dummy variable, does nothing but required for function pointer
-     *
      * @return     returns value at normal distribution
      */
-    static double normal_dist(double dummy) {
+    static double normal_dist() {
         static std::mt19937 rng;
         // center at zero and scale is 0.05
         static std::normal_distribution<> nd(0.50, 0.50);

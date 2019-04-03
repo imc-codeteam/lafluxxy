@@ -45,8 +45,67 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     this->setWindowTitle(tr(PROGRAM_NAME) + tr(" v.") + QString(PROGRAM_VERSION));    // set window label
     this->setMinimumSize(1024, 768);                     // set minimum size of the window
     this->resize(1024, 768);                             // resize the windows
+
+    // build connections
+    connect(this->input_tab->get_button_submit(), SIGNAL(clicked()), this, SLOT(launch_calculation()));
 }
 
+/**
+ * @brief      Destroys the object.
+ */
+MainWindow::~MainWindow(){}
+
+/**
+ * @brief      Close the application
+ */
+void MainWindow::exit() {
+    QApplication::quit();
+}
+
+/**
+ * @brief      Launch the simulation
+ */
+void MainWindow::launch_calculation() {
+    this->tdrd = std::unique_ptr<TwoDimRD>(this->input_tab->build_reaction_system());
+    this->results_tab->set_reaction_system(this->tdrd.get());
+
+    this->input_tab->get_button_submit()->setEnabled(false);
+
+    // already set initial conditions image
+    this->results_tab->update_progress(0, this->tdrd->get_num_steps());
+    this->results_tab->add_frame(0);
+
+    WorkerThread *workerThread = new WorkerThread(this->tdrd.get());
+    connect(workerThread, &WorkerThread::simulation_finished, this, &MainWindow::handle_results);
+    connect(workerThread, &WorkerThread::step_finished, this, &MainWindow::handle_results_step);
+    connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
+    workerThread->start();
+
+    this->tabs->setCurrentIndex(1);
+    statusBar()->showMessage(tr("Simulation running..."));
+}
+
+/**
+ * @brief      Handle results when the simulation is finished
+ */
+void MainWindow::handle_results() {
+    this->input_tab->get_button_submit()->setEnabled(true);
+    statusBar()->showMessage(tr("Simulation complete."));
+}
+
+/**
+ * @brief      Handle the results of a single frame
+ *
+ * @param[in]  i     Frame index i
+ */
+void MainWindow::handle_results_step(unsigned int i) {
+    this->results_tab->update_progress(i+1, this->tdrd->get_num_steps());
+    this->results_tab->add_frame(i+1);
+}
+
+/**
+ * @brief      Create tabs
+ */
 void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
@@ -56,6 +115,9 @@ void MainWindow::create_tabs() {
     this->tabs->addTab(this->results_tab, tr("Results"));
 }
 
+/**
+ * @brief      Build the drop-down menus
+ */
 void MainWindow::build_menu() {
     // build drop down menus
     QMenuBar *menuBar = new QMenuBar;
@@ -91,12 +153,3 @@ void MainWindow::build_menu() {
 
     setMenuBar(menuBar);
 }
-
-/**
- * @brief      Close the application
- */
-void MainWindow::exit() {
-    QApplication::quit();
-}
-
-MainWindow::~MainWindow(){}

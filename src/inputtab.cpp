@@ -70,9 +70,26 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
     // set launch button
     this->button_submit = new QPushButton("Launch calculation");
     layout->addWidget(this->button_submit);
+    this->button_submit->setEnabled(false);
 
     // connect signals
     connect(this->reaction_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_reaction_input(int)));
+}
+
+TwoDimRD* InputTab::build_reaction_system() {
+    TwoDimRD* reaction_system = new TwoDimRD(this->input_diffusion_X->value(),
+                                             this->input_diffusion_Y->value(),
+                                             this->input_width->value(),
+                                             this->input_height->value(),
+                                             this->input_dx->value(),
+                                             this->input_dt->value(),
+                                             this->input_steps->value(),
+                                             this->input_tsteps->value());
+    reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
+    reaction_system->set_pbc(true);
+    reaction_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
+
+    return reaction_system;
 }
 
 /**
@@ -109,25 +126,29 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
 
     gridlayout->addWidget(new QLabel("dX"), row, 0);
     gridlayout->addWidget(this->input_diffusion_X, row, 1);
-    this->input_diffusion_X->setValue(2.0);
+    this->input_diffusion_X->setDecimals(6);
+    this->input_diffusion_X->setValue(2e-5);
     gridlayout->addWidget(new QLabel("Diffusion rate of component X"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dY"), row, 0);
     gridlayout->addWidget(this->input_diffusion_Y, row, 1);
-    this->input_diffusion_Y->setValue(16.0);
+    this->input_diffusion_Y->setDecimals(6);
+    this->input_diffusion_Y->setValue(1e-5);
     gridlayout->addWidget(new QLabel("Diffusion rate of component Y"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dx"), row, 0);
     gridlayout->addWidget(this->input_dx, row, 1);
-    this->input_dx->setValue(1.0);
+    this->input_dx->setDecimals(4);
+    this->input_dx->setValue(0.005);
     gridlayout->addWidget(new QLabel("Spatial distance in discretization"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dt"), row, 0);
     gridlayout->addWidget(this->input_dt, row, 1);
-    this->input_dt->setValue(0.1);
+    this->input_dt->setDecimals(4);
+    this->input_dt->setValue(0.01);
     gridlayout->addWidget(new QLabel("Time step size"), row, 2);
     row++;
 
@@ -164,7 +185,7 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     gridlayout->addWidget(this->input_tsteps, row, 1);
     this->input_tsteps->setMinimum(1);
     this->input_tsteps->setMaximum(10000);
-    this->input_tsteps->setValue(10);
+    this->input_tsteps->setValue(1000);
     gridlayout->addWidget(new QLabel("Number of time steps per each integration step"), row, 2);
     row++;
 }
@@ -195,5 +216,8 @@ void InputTab::set_reaction_input(int reactype) {
 
     if(this->reaction_settings != nullptr) {
         this->gridlayout_reaction->addWidget(this->reaction_settings, 2, 0);
+        this->button_submit->setEnabled(true);
+    } else {
+        this->button_submit->setEnabled(false);
     }
 }

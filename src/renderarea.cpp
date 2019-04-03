@@ -29,7 +29,7 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 
-    this->rd_system = std::make_shared<TwoDimRD>(2e-5, 1e-5, 256, 256, 0.005, 0.01, 100, 10);
+    this->rd_system = std::make_shared<TwoDimRD>(2e-5, 1e-5, 256, 256, 0.005, 0.01, 10, 100);
     this->rd_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
     this->rd_system->set_pbc(true);
     this->rd_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
@@ -42,6 +42,7 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
         this->graphs.push_back(QPixmap::fromImage(img));
     }
 
+    this->ctr = 0;
     this->update();
 }
 
@@ -58,6 +59,23 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setPen(palette().dark().color());
     painter.setBrush(Qt::NoBrush);
-    painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs.back(), 0, 0, this->graphs.back().width(), this->graphs.back().height());
+    painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs[ctr], 0, 0, this->graphs[ctr].width(), this->graphs[ctr].height());
     painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
+}
+
+void RenderArea::next_img() {
+    this->ctr++;
+    if(this->ctr >= this->graphs.size()) {
+        this->ctr = 0;
+    }
+    this->update();
+}
+
+void RenderArea::prev_img() {
+    if(this->ctr == 0) {
+        this->ctr = this->graphs.size() - 1;
+    } else {
+        this->ctr--;
+    }
+    this->update();
 }

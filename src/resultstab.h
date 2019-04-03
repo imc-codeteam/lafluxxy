@@ -26,6 +26,8 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
+#include <QToolButton>
+#include <QStyle>
 
 #include "renderarea.h"
 
@@ -34,6 +36,8 @@ class ResultsTab : public QWidget {
 
 private:
     RenderArea *renderarea;
+    QToolButton *button_next;
+    QToolButton *button_prev;
 
 public:
     /**
@@ -45,7 +49,9 @@ public:
 private:
 
 private slots:
+    void next_img();
 
+    void prev_img();
 };
 
 #endif // _RESULTSTAB_H

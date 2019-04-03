@@ -52,5 +52,28 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     layout->addWidget(new QLabel(tr("Domain")));
     this->renderarea = new RenderArea();
     layout->addWidget(this->renderarea);
-    layout->addWidget(new QLabel(tr("Simulation results")));
+
+    QWidget *gridwidget = new QWidget(this);
+    QGridLayout *gridlayout = new QGridLayout(this);
+    gridwidget->setLayout(gridlayout);
+
+    this->button_prev = new QToolButton(this);
+    this->button_prev->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+    gridlayout->addWidget(this->button_prev, 0, 0);
+    connect(this->button_prev, SIGNAL(clicked()), this, SLOT(prev_img()));
+
+    this->button_next = new QToolButton(this);
+    this->button_next->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
+    gridlayout->addWidget(this->button_next, 0, 1);
+    connect(this->button_next, SIGNAL(clicked()), this, SLOT(next_img()));
+
+    layout->addWidget(gridwidget);
+}
+
+void ResultsTab::next_img() {
+    this->renderarea->next_img();
+}
+
+void ResultsTab::prev_img() {
+    this->renderarea->prev_img();
 }

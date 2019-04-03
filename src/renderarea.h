@@ -35,6 +35,7 @@ class RenderArea : public QWidget {
 private:
     std::shared_ptr<TwoDimRD> rd_system;
     std::vector<QPixmap> graphs;
+    unsigned int ctr;
 
 public:
     /**
@@ -46,6 +47,10 @@ public:
     QSize minimumSizeHint() const override;
 
     QSize sizeHint() const override;
+
+    void next_img();
+
+    void prev_img();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

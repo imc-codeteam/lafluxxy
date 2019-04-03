@@ -109,21 +109,25 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
 
     gridlayout->addWidget(new QLabel("dX"), row, 0);
     gridlayout->addWidget(this->input_diffusion_X, row, 1);
+    this->input_diffusion_X->setValue(2.0);
     gridlayout->addWidget(new QLabel("Diffusion rate of component X"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dY"), row, 0);
     gridlayout->addWidget(this->input_diffusion_Y, row, 1);
+    this->input_diffusion_Y->setValue(16.0);
     gridlayout->addWidget(new QLabel("Diffusion rate of component Y"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dx"), row, 0);
     gridlayout->addWidget(this->input_dx, row, 1);
+    this->input_dx->setValue(1.0);
     gridlayout->addWidget(new QLabel("Spatial distance in discretization"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("dt"), row, 0);
     gridlayout->addWidget(this->input_dt, row, 1);
+    this->input_dt->setValue(0.1);
     gridlayout->addWidget(new QLabel("Time step size"), row, 2);
     row++;
 
@@ -134,21 +138,33 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
 
     gridlayout->addWidget(new QLabel("width"), row, 0);
     gridlayout->addWidget(this->input_width, row, 1);
+    this->input_width->setMinimum(16);
+    this->input_width->setMaximum(1024);
+    this->input_width->setValue(256);
     gridlayout->addWidget(new QLabel("Width of the unit cell"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("height"), row, 0);
     gridlayout->addWidget(this->input_height, row, 1);
+    this->input_height->setMinimum(16);
+    this->input_height->setMaximum(1024);
+    this->input_height->setValue(256);
     gridlayout->addWidget(new QLabel("Height of the unit cell"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("steps"), row, 0);
     gridlayout->addWidget(this->input_steps, row, 1);
+    this->input_steps->setMinimum(1);
+    this->input_steps->setMaximum(10000);
+    this->input_steps->setValue(100);
     gridlayout->addWidget(new QLabel("Number of integration steps"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("tsteps"), row, 0);
     gridlayout->addWidget(this->input_tsteps, row, 1);
+    this->input_tsteps->setMinimum(1);
+    this->input_tsteps->setMaximum(10000);
+    this->input_tsteps->setValue(10);
     gridlayout->addWidget(new QLabel("Number of time steps per each integration step"), row, 2);
     row++;
 }

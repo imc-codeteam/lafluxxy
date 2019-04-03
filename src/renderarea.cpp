@@ -37,3 +37,11 @@ QSize RenderArea::sizeHint() const {
 QSize RenderArea::minimumSizeHint() const {
     return QSize(256, 256);
 }
+
+void RenderArea::paintEvent(QPaintEvent * /* event */) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(palette().dark().color());
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
+}

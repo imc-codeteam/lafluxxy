@@ -23,6 +23,7 @@
 #define _RENDER_ARA
 
 #include <QWidget>
+#include <QPainter>
 
 class RenderArea : public QWidget {
     Q_OBJECT
@@ -39,6 +40,9 @@ public:
     QSize minimumSizeHint() const override;
 
     QSize sizeHint() const override;
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
 

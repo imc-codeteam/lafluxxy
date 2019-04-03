@@ -28,6 +28,13 @@
 RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
+
+    this->rd_system = std::make_shared<TwoDimRD>(2e-5, 1e-5, 256, 256, 0.005, 0.01, 10, 100);
+    this->rd_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
+    this->rd_system->set_pbc(true);
+    this->rd_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
+    this->rd_system->time_integrate();
+
 }
 
 QSize RenderArea::sizeHint() const {

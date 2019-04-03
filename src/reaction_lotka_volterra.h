@@ -19,39 +19,50 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _RENDER_ARA
-#define _RENDER_ARA
+#pragma once
 
-#include <QWidget>
-#include <QPainter>
+#include "reaction_system.h"
 
-#include "two_dim_rd.h"
-#include "reaction_lotka_volterra.h"
-
-class RenderArea : public QWidget {
-    Q_OBJECT
-
+/**
+ * @brief      Class for Lotka-Volterra Reaction
+ */
+class ReactionLotkaVolterra : public ReactionSystem {
 private:
-    std::shared_ptr<TwoDimRD> rd_system;
+    double alpha = 4.0/3.0;
+    double beta = 8.0/3.0;
+    double gamma = 1;
+    double delta = 1;
 
 public:
     /**
-     * @brief Input tab constructor
-     * @param parent widget
+     * @brief      Constructs the object.
      */
-    explicit RenderArea(QWidget *parent = 0);
+    ReactionLotkaVolterra();
 
-    QSize minimumSizeHint() const override;
+    /**
+     * @brief      Perform a reaction step
+     *
+     * @param[in]  a     Concentration matrix A
+     * @param[in]  b     Concentration matrix B
+     * @param      ra    Pointer to reaction term for A
+     * @param      rb    Pointer to reaction term for B
+     */
+    void reaction(double a, double b, double *ra, double *rb) const;
 
-    QSize sizeHint() const override;
+    /**
+     * @brief      Initialize the system
+     *
+     * @param      a     Concentration matrix A
+     * @param      b     Concentration matrix B
+     */
+    void init(MatrixXXd& a, MatrixXXd& b) const;
 
-protected:
-    void paintEvent(QPaintEvent *event) override;
+    /**
+     * @brief      Sets the parameters.
+     *
+     * @param[in]  params  The parameters
+     */
+    void set_parameters(const std::string& params);
 
 private:
-
-private slots:
-
 };
-
-#endif // _RENDER_ARA

@@ -22,11 +22,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtWidgets/QApplication>
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QStatusBar>
 #include <QTabWidget>
+#include <QMenuBar>
+#include <QMenu>
 
 #include <iostream>
 
@@ -49,9 +52,15 @@ public:
     ~MainWindow();
 
 private slots:
+    /**
+     * @brief      Close the application
+     */
+    void exit();
 
 private:
     void create_tabs();
+
+    void build_menu();
 };
 
 #endif // MAINWINDOW_H

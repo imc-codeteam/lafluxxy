@@ -23,6 +23,9 @@
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    //build drop-down menu
+    this->build_menu();
+
     QWidget *widget = new QWidget();
     this->setCentralWidget(widget);
 
@@ -50,6 +53,49 @@ void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
     this->tabs->addTab(this->input_tab, tr("Input"));
+}
+
+void MainWindow::build_menu() {
+    // build drop down menus
+    QMenuBar *menuBar = new QMenuBar;
+    QMenu *menuFile = menuBar->addMenu(tr("&File"));
+    QMenu *menuHelp = menuBar->addMenu(tr("&Help"));
+
+    // build menu bar items
+    QAction *action_open = new QAction(menuFile);
+    QAction *action_save = new QAction(menuFile);
+    QAction *action_quit = new QAction(menuFile);
+    QAction *action_about = new QAction(menuHelp);
+
+    // define actions
+    action_open->setText(tr("Open"));
+    action_open->setShortcuts(QKeySequence::Open);
+
+    action_save->setText(tr("Save"));
+    action_save->setShortcuts(QKeySequence::Save);
+
+    action_quit->setText(tr("Quit"));
+    action_quit->setShortcuts(QKeySequence::Quit);
+
+    action_about->setText(tr("About"));
+
+    // add options to menu
+    menuFile->addAction(action_open);
+    menuFile->addAction(action_save);
+    menuFile->addAction(action_quit);
+    menuHelp->addAction(action_about);
+
+    // connect actions
+    connect(action_quit, &QAction::triggered, this, &MainWindow::exit);
+
+    setMenuBar(menuBar);
+}
+
+/**
+ * @brief      Close the application
+ */
+void MainWindow::exit() {
+    QApplication::quit();
 }
 
 MainWindow::~MainWindow(){}

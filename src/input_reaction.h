@@ -27,6 +27,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QDoubleSpinBox>
+#include <QPushButton>
 #include <unordered_map>
 
 class InputReaction : public QWidget {

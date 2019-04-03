@@ -19,29 +19,38 @@
  *                                                                        *
  **************************************************************************/
 
-#include "input_reaction.h"
+#include "resultstab.h"
 
-InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
-    this->layout = new QVBoxLayout();
-    this->setLayout(this->layout);
+/**
+ * @brief Results tab constructor
+ * @param parent widget
+ */
+ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    this->setLayout(mainLayout);
+    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    // set reaction label
-    this->reaction_label = new QLabel();
-    this->layout->addWidget(this->reaction_label);
+    // add a ScrollArea widget and define properties
+    QScrollArea *scrollArea = new QScrollArea(this);     //Create scroll area Widget
+    scrollArea->setContentsMargins(0,0,0,0);
+    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    scrollArea->setWidgetResizable(true);
 
-    // build input boxes
-    QWidget *widget = new QWidget();
-    layout->addWidget(widget);
-    this->gridlayout = new QGridLayout();
-    widget->setLayout(this->gridlayout);
-}
+    // add ScrollArea to QWidget
+    mainLayout->addWidget(scrollArea);
 
-void InputReaction::build_input_boxes() {
-    for(unsigned int i=0; i<input_names.size(); i++) {
-        this->gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
-        QDoubleSpinBox *box = new QDoubleSpinBox();
-        this->input_boxes.emplace(input_names[i], box);
-        box->setValue(this->input_default_values[i]);
-        this->gridlayout->addWidget(box, i, 1);
-    }
+    // create new Widget for in the QScrollArea and set properties
+    QWidget* widget = new QWidget();
+    widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    // add Widget to ScrollArea
+    scrollArea->setWidget(widget);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    widget->setLayout(layout);
+
+    layout->addWidget(new QLabel(tr("Domain")));
+    this->renderarea = new RenderArea();
+    layout->addWidget(this->renderarea);
+    layout->addWidget(new QLabel(tr("Simulation results")));
 }

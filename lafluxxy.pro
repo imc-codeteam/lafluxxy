@@ -38,16 +38,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += src/main.cpp\
            src/mainwindow.cpp \
            src/inputtab.cpp \
+           src/resultstab.cpp \
            src/input_reaction.cpp \
            src/input_lotka_volterra.cpp \
-           src/input_gray_scott.cpp
+           src/input_gray_scott.cpp \
+           src/renderarea.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
             src/inputtab.h \
+            src/resultstab.h \
             src/input_reaction.h \
             src/input_lotka_volterra.h \
-            src/input_gray_scott.h
+            src/input_gray_scott.h \
+            src/renderarea.h
 
 win32 {
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include

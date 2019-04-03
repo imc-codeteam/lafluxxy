@@ -51,6 +51,9 @@ void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
     this->tabs->addTab(this->input_tab, tr("Input"));
+
+    this->results_tab = new ResultsTab();
+    this->tabs->addTab(this->results_tab, tr("Results"));
 }
 
 void MainWindow::build_menu() {

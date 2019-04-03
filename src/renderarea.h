@@ -19,29 +19,31 @@
  *                                                                        *
  **************************************************************************/
 
-#include "input_reaction.h"
+#ifndef _RENDER_ARA
+#define _RENDER_ARA
 
-InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
-    this->layout = new QVBoxLayout();
-    this->setLayout(this->layout);
+#include <QWidget>
 
-    // set reaction label
-    this->reaction_label = new QLabel();
-    this->layout->addWidget(this->reaction_label);
+class RenderArea : public QWidget {
+    Q_OBJECT
 
-    // build input boxes
-    QWidget *widget = new QWidget();
-    layout->addWidget(widget);
-    this->gridlayout = new QGridLayout();
-    widget->setLayout(this->gridlayout);
-}
+private:
 
-void InputReaction::build_input_boxes() {
-    for(unsigned int i=0; i<input_names.size(); i++) {
-        this->gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
-        QDoubleSpinBox *box = new QDoubleSpinBox();
-        this->input_boxes.emplace(input_names[i], box);
-        box->setValue(this->input_default_values[i]);
-        this->gridlayout->addWidget(box, i, 1);
-    }
-}
+public:
+    /**
+     * @brief Input tab constructor
+     * @param parent widget
+     */
+    explicit RenderArea(QWidget *parent = 0);
+
+    QSize minimumSizeHint() const override;
+
+    QSize sizeHint() const override;
+
+private:
+
+private slots:
+
+};
+
+#endif // _RENDER_ARA

@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include "inputtab.h"
+#include "resultstab.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,6 +47,7 @@ class MainWindow : public QMainWindow
 private:
     QTabWidget *tabs;
     InputTab *input_tab;
+    ResultsTab *results_tab;
 
 public:
     explicit MainWindow(QWidget *parent = 0);

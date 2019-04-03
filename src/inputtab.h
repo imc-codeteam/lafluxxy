@@ -52,7 +52,7 @@ private:
     QSpinBox* input_tsteps;             // set number of time steps for each integration step
 
     QGridLayout* gridlayout_reaction;
-
+    QPushButton* button_submit;
 
 public:
     /**

@@ -67,6 +67,10 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
     gridlayout->setColumnStretch(1, 1);
     this->build_general_parameters(gridlayout);
 
+    // set launch button
+    this->button_submit = new QPushButton("Launch calculation");
+    layout->addWidget(this->button_submit);
+
     // connect signals
     connect(this->reaction_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_reaction_input(int)));
 }

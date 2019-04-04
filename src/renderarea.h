@@ -29,6 +29,7 @@
 #include "two_dim_rd.h"
 #include "reaction_lotka_volterra.h"
 #include "colorschemes/viridis.h"
+#include "colorschemes/magma.h"
 
 class RenderArea : public QWidget {
     Q_OBJECT
@@ -36,6 +37,7 @@ class RenderArea : public QWidget {
 private:
     std::vector<QPixmap> graphs;
     unsigned int ctr;
+    const std::vector<float>* color_scheme;
 
 public:
     /**
@@ -68,6 +70,10 @@ public:
      */
     void add_graph(const MatrixXXd& X);
 
+    inline void set_color_scheme(const std::vector<float>* _color_scheme) {
+        this->color_scheme = _color_scheme;
+    }
+
 protected:
     /**
      * @brief      Perform paint event call
@@ -85,7 +91,7 @@ private:
      *
      * @return     ByteArray with colors
      */
-    QByteArray convert_data(const MatrixXXd& data, const std::vector<float>& color_scheme) const;
+    QByteArray convert_data(const MatrixXXd& data) const;
 
     /**
      * @brief      Obtain color from data point using color scheme
@@ -95,7 +101,7 @@ private:
      *
      * @return     The color.
      */
-    std::array<uint8_t, 3> get_color(double val, const std::vector<float>& color_scheme) const;
+    std::array<uint8_t, 3> get_color(double val) const;
 
 private slots:
 

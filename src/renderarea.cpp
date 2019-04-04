@@ -65,9 +65,9 @@ void RenderArea::prev_img() {
  * @param[in]  data  Raw concentration data
  */
 void RenderArea::add_graph(const MatrixXXd& data) {
-    QByteArray graph_data = this->convert_data(data, viridis);
+    QByteArray graph_data = this->convert_data(data);
 
-    QImage img((const uchar*)(graph_data.constData()), 256, 256, QImage::Format_RGB888);
+    QImage img((const uchar*)(graph_data.constData()), data.cols(), data.rows(), QImage::Format_RGB888);
     this->graphs.push_back(QPixmap::fromImage(img));
 }
 
@@ -94,11 +94,11 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
  *
  * @return     ByteArray with colors
  */
-QByteArray RenderArea::convert_data(const MatrixXXd& data, const std::vector<float>& color_scheme) const {
+QByteArray RenderArea::convert_data(const MatrixXXd& data) const {
     QByteArray result;
     for(unsigned int y=0; y<data.rows(); y++) {
         for(unsigned int x=0; x<data.cols(); x++) {
-            auto cols = this->get_color(data(data.rows() - y - 1,x), color_scheme);
+            auto cols = this->get_color(data(data.rows() - y - 1,x));
             result.push_back(cols[0]);
             result.push_back(cols[1]);
             result.push_back(cols[2]);
@@ -116,17 +116,17 @@ QByteArray RenderArea::convert_data(const MatrixXXd& data, const std::vector<flo
  *
  * @return     The color.
  */
-std::array<uint8_t, 3> RenderArea::get_color(double val, const std::vector<float>& color_scheme) const {
+std::array<uint8_t, 3> RenderArea::get_color(double val) const {
     if(val <= 0.0) {
-        return std::array<uint8_t, 3>{uint8_t(color_scheme[0] * 256.0f), uint8_t(color_scheme[1] * 256.0f), uint8_t(color_scheme[2] * 256.0f)};
+        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(0) * 256.0f), uint8_t(this->color_scheme->at(1) * 256.0f), uint8_t(this->color_scheme->at(2) * 256.0f)};
     }
 
     if(val >= 1.0) {
-        const unsigned int sz = color_scheme.size();
-        return std::array<uint8_t, 3>{uint8_t(color_scheme[sz-3] * 256.0f), uint8_t(color_scheme[sz-2] * 256.0f), uint8_t(color_scheme[sz-1] * 256.0f)};
+        const unsigned int sz = this->color_scheme->size();
+        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(sz-3) * 256.0f), uint8_t(this->color_scheme->at(sz-2) * 256.0f), uint8_t(this->color_scheme->at(sz-1) * 256.0f)};
     }
 
-    unsigned int idx = val * (color_scheme.size() / 3);
+    unsigned int idx = val * (this->color_scheme->size() / 3);
 
-    return std::array<uint8_t, 3>{uint8_t(color_scheme[idx*3] * 256.0f), uint8_t(color_scheme[idx*3+1] * 256.0f), uint8_t(color_scheme[idx*3+2] * 256.0f)};
+    return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(idx*3) * 256.0f), uint8_t(this->color_scheme->at(idx*3+1) * 256.0f), uint8_t(this->color_scheme->at(idx*3+2) * 256.0f)};
 }

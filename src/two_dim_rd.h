@@ -24,7 +24,6 @@
 #include <Eigen/Dense>
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
 
-#include <QByteArray>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -129,9 +128,15 @@ public:
         return this->steps;
     }
 
-    QByteArray get_qbyte_array_X(unsigned int i) const;
-
-    QByteArray get_qbyte_array_Y(unsigned int i) const;
+    /**
+     * @brief      Gets the concentration matrix.
+     *
+     * @param[in]  frame  Frame index
+     * @param[in]  first  Whether first or second concentration (X or Y) needs to be returned
+     *
+     * @return     The concentration matrix.
+     */
+    const MatrixXXd& get_concentration_matrix(unsigned int frame, bool first) const;
 
 private:
     /**

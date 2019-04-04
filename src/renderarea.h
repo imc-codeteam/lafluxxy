@@ -51,10 +51,6 @@ public:
 
     void prev_img();
 
-    inline void add_graph(const QPixmap& graph) {
-        this->graphs.push_back(graph);
-    }
-
     inline unsigned int get_ctr() const {
         return this->ctr;
     }
@@ -62,6 +58,10 @@ public:
     inline unsigned int get_num_graphs() const {
         return this->graphs.size();
     }
+
+    void add_graph(const MatrixXXd& X);
+
+    QByteArray convert_data(const MatrixXXd& data) const;
 
 protected:
     void paintEvent(QPaintEvent *event) override;

@@ -68,3 +68,36 @@ void RenderArea::prev_img() {
     }
     this->update();
 }
+
+/**
+ * @brief      Adds a graph.
+ *
+ * @param[in]  data  Raw concentration data
+ */
+void RenderArea::add_graph(const MatrixXXd& data) {
+    QByteArray graph_data = this->convert_data(data);
+
+    QImage img((const uchar*)(graph_data.constData()), 256, 256, QImage::Format_RGB888);
+    this->graphs.push_back(QPixmap::fromImage(img));
+}
+
+/**
+ * @brief      Convert raw concentration data to color graph
+ *
+ * @param[in]  data  The raw concentration data
+ *
+ * @return     ByteArray with colors
+ */
+QByteArray RenderArea::convert_data(const MatrixXXd& data) const {
+    QByteArray result;
+    for(unsigned int y=0; y<data.rows(); y++) {
+        for(unsigned int x=0; x<data.cols(); x++) {
+            uchar val = (uint8_t)(data(data.rows() - y - 1,x) * 32.0);
+            result.push_back(val);
+            result.push_back(val);
+            result.push_back(val);
+        }
+    }
+
+    return result;
+}

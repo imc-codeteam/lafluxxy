@@ -111,14 +111,8 @@ void ResultsTab::prev_img() {
 }
 
 void ResultsTab::add_frame(unsigned int i) {
-    QByteArray data_X = this->reaction_system->get_qbyte_array_X(i);
-    QByteArray data_Y = this->reaction_system->get_qbyte_array_Y(i);
-
-    QImage img_X((const uchar*)(data_X.constData()), 256, 256, QImage::Format_RGB888);
-    QImage img_Y((const uchar*)(data_Y.constData()), 256, 256, QImage::Format_RGB888);
-
-    this->renderarea_X->add_graph(QPixmap::fromImage(img_X));
-    this->renderarea_Y->add_graph(QPixmap::fromImage(img_Y));
+    this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true));
+    this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false));
 
     // update render area
     if(i == 0) {

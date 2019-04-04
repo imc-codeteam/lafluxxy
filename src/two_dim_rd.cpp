@@ -104,34 +104,24 @@ void TwoDimRD::write_state_to_file(const std::string& filename) {
     out.close();
 }
 
-QByteArray TwoDimRD::get_qbyte_array_X(unsigned int i) const {
-    QByteArray result;
-    for(unsigned int y=0; y<this->ta[i].rows(); y++) {
-        for(unsigned int x=0; x<this->ta[i].cols(); x++) {
-            uchar val = (uint8_t)(this->ta[i](y,x) * 32.0);
-            result.push_back(val);
-            result.push_back(val);
-            result.push_back(val);
-            // std::cout << (unsigned int)val << "\t" << this->ta.back()(y,x) << std::endl;
+/**
+ * @brief      Gets the concentration matrix.
+ *
+ * @param[in]  frame  Frame index
+ * @param[in]  first  Whether first or second concentration (X or Y) needs to be returned
+ *
+ * @return     The concentration matrix.
+ */
+const MatrixXXd& TwoDimRD::get_concentration_matrix(unsigned int frame, bool first) const {
+    if(frame >= this->ta.size()) {
+        throw std::runtime_error("Invalid time frame requested");
+    } else {
+        if(first) {
+            return this->ta[frame];
+        } else {
+            return this->tb[frame];
         }
     }
-
-    return result;
-}
-
-QByteArray TwoDimRD::get_qbyte_array_Y(unsigned int i) const {
-    QByteArray result;
-    for(unsigned int y=0; y<this->tb[i].rows(); y++) {
-        for(unsigned int x=0; x<this->tb[i].cols(); x++) {
-            uchar val = (uint8_t)(this->tb[i](y,x) * 32.0);
-            result.push_back(val);
-            result.push_back(val);
-            result.push_back(val);
-            // std::cout << (unsigned int)val << "\t" << this->ta.back()(y,x) << std::endl;
-        }
-    }
-
-    return result;
 }
 
 /**

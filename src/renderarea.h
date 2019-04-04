@@ -28,6 +28,7 @@
 
 #include "two_dim_rd.h"
 #include "reaction_lotka_volterra.h"
+#include "colorschemes/viridis.h"
 
 class RenderArea : public QWidget {
     Q_OBJECT
@@ -38,8 +39,9 @@ private:
 
 public:
     /**
-     * @brief Input tab constructor
-     * @param parent widget
+     * @brief      Constructs the object.
+     *
+     * @param      parent  The parent
      */
     explicit RenderArea(QWidget *parent = 0);
 
@@ -59,14 +61,30 @@ public:
         return this->graphs.size();
     }
 
+    /**
+     * @brief      Adds a graph.
+     *
+     * @param[in]  data  Raw concentration data
+     */
     void add_graph(const MatrixXXd& X);
 
-    QByteArray convert_data(const MatrixXXd& data) const;
-
 protected:
+    /**
+     * @brief      Perform paint event call
+     *
+     * @param      event  The paint event
+     */
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    /**
+     * @brief      Convert raw concentration data to color graph
+     *
+     * @param[in]  data  The raw concentration data
+     *
+     * @return     ByteArray with colors
+     */
+    QByteArray convert_data(const MatrixXXd& data) const;
 
 private slots:
 

@@ -22,8 +22,9 @@
 #include "renderarea.h"
 
 /**
- * @brief Results tab constructor
- * @param parent widget
+ * @brief      Constructs the object.
+ *
+ * @param      parent  The parent
  */
 RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
     setBackgroundRole(QPalette::Base);
@@ -39,17 +40,6 @@ QSize RenderArea::sizeHint() const {
 
 QSize RenderArea::minimumSizeHint() const {
     return QSize(256, 256);
-}
-
-void RenderArea::paintEvent(QPaintEvent * /* event */) {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(palette().dark().color());
-    painter.setBrush(Qt::NoBrush);
-    if(this->graphs.size() > 0) {
-        painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs[ctr], 0, 0, this->graphs[ctr].width(), this->graphs[ctr].height());
-    }
-    painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
 }
 
 void RenderArea::next_img() {
@@ -79,6 +69,22 @@ void RenderArea::add_graph(const MatrixXXd& data) {
 
     QImage img((const uchar*)(graph_data.constData()), 256, 256, QImage::Format_RGB888);
     this->graphs.push_back(QPixmap::fromImage(img));
+}
+
+/**
+ * @brief      Perform paint event call
+ *
+ * @param      event  The paint event
+ */
+void RenderArea::paintEvent(QPaintEvent * /* event */) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(palette().dark().color());
+    painter.setBrush(Qt::NoBrush);
+    if(this->graphs.size() > 0) {
+        painter.drawPixmap(0, 0, width() - 1, height() - 1, this->graphs[ctr], 0, 0, this->graphs[ctr].width(), this->graphs[ctr].height());
+    }
+    painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
 }
 
 /**

@@ -85,6 +85,7 @@ TwoDimRD* InputTab::build_reaction_system() {
                                              this->input_dt->value(),
                                              this->input_steps->value(),
                                              this->input_tsteps->value());
+    reaction_system->set_cores(this->input_ncores->value());
     reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
     reaction_system->set_pbc(true);
     reaction_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
@@ -156,6 +157,7 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     this->input_height = new QSpinBox();
     this->input_steps = new QSpinBox();
     this->input_tsteps = new QSpinBox();
+    this->input_ncores = new QSpinBox();
 
     gridlayout->addWidget(new QLabel("width"), row, 0);
     gridlayout->addWidget(this->input_width, row, 1);
@@ -187,6 +189,24 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     this->input_tsteps->setMaximum(10000);
     this->input_tsteps->setValue(1000);
     gridlayout->addWidget(new QLabel("Number of time steps per each integration step"), row, 2);
+    row++;
+
+    gridlayout->addWidget(new QLabel("ncores"), row, 0);
+    gridlayout->addWidget(this->input_ncores, row, 1);
+    this->input_ncores->setMinimum(1);
+    // determine maximum number of threads; this part needs to be executed in a parallel environment
+    #pragma omp parallel
+    {
+        if(omp_get_thread_num() == 0) {
+            this->input_ncores->setValue(std::min(4, omp_get_num_threads()));
+            this->input_ncores->setMaximum(omp_get_num_threads());
+        }
+    }
+    gridlayout->addWidget(new QLabel("Number of computing cores in OpenMP parallelization"), row, 2);
+    QToolButton *button_ncores_info = new QToolButton;
+    button_ncores_info->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
+    button_ncores_info->setToolTip("Too high numbers will actually slow down the calculation as the process becomes limited by inter-process communication.");
+    gridlayout->addWidget(button_ncores_info, row, 3);
     row++;
 }
 

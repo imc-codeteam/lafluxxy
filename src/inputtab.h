@@ -30,6 +30,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QDoubleSpinBox>
+#include <QToolButton>
 
 #include "two_dim_rd.h"
 #include "input_lotka_volterra.h"
@@ -52,6 +53,7 @@ private:
     QSpinBox* input_height;             // set height of box
     QSpinBox* input_steps;              // set number of integration steps
     QSpinBox* input_tsteps;             // set number of time steps for each integration step
+    QSpinBox* input_ncores;             // set number of computing cores
 
     QGridLayout* gridlayout_reaction;
     QPushButton* button_submit;

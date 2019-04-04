@@ -65,7 +65,7 @@ void RenderArea::prev_img() {
  * @param[in]  data  Raw concentration data
  */
 void RenderArea::add_graph(const MatrixXXd& data) {
-    QByteArray graph_data = this->convert_data(data);
+    QByteArray graph_data = this->convert_data(data, viridis);
 
     QImage img((const uchar*)(graph_data.constData()), 256, 256, QImage::Format_RGB888);
     this->graphs.push_back(QPixmap::fromImage(img));
@@ -94,16 +94,39 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
  *
  * @return     ByteArray with colors
  */
-QByteArray RenderArea::convert_data(const MatrixXXd& data) const {
+QByteArray RenderArea::convert_data(const MatrixXXd& data, const std::vector<float>& color_scheme) const {
     QByteArray result;
     for(unsigned int y=0; y<data.rows(); y++) {
         for(unsigned int x=0; x<data.cols(); x++) {
-            uchar val = (uint8_t)(data(data.rows() - y - 1,x) * 32.0);
-            result.push_back(val);
-            result.push_back(val);
-            result.push_back(val);
+            auto cols = this->get_color(data(data.rows() - y - 1,x), color_scheme);
+            result.push_back(cols[0]);
+            result.push_back(cols[1]);
+            result.push_back(cols[2]);
         }
     }
 
     return result;
+}
+
+/**
+ * @brief      Obtain color from data point using color scheme
+ *
+ * @param[in]  val           The value
+ * @param[in]  color_scheme  The color scheme
+ *
+ * @return     The color.
+ */
+std::array<uint8_t, 3> RenderArea::get_color(double val, const std::vector<float>& color_scheme) const {
+    if(val <= 0.0) {
+        return std::array<uint8_t, 3>{uint8_t(color_scheme[0] * 256.0f), uint8_t(color_scheme[1] * 256.0f), uint8_t(color_scheme[2] * 256.0f)};
+    }
+
+    if(val >= 1.0) {
+        const unsigned int sz = color_scheme.size();
+        return std::array<uint8_t, 3>{uint8_t(color_scheme[sz-3] * 256.0f), uint8_t(color_scheme[sz-2] * 256.0f), uint8_t(color_scheme[sz-1] * 256.0f)};
+    }
+
+    unsigned int idx = val * (color_scheme.size() / 3);
+
+    return std::array<uint8_t, 3>{uint8_t(color_scheme[idx*3] * 256.0f), uint8_t(color_scheme[idx*3+1] * 256.0f), uint8_t(color_scheme[idx*3+2] * 256.0f)};
 }

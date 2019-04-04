@@ -109,11 +109,13 @@ void MainWindow::handle_simulation_canceled() {
 /**
  * @brief      Handle the results of a single frame
  *
- * @param[in]  i     Frame index i
+ * @param[in]  i      Frame index i
+ * @param[in]  tcalc  Number of seconds spent on step
  */
-void MainWindow::handle_results_step(unsigned int i) {
+void MainWindow::handle_results_step(unsigned int i, double tcalc) {
     this->results_tab->update_progress(i+1, this->tdrd->get_num_steps());
     this->results_tab->add_frame(i+1);
+    // std::cout << tcalc << std::endl;
 }
 
 /**

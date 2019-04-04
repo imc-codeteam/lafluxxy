@@ -82,9 +82,10 @@ private slots:
     /**
      * @brief      Handle the results of a single frame
      *
-     * @param[in]  i     Frame index i
+     * @param[in]  i      Frame index i
+     * @param[in]  tcalc  Number of seconds spent on step
      */
-    void handle_results_step(unsigned int i);
+    void handle_results_step(unsigned int i, double tcalc);
 
 private:
     /**

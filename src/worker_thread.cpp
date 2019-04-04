@@ -34,9 +34,12 @@ void WorkerThread::run() {
             return;
         }
 
+        auto start = std::chrono::system_clock::now();
         this->reaction_system->update();
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
 
-        emit step_finished(i);
+        emit step_finished(i, elapsed_seconds.count());
     }
 
     emit simulation_finished();

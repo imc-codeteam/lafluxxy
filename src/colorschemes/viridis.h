@@ -29,9 +29,9 @@
 #ifndef _VIRIDIS_H
 #define _VIRIDIS_H
 
-#include <array>
+#include <vector>
 
-static const std::array<float, 768> viridis =
+static const std::vector<float> viridis =
                 {0.267004, 0.004874, 0.329415,
                  0.268510, 0.009605, 0.335427,
                  0.269944, 0.014625, 0.341379,

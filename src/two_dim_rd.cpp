@@ -192,6 +192,7 @@ void TwoDimRD::update() {
 void TwoDimRD::laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c) {
     const double idx2 = 1.0 / (this->dx * this->dx);
 
+    omp_set_num_threads(this->ncores);
     #pragma omp parallel for schedule(static)
     for(unsigned int i=0; i<this->height; i++) {
         // indices
@@ -250,6 +251,7 @@ void TwoDimRD::laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c) {
 
     const double idx2 = 1.0 / (dx * dx);
 
+    omp_set_num_threads(this->ncores);
     #pragma omp parallel for
     for(unsigned int i=0; i<height; i++) {
         for(unsigned int j=0; j<width; j++) {
@@ -285,6 +287,7 @@ void TwoDimRD::laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c) {
  * Add the value to the current delta matrices
  */
 void TwoDimRD::add_reaction() {
+    omp_set_num_threads(this->ncores);
     #pragma omp parallel for schedule(static)
     for(unsigned int i=0; i<this->height; i++) {
         for(unsigned int j=0; j<this->width; j++) {

@@ -60,6 +60,8 @@ private:
 
     bool pbc = true;    //!< Whether to employ periodic boundary conditions
 
+    unsigned int ncores;
+
 public:
     /**
      * @brief      Constructs the object.
@@ -137,6 +139,10 @@ public:
      * @return     The concentration matrix.
      */
     const MatrixXXd& get_concentration_matrix(unsigned int frame, bool first) const;
+
+    inline void set_cores(unsigned int _ncores) {
+        this->ncores = _ncores;
+    }
 
 private:
     /**

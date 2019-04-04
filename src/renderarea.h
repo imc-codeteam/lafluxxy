@@ -80,11 +80,22 @@ private:
     /**
      * @brief      Convert raw concentration data to color graph
      *
-     * @param[in]  data  The raw concentration data
+     * @param[in]  data          The raw concentration data
+     * @param[in]  color_scheme  The color scheme
      *
      * @return     ByteArray with colors
      */
-    QByteArray convert_data(const MatrixXXd& data) const;
+    QByteArray convert_data(const MatrixXXd& data, const std::vector<float>& color_scheme) const;
+
+    /**
+     * @brief      Obtain color from data point using color scheme
+     *
+     * @param[in]  val           The value
+     * @param[in]  color_scheme  The color scheme
+     *
+     * @return     The color.
+     */
+    std::array<uint8_t, 3> get_color(double val, const std::vector<float>& color_scheme) const;
 
 private slots:
 

@@ -23,6 +23,7 @@
 #define _WORKER_THREAD_H
 
 #include <QThread>
+#include <chrono>
 
 #include "two_dim_rd.h"
 
@@ -43,7 +44,7 @@ signals:
 
     void simulation_cancelled();
 
-    void step_finished(unsigned int i);
+    void step_finished(unsigned int i, double tcalc);
 
 public slots:
     void kill_job() {

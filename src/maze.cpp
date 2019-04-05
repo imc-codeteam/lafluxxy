@@ -57,29 +57,44 @@ void Cell::set_neighbors(Cell* _north, Cell* _south, Cell* _east, Cell* _west) {
 /**
  * @brief      Link a neighbor
  *
- * @param      neighbor  The neighbor
+ * @param      neighbor     The neighbor
+ * @param[in]  do_neighbor  whether to recursively link the neighbor
  */
-void Cell::link(Cell* neighbor) {
+void Cell::link(Cell* neighbor, bool do_neighbor) {
     auto got = this->links.find(neighbor);
     if(got != this->links.end()) {
         got->second = true;
     } else {
         throw std::runtime_error("Invalid link request");
     }
+
+    if(do_neighbor) {
+        neighbor->link(this, false);
+    }
 }
 
 /**
- * @brief      Unlink a neighbor
+ * @brief      Link a neighbor
  *
- * @param      neighbor  The neighbor
+ * @param      neighbor     The neighbor
+ * @param[in]  do_neighbor  whether to recursively link the neighbor
  */
-void Cell::unlink(Cell* neighbor) {
+void Cell::unlink(Cell* neighbor, bool do_neighbor) {
     auto got = this->links.find(neighbor);
     if(got != this->links.end()) {
         got->second = true;
     } else {
         throw std::runtime_error("Invalid unlink request");
     }
+
+    if(do_neighbor) {
+        neighbor->unlink(this, false);
+    }
+}
+
+bool Cell::is_linked(Cell* neighbor) const {
+    auto got = this->links.find(neighbor);
+    return got->second;
 }
 
 /**
@@ -96,6 +111,85 @@ Maze::Maze(unsigned int _width, unsigned int _height) : width(_width), height(_h
         }
     }
     this->configure_cells();
+}
+
+void Maze::build_algo_binary_tree() {
+    for(unsigned int i=0; i<this->height; i++) {
+        for(unsigned int j=0; j<this->width; j++) {
+            std::vector<Cell*> neighbors;
+
+            if(this->cells[i][j].get_north() != nullptr) {
+                neighbors.push_back(this->cells[i][j].get_north());
+            }
+
+            if(this->cells[i][j].get_east() != nullptr) {
+                neighbors.push_back(this->cells[i][j].get_east());
+            }
+
+            if(neighbors.size() == 0) {
+                continue;
+            }
+
+            this->cells[i][j].link(neighbors[this->randint(0, neighbors.size() - 1)]);
+        }
+    }
+}
+
+void Maze::print() const {
+    std::cout << "+";
+    for(unsigned int i=0; i<this->width; i++) {
+        std::cout << "---+";
+    }
+    std::cout << std::endl;
+
+    for(int i=this->height-1; i>=0; i--) {
+        std::string top = "|";
+        std::string bottom = "+";
+
+        for(unsigned int j=0; j<this->width; j++) {
+            const Cell* cell = &this->cells[i][j];
+
+            std::string body = "   ";
+            std::string east_boundary = cell->is_linked(cell->get_east()) ? " " : "|";
+
+            top += body + east_boundary;
+
+            std::string south_boundary = cell->is_linked(cell->get_south()) ? "   " : "---";
+            std::string corner = "+";
+
+            bottom += south_boundary + corner;
+        }
+
+        std::cout << top << std::endl;
+        std::cout << bottom << std::endl;
+    }
+}
+
+QByteArray Maze::create_image(unsigned int cell_size) const {
+    unsigned int img_width = this->width * cell_size;
+    unsigned int img_height = this->height * cell_size;
+
+    QByteArray data(255, img_width * img_height);
+
+    for(int i=this->height-1; i>=0; i--) {
+        for(unsigned int j=0; j<this->width; j++) {
+            const Cell* cell = &this->cells[i][j];
+
+            unsigned int x1 = j * cell_size;
+            unsigned int y1 = i * cell_size;
+
+            unsigned int x2 = (j+1) * cell_size;
+            unsigned int y2 = (i+1) * cell_size;
+
+            if(cell->is_linked(cell->get_north())) {
+                for(unsigned int x=x1; x <= x2; x++) {
+                    data[y1 * this->width + x] = 0;
+                }
+            }
+        }
+    }
+
+    return data;
 }
 
 /**

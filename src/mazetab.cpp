@@ -48,4 +48,8 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     widget->setLayout(layout);
+
+    Maze maze(10,10);
+    maze.build_algo_binary_tree();
+    // maze.print();
 }

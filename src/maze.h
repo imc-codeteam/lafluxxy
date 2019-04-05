@@ -22,8 +22,11 @@
 #ifndef _MAZE_H
 #define _MAZE_H
 
+#include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <random>
+#include <QByteArray>
 
 class Cell {
 private:
@@ -59,16 +62,36 @@ public:
     /**
      * @brief      Link a neighbor
      *
-     * @param      neighbor  The neighbor
+     * @param      neighbor     The neighbor
+     * @param[in]  do_neighbor  whether to recursively link the neighbor
      */
-    void link(Cell*);
+    void link(Cell* neighbor, bool do_neighbor = true);
 
     /**
      * @brief      Unlink a neighbor
      *
-     * @param      neighbor  The neighbor
+     * @param      neighbor     The neighbor
+     * @param[in]  do_neighbor  whether to recursively unlink the neighbor
      */
-    void unlink(Cell* neighbor);
+    void unlink(Cell* neighbor, bool do_neighbor = true);
+
+    inline Cell* get_north() const {
+        return this->north;
+    }
+
+    inline Cell* get_south() const {
+        return this->south;
+    }
+
+    inline Cell* get_east() const {
+        return this->east;
+    }
+
+    inline Cell* get_west() const {
+        return this->west;
+    }
+
+    bool is_linked(Cell* neighbor) const;
 };
 
 class Maze {
@@ -87,11 +110,25 @@ public:
      */
     Maze(unsigned int _width, unsigned int _height);
 
+    void build_algo_binary_tree();
+
+    void print() const;
+
+    QByteArray create_image(unsigned int cell_size = 10) const;
+
 private:
     /**
      * @brief      Configure the neighbors of each cell
      */
     void configure_cells();
+
+    unsigned int randint(unsigned int minval, unsigned int maxval) {
+        static std::random_device dev;
+        static std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> dist(minval, maxval);
+
+        return dist(rng);
+    }
 };
 
 #endif // _MAZE_H

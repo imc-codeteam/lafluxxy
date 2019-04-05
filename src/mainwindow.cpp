@@ -84,7 +84,7 @@ void MainWindow::launch_calculation() {
     connect(this->results_tab->get_stop_button(), SIGNAL(clicked()), workerThread, SLOT(kill_job()));
     workerThread->start();
 
-    this->tabs->setCurrentIndex(1);
+    this->tabs->setCurrentIndex(this->tabs->indexOf(this->results_tab));
     statusBar()->showMessage(tr("Simulation running..."));
 }
 
@@ -125,6 +125,9 @@ void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
     this->tabs->addTab(this->input_tab, tr("Input"));
+
+    this->maze_tab = new MazeTab();
+    this->tabs->addTab(this->maze_tab, tr("Maze"));
 
     this->results_tab = new ResultsTab();
     this->tabs->addTab(this->results_tab, tr("Results"));

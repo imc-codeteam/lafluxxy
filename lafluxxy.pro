@@ -39,6 +39,7 @@ SOURCES += src/main.cpp\
            src/mainwindow.cpp \
            src/inputtab.cpp \
            src/resultstab.cpp \
+           src/mazetab.cpp \
            src/input_reaction.cpp \
            src/input_lotka_volterra.cpp \
            src/input_brusselator.cpp \
@@ -48,12 +49,14 @@ SOURCES += src/main.cpp\
            src/reaction_lotka_volterra.cpp \
            src/reaction_brusselator.cpp \
            src/reaction_system.cpp \
-           src/worker_thread.cpp
+           src/worker_thread.cpp \
+           src/maze.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
             src/inputtab.h \
             src/resultstab.h \
+            src/mazetab.h \
             src/input_reaction.h \
             src/input_lotka_volterra.h \
             src/input_brusselator.h \
@@ -63,7 +66,8 @@ HEADERS  += src/mainwindow.h \
             src/reaction_lotka_volterra.h \
             src/reaction_brusselator.h \
             src/reaction_system.h \
-            src/worker_thread.h
+            src/worker_thread.h \
+            src/maze.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

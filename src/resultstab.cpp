@@ -81,6 +81,7 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     main_layout->addWidget(gridwidget);
 
     // set up progress bar
+    main_layout->addWidget(new QLabel("Simulation progress:"));
     QWidget *progress_widget = new QWidget;
     QGridLayout *progress_layout = new QGridLayout;
     progress_widget->setLayout(progress_layout);

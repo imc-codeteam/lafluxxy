@@ -19,87 +19,79 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef _MAZE_H
+#define _MAZE_H
 
-#include <QtWidgets/QApplication>
-#include <QMainWindow>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QStatusBar>
-#include <QTabWidget>
-#include <QMenuBar>
-#include <QMenu>
+#include <vector>
+#include <unordered_map>
 
-#include <iostream>
-
-#include "inputtab.h"
-#include "resultstab.h"
-#include "mazetab.h"
-
-#include "two_dim_rd.h"
-#include "worker_thread.h"
-
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
+class Cell {
 private:
-    QTabWidget *tabs;
-    InputTab *input_tab;
-    ResultsTab *results_tab;
-    MazeTab *maze_tab;
+    unsigned int row;
+    unsigned int column;
 
-    std::unique_ptr<TwoDimRD> tdrd;
+    Cell* north;
+    Cell* south;
+    Cell* east;
+    Cell* west;
+
+    std::unordered_map<Cell*, bool> links;
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-
-    ~MainWindow();
-
-private slots:
     /**
-     * @brief      Close the application
-     */
-    void exit();
+    * @brief      Constructs the object.
+    *
+    * @param[in]  _row     The row index
+    * @param[in]  _column  The column index
+    */
+    Cell(unsigned int _row, unsigned int _column);
 
     /**
-     * @brief      Launch an RD simulation
-     */
-    void launch_calculation();
-
-    /**
-     * @brief      Handle results when the simulation is finished
-     */
-    void handle_simulation_finished();
-
-    /**
-     * @brief      Handle results when the simulation is canceled
-     */
-    void handle_simulation_canceled();
-
-    /**
-     * @brief      Handle the results of a single frame
+     * @brief      Sets the neighbors.
      *
-     * @param[in]  i      Frame index i
-     * @param[in]  tcalc  Number of seconds spent on step
+     * @param      _north  North neighbor
+     * @param      _south  South neighbor
+     * @param      _east   East neighbor
+     * @param      _west   West neighbor
      */
-    void handle_results_step(unsigned int i, double tcalc);
+    void set_neighbors(Cell* _north, Cell* _south, Cell* _east, Cell* _west);
+
+    /**
+     * @brief      Link a neighbor
+     *
+     * @param      neighbor  The neighbor
+     */
+    void link(Cell*);
+
+    /**
+     * @brief      Unlink a neighbor
+     *
+     * @param      neighbor  The neighbor
+     */
+    void unlink(Cell* neighbor);
+};
+
+class Maze {
+private:
+    unsigned int width;
+    unsigned int height;
+
+    std::vector<std::vector<Cell> > cells;
+
+public:
+    /**
+     * @brief      Constructs the object.
+     *
+     * @param[in]  _width   The width
+     * @param[in]  _height  The height
+     */
+    Maze(unsigned int _width, unsigned int _height);
 
 private:
     /**
-     * @brief      Create tabs
+     * @brief      Configure the neighbors of each cell
      */
-    void create_tabs();
-
-    /**
-     * @brief      Build the drop-down menus
-     */
-    void build_menu();
+    void configure_cells();
 };
 
-#endif // MAINWINDOW_H
+#endif // _MAZE_H

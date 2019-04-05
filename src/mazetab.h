@@ -19,87 +19,34 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef _MAZETAB_H
+#define _MAZETAB_H
 
-#include <QtWidgets/QApplication>
-#include <QMainWindow>
+#include <QWidget>
 #include <QVBoxLayout>
+#include <QScrollArea>
 #include <QLabel>
-#include <QStatusBar>
-#include <QTabWidget>
-#include <QMenuBar>
-#include <QMenu>
 
-#include <iostream>
+#include "maze.h"
 
-#include "inputtab.h"
-#include "resultstab.h"
-#include "mazetab.h"
-
-#include "two_dim_rd.h"
-#include "worker_thread.h"
-
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
-{
+class MazeTab : public QWidget {
     Q_OBJECT
 
 private:
-    QTabWidget *tabs;
-    InputTab *input_tab;
-    ResultsTab *results_tab;
-    MazeTab *maze_tab;
 
-    std::unique_ptr<TwoDimRD> tdrd;
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-
-    ~MainWindow();
-
-private slots:
     /**
-     * @brief      Close the application
+     * @brief Maze tab constructor
+     * @param parent widget
      */
-    void exit();
+    explicit MazeTab(QWidget *parent = 0);
 
-    /**
-     * @brief      Launch an RD simulation
-     */
-    void launch_calculation();
-
-    /**
-     * @brief      Handle results when the simulation is finished
-     */
-    void handle_simulation_finished();
-
-    /**
-     * @brief      Handle results when the simulation is canceled
-     */
-    void handle_simulation_canceled();
-
-    /**
-     * @brief      Handle the results of a single frame
-     *
-     * @param[in]  i      Frame index i
-     * @param[in]  tcalc  Number of seconds spent on step
-     */
-    void handle_results_step(unsigned int i, double tcalc);
 
 private:
-    /**
-     * @brief      Create tabs
-     */
-    void create_tabs();
 
-    /**
-     * @brief      Build the drop-down menus
-     */
-    void build_menu();
+private slots:
+
 };
 
-#endif // MAINWINDOW_H
+#endif // _MAZETAB_H

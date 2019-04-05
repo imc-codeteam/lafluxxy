@@ -19,87 +19,33 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QtWidgets/QApplication>
-#include <QMainWindow>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QStatusBar>
-#include <QTabWidget>
-#include <QMenuBar>
-#include <QMenu>
-
-#include <iostream>
-
-#include "inputtab.h"
-#include "resultstab.h"
 #include "mazetab.h"
 
-#include "two_dim_rd.h"
-#include "worker_thread.h"
+/**
+ * @brief Input tab constructor
+ * @param parent widget
+ */
+MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    this->setLayout(mainLayout);
+    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-namespace Ui {
-class MainWindow;
+    // add a ScrollArea widget and define properties
+    QScrollArea *scrollArea = new QScrollArea(this);     //Create scroll area Widget
+    scrollArea->setContentsMargins(0,0,0,0);
+    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    scrollArea->setWidgetResizable(true);
+
+    // add ScrollArea to QWidget
+    mainLayout->addWidget(scrollArea);
+
+    // create new Widget for in the QScrollArea and set properties
+    QWidget* widget = new QWidget();
+    widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    // add Widget to ScrollArea
+    scrollArea->setWidget(widget);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    widget->setLayout(layout);
 }
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
-private:
-    QTabWidget *tabs;
-    InputTab *input_tab;
-    ResultsTab *results_tab;
-    MazeTab *maze_tab;
-
-    std::unique_ptr<TwoDimRD> tdrd;
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
-
-    ~MainWindow();
-
-private slots:
-    /**
-     * @brief      Close the application
-     */
-    void exit();
-
-    /**
-     * @brief      Launch an RD simulation
-     */
-    void launch_calculation();
-
-    /**
-     * @brief      Handle results when the simulation is finished
-     */
-    void handle_simulation_finished();
-
-    /**
-     * @brief      Handle results when the simulation is canceled
-     */
-    void handle_simulation_canceled();
-
-    /**
-     * @brief      Handle the results of a single frame
-     *
-     * @param[in]  i      Frame index i
-     * @param[in]  tcalc  Number of seconds spent on step
-     */
-    void handle_results_step(unsigned int i, double tcalc);
-
-private:
-    /**
-     * @brief      Create tabs
-     */
-    void create_tabs();
-
-    /**
-     * @brief      Build the drop-down menus
-     */
-    void build_menu();
-};
-
-#endif // MAINWINDOW_H

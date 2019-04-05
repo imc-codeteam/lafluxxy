@@ -23,12 +23,15 @@
 #define CONFIG_H
 
 #define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.3.3"
+#define PROGRAM_VERSION "0.3.4"
 
 enum {
     NONE,
     LOTKA_VOLTERRA,
-    GRAY_SCOTT
+    GRAY_SCOTT,
+    FITZHUGH_NAGUMO,
+    BRUSSELATOR,
+    BARKLEY
 };
 
 #endif // CONFIG_H

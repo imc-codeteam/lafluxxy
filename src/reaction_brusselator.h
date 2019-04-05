@@ -19,79 +19,48 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _INPUT_REACTION_H
-#define _INPUT_REACTION_H
+#pragma once
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QGridLayout>
-#include <QLabel>
-#include <QDoubleSpinBox>
-#include <QPushButton>
-#include <QStyle>
-#include <unordered_map>
+#include "reaction_system.h"
 
-#include "config.h"
-
-class InputReaction : public QWidget {
-    Q_OBJECT
-
+/**
+ * @brief      Class for Brusselator Reaction
+ * */
+class ReactionBrusselator : public ReactionSystem {
 private:
-    std::unordered_map<std::string, QDoubleSpinBox*> input_boxes;
-    QGridLayout *gridlayout;
-    QPushButton *button_set_defaults;
-
-protected:
-    unsigned int reaction_type;
-
-    QVBoxLayout* layout;
-    QLabel* reaction_label;
-    std::vector<std::string> input_names;
-    std::vector<std::string> input_labels;
-    std::vector<double> input_default_values;
+    double alpha = -0.005;
+    double beta = 10.0;
 
 public:
     /**
-     * @brief Input tab constructor
-     * @param parent widget
+     * @brief      Constructs the object.
      */
-    explicit InputReaction(QWidget *parent = 0);
-
-    inline unsigned int get_reaction_type() const {
-        return this->reaction_type;
-    }
+    ReactionBrusselator();
 
     /**
-     * @brief      Gets the parameter string that defines the kinetic parameters.
+     * @brief      Initialize the system
      *
-     * @return     The parameter string.
+     * @param      a     Concentration matrix A
+     * @param      b     Concentration matrix B
      */
-    std::string get_parameter_string() const;
+    void init(MatrixXXd& a, MatrixXXd& b) const;
 
     /**
-     * @brief      Gets the default parameter settings.
+     * @brief      Perform a reaction step
      *
-     * @return     The default parameter settings.
+     * @param[in]  a     Concentration matrix A
+     * @param[in]  b     Concentration matrix B
+     * @param      ra    Pointer to reaction term for A
+     * @param      rb    Pointer to reaction term for B
      */
-    virtual std::string get_default_parameter_settings() = 0;
+    void reaction(double a, double b, double *ra, double *rb) const;
 
     /**
-     * @brief      Gets the pointer to button for setting defaults
+     * @brief      Sets the parameters.
      *
-     * @return     The button
+     * @param[in]  params  The parameters
      */
-    inline QPushButton* get_button_set_defaults() const {
-        return this->button_set_defaults;
-    }
-
-protected:
-    void build_input_boxes();
+    void set_parameters(const std::string& params);
 
 private:
-    virtual void set_label() = 0;
-
-private slots:
-
 };
-
-#endif // _INPUT_REACTION_H

@@ -95,10 +95,13 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
  * @return     ByteArray with colors
  */
 QByteArray RenderArea::convert_data(const MatrixXXd& data) const {
+    const double minval = data.minCoeff();
+    const double maxval = data.maxCoeff();
+
     QByteArray result;
     for(unsigned int y=0; y<data.rows(); y++) {
         for(unsigned int x=0; x<data.cols(); x++) {
-            auto cols = this->get_color(data(data.rows() - y - 1,x));
+            auto cols = this->get_color(data(data.rows() - y - 1,x), minval, maxval);
             result.push_back(cols[0]);
             result.push_back(cols[1]);
             result.push_back(cols[2]);
@@ -111,22 +114,23 @@ QByteArray RenderArea::convert_data(const MatrixXXd& data) const {
 /**
  * @brief      Obtain color from data point using color scheme
  *
- * @param[in]  val           The value
- * @param[in]  color_scheme  The color scheme
+ * @param[in]  val     The value
+ * @param[in]  minval  Minimum value
+ * @param[in]  maxval  Maximum value
  *
  * @return     The color.
  */
-std::array<uint8_t, 3> RenderArea::get_color(double val) const {
-    if(val <= 0.0) {
+std::array<uint8_t, 3> RenderArea::get_color(double val, double minval, double maxval) const {
+    if(val <= minval) {
         return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(0) * 256.0f), uint8_t(this->color_scheme->at(1) * 256.0f), uint8_t(this->color_scheme->at(2) * 256.0f)};
     }
 
-    if(val >= 1.0) {
+    if(val >= maxval) {
         const unsigned int sz = this->color_scheme->size();
         return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(sz-3) * 256.0f), uint8_t(this->color_scheme->at(sz-2) * 256.0f), uint8_t(this->color_scheme->at(sz-1) * 256.0f)};
     }
 
-    unsigned int idx = val * (this->color_scheme->size() / 3);
+    unsigned int idx = (val - minval)/(maxval - minval) * (this->color_scheme->size() / 3);
 
     return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(idx*3) * 256.0f), uint8_t(this->color_scheme->at(idx*3+1) * 256.0f), uint8_t(this->color_scheme->at(idx*3+2) * 256.0f)};
 }

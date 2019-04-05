@@ -38,3 +38,12 @@ InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
 void InputGrayScott::set_label() {
     this->reaction_label->setText(tr("<i>Gray-Scott kinetic parameters</i>"));
 }
+
+/**
+ * @brief      Gets the default parameter settings.
+ *
+ * @return     The default parameter settings.
+ */
+std::string InputGrayScott::get_default_parameter_settings() {
+    return std::string("");
+}

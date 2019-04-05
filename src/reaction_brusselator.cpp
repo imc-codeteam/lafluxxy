@@ -19,31 +19,47 @@
  *                                                                        *
  **************************************************************************/
 
-#include "input_lotka_volterra.h"
+#include "reaction_brusselator.h"
 
-/**
- * @brief Input tab constructor
- * @param parent widget
- */
-InputLotkaVolterra::InputLotkaVolterra(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = LOTKA_VOLTERRA;
-    this->input_names = {"alpha", "beta", "gamma", "delta"};
-    this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
-    this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};
+ReactionBrusselator::ReactionBrusselator() {
 
-    this->set_label();
-    this->build_input_boxes();
 }
 
-void InputLotkaVolterra::set_label() {
-    this->reaction_label->setText(tr("<i>Lotka-Volterra kinetic parameters</i>"));
+void ReactionBrusselator::init(MatrixXXd& a, MatrixXXd& b) const {
+    this->init_random(a, b, this->alpha, this->beta / this->alpha, 0.3);
+}
+
+void ReactionBrusselator::reaction(double a, double b, double *ra, double *rb) const {
+    *ra = this->alpha - (this->beta + 1) * a + (a * a * b);
+    *rb = (this->beta * a) - (a * a * b);
 }
 
 /**
- * @brief      Gets the default parameter settings.
+ * @brief      Sets the parameters.
  *
- * @return     The default parameter settings.
+ * @param[in]  params  The parameters
  */
-std::string InputLotkaVolterra::get_default_parameter_settings() {
-    return std::string("dX=2e-5;dY=1e-5;dx=0.005;dt=0.01;width=256;height=256;steps=100;tsteps=1000;pbc=1");
+void ReactionBrusselator::set_parameters(const std::string& params) {
+    auto map = this->parse_parameters(params);
+
+    auto got = map.find("alpha");
+    if(got != map.end()) {
+        this->alpha = got->second;
+    } else {
+        throw std::runtime_error("Cannot find parameter alpha");
+    }
+
+    got = map.find("beta");
+    if(got != map.end()) {
+        this->beta = got->second;
+    } else {
+        throw std::runtime_error("Cannot find parameter beta");
+    }
+
+    // std::vector<std::string> paramlist = {"alpha", "beta"};
+    // std::cout << "Succesfully loaded the following parameters" << std::endl;
+    // for(const std::string& variable : paramlist) {
+    //     auto got = map.find(variable);
+    //     std::cout << "    " << variable << " = " << got->second << std::endl;
+    // }
 }

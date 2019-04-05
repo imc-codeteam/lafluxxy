@@ -19,79 +19,42 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _INPUT_REACTION_H
-#define _INPUT_REACTION_H
+#ifndef _INPUT_BRUSSELATOR_H
+#define _INPUT_BRUSSELATOR_H
 
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
 #include <QDoubleSpinBox>
-#include <QPushButton>
-#include <QStyle>
 #include <unordered_map>
 
 #include "config.h"
+#include "input_reaction.h"
 
-class InputReaction : public QWidget {
-    Q_OBJECT
+class InputBrusselator : public InputReaction {
 
 private:
-    std::unordered_map<std::string, QDoubleSpinBox*> input_boxes;
-    QGridLayout *gridlayout;
-    QPushButton *button_set_defaults;
-
-protected:
-    unsigned int reaction_type;
-
-    QVBoxLayout* layout;
-    QLabel* reaction_label;
-    std::vector<std::string> input_names;
-    std::vector<std::string> input_labels;
-    std::vector<double> input_default_values;
 
 public:
     /**
      * @brief Input tab constructor
      * @param parent widget
      */
-    explicit InputReaction(QWidget *parent = 0);
-
-    inline unsigned int get_reaction_type() const {
-        return this->reaction_type;
-    }
-
-    /**
-     * @brief      Gets the parameter string that defines the kinetic parameters.
-     *
-     * @return     The parameter string.
-     */
-    std::string get_parameter_string() const;
+    explicit InputBrusselator(QWidget *parent = 0);
 
     /**
      * @brief      Gets the default parameter settings.
      *
      * @return     The default parameter settings.
      */
-    virtual std::string get_default_parameter_settings() = 0;
-
-    /**
-     * @brief      Gets the pointer to button for setting defaults
-     *
-     * @return     The button
-     */
-    inline QPushButton* get_button_set_defaults() const {
-        return this->button_set_defaults;
-    }
-
-protected:
-    void build_input_boxes();
+    std::string get_default_parameter_settings() override;
 
 private:
-    virtual void set_label() = 0;
+    void set_label() override;
 
 private slots:
 
 };
 
-#endif // _INPUT_REACTION_H
+#endif // _INPUT_BRUSSELATOR_H

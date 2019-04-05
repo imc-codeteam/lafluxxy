@@ -96,12 +96,13 @@ private:
     /**
      * @brief      Obtain color from data point using color scheme
      *
-     * @param[in]  val           The value
-     * @param[in]  color_scheme  The color scheme
+     * @param[in]  val     The value
+     * @param[in]  minval  Minimum value
+     * @param[in]  maxval  Maximum value
      *
      * @return     The color.
      */
-    std::array<uint8_t, 3> get_color(double val) const;
+    std::array<uint8_t, 3> get_color(double val, double minval, double maxval) const;
 
 private slots:
 

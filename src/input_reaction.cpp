@@ -34,6 +34,12 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     layout->addWidget(widget);
     this->gridlayout = new QGridLayout();
     widget->setLayout(this->gridlayout);
+
+    this->button_set_defaults = new QPushButton(" Set default integration settings");
+    QIcon icon_button_set_defaults = style()->standardIcon(QStyle::SP_BrowserReload);
+    this->button_set_defaults->setIcon(icon_button_set_defaults);
+    this->button_set_defaults->setToolTip("Overwrite the integration settings below with default settings for this kinetic system.");
+    layout->addWidget(this->button_set_defaults);
 }
 
 void InputReaction::build_input_boxes() {
@@ -44,4 +50,24 @@ void InputReaction::build_input_boxes() {
         box->setValue(this->input_default_values[i]);
         this->gridlayout->addWidget(box, i, 1);
     }
+}
+
+/**
+ * @brief      Gets the parameter string that defines the kinetic parameters.
+ *
+ * @return     The parameter string.
+ */
+std::string InputReaction::get_parameter_string() const {
+    std::string parameter_string;
+
+    for(auto it : this->input_boxes) {
+        parameter_string += it.first;
+        parameter_string += "=";
+        parameter_string += std::to_string(it.second->value());
+        parameter_string += ";";
+    }
+
+    parameter_string.pop_back();
+
+    return parameter_string;
 }

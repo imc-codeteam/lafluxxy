@@ -86,9 +86,25 @@ TwoDimRD* InputTab::build_reaction_system() {
                                              this->input_steps->value(),
                                              this->input_tsteps->value());
     reaction_system->set_cores(this->input_ncores->value());
-    reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
-    reaction_system->set_pbc(true);
-    reaction_system->set_parameters("alpha=2.3333;beta=2.6666;gamma=1.0;delta=1.0");
+
+    switch(this->reaction_selector->currentIndex()) {
+        case LOTKA_VOLTERRA:
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
+        break;
+        case GRAY_SCOTT:
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
+        break;
+        case BRUSSELATOR:
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBrusselator()));
+        break;
+        default:
+            // do nothing
+        break;
+    }
+
+    reaction_system->set_pbc(this->checkbox_pbc->isChecked());
+
+    reaction_system->set_parameters(this->reaction_settings->get_parameter_string());
 
     return reaction_system;
 }
@@ -191,6 +207,13 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     gridlayout->addWidget(new QLabel("Number of time steps per each integration step"), row, 2);
     row++;
 
+    this->checkbox_pbc = new QCheckBox;
+    this->checkbox_pbc->setCheckState(Qt::Checked);
+    gridlayout->addWidget(new QLabel("pbc"), row, 0);
+    gridlayout->addWidget(this->checkbox_pbc, row, 1);
+    gridlayout->addWidget(new QLabel("Whether to implement periodic boundary conditions (checked) or no-flux conditions (unchecked)"), row, 2);
+    row++;
+
     gridlayout->addWidget(new QLabel("ncores"), row, 0);
     gridlayout->addWidget(this->input_ncores, row, 1);
     this->input_ncores->setMinimum(1);
@@ -203,10 +226,12 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
         }
     }
     gridlayout->addWidget(new QLabel("Number of computing cores in OpenMP parallelization"), row, 2);
-    QToolButton *button_ncores_info = new QToolButton;
-    button_ncores_info->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
-    button_ncores_info->setToolTip("Too high numbers will actually slow down the calculation as the process becomes limited by inter-process communication.");
-    gridlayout->addWidget(button_ncores_info, row, 3);
+    QIcon icon_cores_info = style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    QPixmap pixmap_cores_info = icon_cores_info.pixmap(QSize(16, 16));
+    QLabel *label_cores_info = new QLabel;
+    label_cores_info->setPixmap(pixmap_cores_info);
+    label_cores_info->setToolTip("Too high numbers will actually slow down the calculation as the process becomes limited by inter-process communication.");
+    gridlayout->addWidget(label_cores_info, row, 3);
     row++;
 }
 
@@ -223,11 +248,14 @@ void InputTab::set_reaction_input(int reactype) {
     }
 
     switch(reactype) {
-        case 1:
+        case LOTKA_VOLTERRA:
             this->reaction_settings = new InputLotkaVolterra();
         break;
-        case 2:
+        case GRAY_SCOTT:
             this->reaction_settings = new InputGrayScott();
+        break;
+        case BRUSSELATOR:
+            this->reaction_settings = new InputBrusselator();
         break;
         default:
             // do nothing
@@ -237,7 +265,91 @@ void InputTab::set_reaction_input(int reactype) {
     if(this->reaction_settings != nullptr) {
         this->gridlayout_reaction->addWidget(this->reaction_settings, 2, 0);
         this->button_submit->setEnabled(true);
+        connect(this->reaction_settings->get_button_set_defaults(), SIGNAL (released()), this, SLOT(set_default_values()));
     } else {
         this->button_submit->setEnabled(false);
+    }
+}
+
+/**
+ * @brief      Set default values
+ */
+void InputTab::set_default_values() {
+
+    QMessageBox msgBox;
+    msgBox.setText(tr("You are about to change the integration settings."));
+    msgBox.setInformativeText(tr("Are you sure you want to <b>discard</b> the current values and <b>overwrite</b> these with the default values for this kinetic system?"));
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.setIcon(QMessageBox::Warning);
+    int ret = msgBox.exec();
+
+    if(ret == QMessageBox::Cancel) {
+        return;
+    }
+
+    std::string params = this->reaction_settings->get_default_parameter_settings();
+
+    std::vector<std::string> pieces;
+    boost::split(pieces, params, boost::is_any_of(";"), boost::token_compress_on);
+
+    for(const std::string& piece : pieces) {
+        std::vector<std::string> vars;
+        boost::split(vars, piece, boost::is_any_of("="), boost::token_compress_on);
+
+        if(vars.size() != 2) {
+            std::cerr << "Piece: " << piece << std::endl;
+            std::cerr << "Var size: " << vars.size() << std::endl;
+            throw std::runtime_error("Invalid params list encountered: " + params);
+        }
+
+        if(vars[0] == "dX") {
+            this->input_diffusion_X->setValue(boost::lexical_cast<double>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "dY") {
+            this->input_diffusion_Y->setValue(boost::lexical_cast<double>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "dx") {
+            this->input_dx->setValue(boost::lexical_cast<double>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "dt") {
+            this->input_dt->setValue(boost::lexical_cast<double>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "width") {
+            this->input_width->setValue(boost::lexical_cast<unsigned int>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "height") {
+            this->input_height->setValue(boost::lexical_cast<unsigned int>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "steps") {
+            this->input_steps->setValue(boost::lexical_cast<unsigned int>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "tsteps") {
+            this->input_tsteps->setValue(boost::lexical_cast<unsigned int>(vars[1]));
+            continue;
+        }
+
+        if(vars[0] == "pbc") {
+            if(vars[1] == "1") {
+                this->checkbox_pbc->setCheckState(Qt::Checked);
+            } else {
+                this->checkbox_pbc->setCheckState(Qt::Unchecked);
+            }
+            continue;
+        }
     }
 }

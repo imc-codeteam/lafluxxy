@@ -41,10 +41,12 @@ SOURCES += src/main.cpp\
            src/resultstab.cpp \
            src/input_reaction.cpp \
            src/input_lotka_volterra.cpp \
+           src/input_brusselator.cpp \
            src/input_gray_scott.cpp \
            src/renderarea.cpp \
            src/two_dim_rd.cpp \
            src/reaction_lotka_volterra.cpp \
+           src/reaction_brusselator.cpp \
            src/reaction_system.cpp \
            src/worker_thread.cpp
 
@@ -54,10 +56,12 @@ HEADERS  += src/mainwindow.h \
             src/resultstab.h \
             src/input_reaction.h \
             src/input_lotka_volterra.h \
+            src/input_brusselator.h \
             src/input_gray_scott.h \
             src/renderarea.h \
             src/two_dim_rd.h \
             src/reaction_lotka_volterra.h \
+            src/reaction_brusselator.h \
             src/reaction_system.h \
             src/worker_thread.h
 
@@ -67,5 +71,4 @@ linux {
 
 win32 {
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
-    INCLUDEPATH += ../../../Libraries/glm-0.9.8.4-win-x64
 }

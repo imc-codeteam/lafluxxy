@@ -42,6 +42,13 @@ public:
      */
     explicit InputGrayScott(QWidget *parent = 0);
 
+    /**
+     * @brief      Gets the default parameter settings.
+     *
+     * @return     The default parameter settings.
+     */
+    std::string get_default_parameter_settings() override;
+
 private:
     void set_label() override;
 

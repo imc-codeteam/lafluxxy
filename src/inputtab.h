@@ -31,18 +31,23 @@
 #include <QPushButton>
 #include <QDoubleSpinBox>
 #include <QToolButton>
+#include <QCheckBox>
+#include <QIcon>
+#include <QMessageBox>
 
 #include "two_dim_rd.h"
 #include "input_lotka_volterra.h"
 #include "input_gray_scott.h"
+#include "input_brusselator.h"
 #include "reaction_lotka_volterra.h"
+#include "reaction_brusselator.h"
 
 class InputTab : public QWidget {
     Q_OBJECT
 
 private:
     QComboBox* reaction_selector;       // set reaction type
-    QWidget* reaction_settings;         // widget that holds reaction settings
+    InputReaction* reaction_settings;   // widget that holds reaction settings
 
     QDoubleSpinBox* input_diffusion_X;  // set diffusion of component X
     QDoubleSpinBox* input_diffusion_Y;  // set diffusion of component Y
@@ -57,6 +62,7 @@ private:
 
     QGridLayout* gridlayout_reaction;
     QPushButton* button_submit;
+    QCheckBox* checkbox_pbc;
 
 public:
     /**
@@ -91,6 +97,11 @@ private slots:
      * @param[in]  reactype  The type
      */
     void set_reaction_input(int reactype);
+
+    /**
+     * @brief      Set default values
+     */
+    void set_default_values();
 };
 
 #endif // INPUTTAB_H

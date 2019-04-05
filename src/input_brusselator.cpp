@@ -19,24 +19,24 @@
  *                                                                        *
  **************************************************************************/
 
-#include "input_lotka_volterra.h"
+#include "input_brusselator.h"
 
 /**
  * @brief Input tab constructor
  * @param parent widget
  */
-InputLotkaVolterra::InputLotkaVolterra(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = LOTKA_VOLTERRA;
-    this->input_names = {"alpha", "beta", "gamma", "delta"};
-    this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
-    this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};
+InputBrusselator::InputBrusselator(QWidget *parent) : InputReaction(parent) {
+    this->reaction_type = BRUSSELATOR;
+    this->input_names = {"alpha", "beta"};
+    this->input_labels = {"&alpha;", "&beta;"};
+    this->input_default_values = {4.50, 7.50};
 
     this->set_label();
     this->build_input_boxes();
 }
 
-void InputLotkaVolterra::set_label() {
-    this->reaction_label->setText(tr("<i>Lotka-Volterra kinetic parameters</i>"));
+void InputBrusselator::set_label() {
+    this->reaction_label->setText(tr("<i>Brusselator kinetic parameters</i>"));
 }
 
 /**
@@ -44,6 +44,6 @@ void InputLotkaVolterra::set_label() {
  *
  * @return     The default parameter settings.
  */
-std::string InputLotkaVolterra::get_default_parameter_settings() {
-    return std::string("dX=2e-5;dY=1e-5;dx=0.005;dt=0.01;width=256;height=256;steps=100;tsteps=1000;pbc=1");
+std::string InputBrusselator::get_default_parameter_settings() {
+    return std::string("dX=2;dY=16;dx=1.0;dt=0.005;width=256;height=256;steps=20;tsteps=1000;pbc=1");
 }

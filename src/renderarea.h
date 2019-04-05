@@ -91,7 +91,7 @@ private:
      *
      * @return     ByteArray with colors
      */
-    QByteArray convert_data(const MatrixXXd& data) const;
+    std::vector<uint8_t> convert_data(const MatrixXXd& data) const;
 
     /**
      * @brief      Obtain color from data point using color scheme

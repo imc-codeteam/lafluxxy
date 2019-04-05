@@ -19,53 +19,68 @@
  *                                                                        *
  **************************************************************************/
 
-#include "mazetab.h"
+#include "mazerenderer.h"
 
-/**
- * @brief Input tab constructor
- * @param parent widget
- */
-MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    this->setLayout(mainLayout);
-    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+MazeRenderer::MazeRenderer() {
 
-    // add a ScrollArea widget and define properties
-    QScrollArea *scrollArea = new QScrollArea(this);     //Create scroll area Widget
-    scrollArea->setContentsMargins(0,0,0,0);
-    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    scrollArea->setWidgetResizable(true);
+}
 
-    // add ScrollArea to QWidget
-    mainLayout->addWidget(scrollArea);
-
-    // create new Widget for in the QScrollArea and set properties
-    QWidget* widget = new QWidget();
-    widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // add Widget to ScrollArea
-    scrollArea->setWidget(widget);
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    widget->setLayout(layout);
-
-    Maze maze(10,10);
-    maze.build_algo_binary_tree();
-
-    MazeRenderer mz;
-    unsigned int cell_size = 64;
-    std::vector<uint8_t> graph_data = mz.create_image(maze, cell_size);
-
+std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int cell_size) {
     unsigned int img_width = maze.get_width() * cell_size + 1;
     unsigned int img_height = maze.get_height() * cell_size + 1;
     img_width += (4 - img_width % 4);
     img_height += (4 - img_height % 4);
 
-    QImage img(&graph_data[0], img_width, img_height, QImage::Format_Grayscale8);
-    QPixmap pixmap = QPixmap::fromImage(img);
+    std::cout << img_width << "x" << img_height << std::endl;
 
-    QLabel *mazelabel = new QLabel;
-    mazelabel->setPixmap(pixmap);
-    layout->addWidget(mazelabel);
-    // maze.print();
+    std::vector<uint8_t> data(img_width * img_height, 255);
+
+    const auto& cells = maze.get_cells();
+
+    for(unsigned int i=0; i<maze.get_height(); i++) {
+        for(unsigned int j=0; j<maze.get_width(); j++) {
+            const Cell* cell = &cells[i][j];
+
+            unsigned int x1 = j * cell_size;
+            unsigned int y1 = img_height - ((i+1) * cell_size) - 1;
+
+            unsigned int x2 = (j+1) * cell_size;
+            unsigned int y2 = img_height - (i * cell_size) - 1;
+
+            if(cell->get_north() == nullptr) {
+                this->draw_line(data, img_width, x1, y1, x2, y1);
+            }
+
+            if(cell->get_west() == nullptr) {
+                this->draw_line(data, img_width, x1, y1, x1, y2);
+            }
+
+            if(!cell->is_linked(cell->get_east())) {
+                this->draw_line(data, img_width, x2, y1, x2, y2);
+            }
+
+            if(!cell->is_linked(cell->get_south())) {
+                this->draw_line(data, img_width, x1, y2, x2, y2);
+            }
+        }
+    }
+
+    return data;
+}
+
+void MazeRenderer::draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+    if(x1 == x2) {
+        for(unsigned int y=y1; y<y2; y++) {
+            data[y * width + x1] = 0;
+        }
+        return;
+    }
+
+    if(y1 == y2) {
+        for(unsigned int x=x1; x<x2; x++) {
+            data[y1 * width + x] = 0;
+        }
+
+        return;
+    }
 }

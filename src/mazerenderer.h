@@ -19,34 +19,21 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _MAZETAB_H
-#define _MAZETAB_H
+#ifndef _MAZE_RENDERER_H
+#define _MAZE_RENDERER_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QScrollArea>
-#include <QLabel>
+#include "maze.h"
 
-#include "mazerenderer.h"
-
-class MazeTab : public QWidget {
-    Q_OBJECT
-
+class MazeRenderer {
 private:
-
 
 public:
-    /**
-     * @brief Maze tab constructor
-     * @param parent widget
-     */
-    explicit MazeTab(QWidget *parent = 0);
+    MazeRenderer();
 
+    std::vector<uint8_t> create_image(const Maze& maze, unsigned int cell_size = 10);
 
 private:
-
-private slots:
-
+    void draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
 };
 
-#endif // _MAZETAB_H
+#endif // _MAZE_RENDERER_H

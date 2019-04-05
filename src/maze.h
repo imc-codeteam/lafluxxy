@@ -114,7 +114,17 @@ public:
 
     void print() const;
 
-    QByteArray create_image(unsigned int cell_size = 10) const;
+    inline unsigned int get_width() const {
+        return this->width;
+    }
+
+    inline unsigned int get_height() const {
+        return this->height;
+    }
+
+    inline const auto& get_cells() const {
+        return this->cells;
+    }
 
 private:
     /**

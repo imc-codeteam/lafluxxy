@@ -93,6 +93,10 @@ void Cell::unlink(Cell* neighbor, bool do_neighbor) {
 }
 
 bool Cell::is_linked(Cell* neighbor) const {
+    if(neighbor == nullptr) {
+        return false;
+    }
+
     auto got = this->links.find(neighbor);
     return got->second;
 }
@@ -163,33 +167,6 @@ void Maze::print() const {
         std::cout << top << std::endl;
         std::cout << bottom << std::endl;
     }
-}
-
-QByteArray Maze::create_image(unsigned int cell_size) const {
-    unsigned int img_width = this->width * cell_size;
-    unsigned int img_height = this->height * cell_size;
-
-    QByteArray data(255, img_width * img_height);
-
-    for(int i=this->height-1; i>=0; i--) {
-        for(unsigned int j=0; j<this->width; j++) {
-            const Cell* cell = &this->cells[i][j];
-
-            unsigned int x1 = j * cell_size;
-            unsigned int y1 = i * cell_size;
-
-            unsigned int x2 = (j+1) * cell_size;
-            unsigned int y2 = (i+1) * cell_size;
-
-            if(cell->is_linked(cell->get_north())) {
-                for(unsigned int x=x1; x <= x2; x++) {
-                    data[y1 * this->width + x] = 0;
-                }
-            }
-        }
-    }
-
-    return data;
 }
 
 /**

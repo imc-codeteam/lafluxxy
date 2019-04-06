@@ -51,6 +51,7 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
 
     Maze maze(13,13);
     maze.build_algo_binary_tree();
+    maze.build_path_dijkstra();
 
     MazeRenderer mz;
     unsigned int cell_size = 64;

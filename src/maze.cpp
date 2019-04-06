@@ -170,16 +170,47 @@ void Maze::print() const {
 }
 
 void Maze::build_path_dijkstra(unsigned int irow, unsigned int icol) {
-    this->path_lengths = MatrixXXui::Zero(this->height, this->width);
+    this->path_lengths = MatrixXXi::Ones(this->height, this->width) * -1;
 
-    Cell* cell = &this->cells[irow][icol];
-    unsigned int path_length = 0;
-    std::vector<Cell*> neighbors;
+    Cell* start = &this->cells[irow][icol];
+    unsigned int path_length = 1;
+    std::vector<Cell*> frontier;
+    this->path_lengths(irow, icol) = 0;
 
-
-    while(neighbors.size() != 0) {
-
+    // build initial frontier list
+    for(const auto& it : start->get_links()) {
+        if(it.first == nullptr || it.second == false) {
+            continue;
+        }
+        frontier.push_back(it.first);
     }
+
+    while(frontier.size() != 0) {
+        std::vector<Cell*> new_frontier;
+
+        for(Cell* cell : frontier) {
+            this->path_lengths(cell->get_row(), cell->get_column()) = path_length;
+
+            for(const auto& it : cell->get_links()) {
+
+                if(it.first == nullptr || it.second == false) {
+                    continue;
+                }
+
+                if(this->path_lengths(it.first->get_row(), it.first->get_column()) != -1) {
+                    continue;
+                }
+
+                new_frontier.push_back(it.first);
+            }
+        }
+
+        frontier = new_frontier;
+        path_length++;
+    }
+
+    this->print();
+    std::cout << this->path_lengths << std::endl;
 }
 
 /**

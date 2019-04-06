@@ -29,7 +29,7 @@
 #include <QByteArray>
 
 #include <Eigen/Dense>
-typedef Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic> MatrixXXui;
+typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> MatrixXXi;
 
 class Cell {
 private:
@@ -78,6 +78,10 @@ public:
      */
     void unlink(Cell* neighbor, bool do_neighbor = true);
 
+    inline const auto& get_links() const {
+        return this->links;
+    }
+
     inline Cell* get_north() const {
         return this->north;
     }
@@ -111,7 +115,7 @@ private:
     unsigned int height;
 
     std::vector<std::vector<Cell> > cells;
-    MatrixXXui path_lengths;
+    MatrixXXi path_lengths;
 
 public:
     /**

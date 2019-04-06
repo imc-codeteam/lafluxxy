@@ -49,7 +49,7 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *layout = new QVBoxLayout;
     widget->setLayout(layout);
 
-    Maze maze(10,10);
+    Maze maze(13,13);
     maze.build_algo_binary_tree();
 
     MazeRenderer mz;
@@ -58,14 +58,18 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
 
     unsigned int img_width = maze.get_width() * cell_size + 1;
     unsigned int img_height = maze.get_height() * cell_size + 1;
+    unsigned int mazewidth = img_width;
+    unsigned int mazeheight = img_height;
+
+    // Qt Images need to be 32-bits aligned
     img_width += (4 - img_width % 4);
     img_height += (4 - img_height % 4);
 
     QImage img(&graph_data[0], img_width, img_height, QImage::Format_Grayscale8);
-    QPixmap pixmap = QPixmap::fromImage(img);
+    QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
+    QPixmap pixmap = QPixmap::fromImage(cropped);
 
     QLabel *mazelabel = new QLabel;
     mazelabel->setPixmap(pixmap);
     layout->addWidget(mazelabel);
-    // maze.print();
 }

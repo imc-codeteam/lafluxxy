@@ -169,6 +169,19 @@ void Maze::print() const {
     }
 }
 
+void Maze::build_path_dijkstra(unsigned int irow, unsigned int icol) {
+    this->path_lengths = MatrixXXui::Zero(this->height, this->width);
+
+    Cell* cell = &this->cells[irow][icol];
+    unsigned int path_length = 0;
+    std::vector<Cell*> neighbors;
+
+
+    while(neighbors.size() != 0) {
+
+    }
+}
+
 /**
  * @brief      Configure the neighbors of each cell
  */

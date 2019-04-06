@@ -28,6 +28,9 @@
 #include <random>
 #include <QByteArray>
 
+#include <Eigen/Dense>
+typedef Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic> MatrixXXui;
+
 class Cell {
 private:
     unsigned int row;
@@ -91,6 +94,14 @@ public:
         return this->west;
     }
 
+    inline unsigned int get_column() const {
+        return this->column;
+    }
+
+    inline unsigned int get_row() const {
+        return this->row;
+    }
+
     bool is_linked(Cell* neighbor) const;
 };
 
@@ -100,6 +111,7 @@ private:
     unsigned int height;
 
     std::vector<std::vector<Cell> > cells;
+    MatrixXXui path_lengths;
 
 public:
     /**
@@ -125,6 +137,8 @@ public:
     inline const auto& get_cells() const {
         return this->cells;
     }
+
+    void build_path_dijkstra(unsigned int irow = 0, unsigned int icol = 0);
 
 private:
     /**

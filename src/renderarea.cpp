@@ -102,6 +102,7 @@ std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data) const {
     const double maxval = data.maxCoeff();
 
     std::vector<uint8_t> result;
+    // Qt Images need to be 32-bits aligned
     unsigned int nrows = data.rows() + (data.rows() * 3) % 4;
     unsigned int ncols = data.cols() + (data.cols() * 3) % 4;
 

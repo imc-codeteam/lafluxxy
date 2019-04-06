@@ -31,8 +31,6 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
     img_width += (4 - img_width % 4);
     img_height += (4 - img_height % 4);
 
-    std::cout << img_width << "x" << img_height << std::endl;
-
     std::vector<uint8_t> data(img_width * img_height, 255);
 
     const auto& cells = maze.get_cells();

@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
+#include <QPainter>
 
 #include "mazerenderer.h"
 

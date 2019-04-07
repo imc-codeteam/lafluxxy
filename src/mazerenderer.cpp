@@ -40,8 +40,6 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
     // fill background
     for(unsigned int i=0; i<maze.get_height(); i++) {
         for(unsigned int j=0; j<maze.get_width(); j++) {
-            const Cell* cell = &cells[i][j];
-
             unsigned int x1 = j * cell_size;
             unsigned int y1 = img_height - ((i+1) * cell_size) - 1;
 
@@ -108,7 +106,7 @@ QPixmap MazeRenderer::generate_maze_pixmap(const Maze& maze, unsigned int maxsiz
     img_height += ((img_height * 3) % 4);
 
     QImage img(&graph_data[0], img_width, img_height, QImage::Format_RGB888);
-    QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
+    QImage cropped = img.copy(0, img_height - mazeheight, mazewidth, mazeheight);
     QPixmap pixmap = QPixmap::fromImage(cropped);
 
     return pixmap;

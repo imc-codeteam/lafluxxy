@@ -137,14 +137,25 @@ void InputTab::set_maze(Maze* _maze) {
     this->label_maze_img->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->label_maze_img->setVisible(true);
 
+    // calculate Maze integration settings
+    const unsigned int mzmax = std::max(this->maze->get_width(), this->maze->get_height());
+    unsigned int cellx = this->input_width->value() / mzmax;
+    unsigned int celly = this->input_height->value() / mzmax;
+    unsigned int gridx = this->maze->get_width() * cellx;
+    unsigned int gridy = this->maze->get_height() * celly;
+
     // display maze properties
     this->label_maze_properties->setVisible(true);
-    this->label_maze_properties->setText(tr("<b>Maze properties</b><br><br>Width:\t") + QString::number(this->maze->get_width()) + tr("<br>Height:\t") + QString::number(this->maze->get_height()));
+    this->label_maze_properties->setText(tr("<b>Maze properties</b><br>Rows:\t") +
+                                         QString::number(this->maze->get_height()) +
+                                         tr("<br>Columns:\t") + QString::number(this->maze->get_width()) +
+                                         tr("<br>Longest path:\t") + QString::number(this->maze->get_max_length()) +
+                                         tr("<br><br>This matrix can be integrated on a ") + QString::number(gridx) + tr("x") + QString::number(gridy) + tr(" grid.<br>") +
+                                         tr("Maze cell size: ") + QString::number(cellx) + tr("x") + QString::number(celly) + tr("<br>") +
+                                         tr("Accessible area size: ") + QString::number(cellx-2) + tr("x") + QString::number(celly-2) + tr("<br>")
+                                         );
     this->label_maze_properties->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     this->label_maze_properties->setAlignment(Qt::AlignLeft);
-
-    // calculate Maze integration settings
-
 }
 
 /**

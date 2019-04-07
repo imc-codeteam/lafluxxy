@@ -126,6 +126,15 @@ public:
      */
     Maze(unsigned int _width, unsigned int _height);
 
+    /**
+     * @brief      Gets the mask.
+     *
+     * @param[in]  cell_size  The cell size
+     *
+     * @return     The mask.
+     */
+    MatrixXXi get_mask(unsigned int cell_size);
+
     void build_algo_binary_tree();
 
     void print() const;

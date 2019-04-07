@@ -117,6 +117,59 @@ Maze::Maze(unsigned int _width, unsigned int _height) : width(_width), height(_h
     this->configure_cells();
 }
 
+/**
+ * @brief      Gets the mask.
+ *
+ * @param[in]  cell_size  The cell size
+ *
+ * @return     The mask.
+ */
+MatrixXXi Maze::get_mask(unsigned int cell_size) {
+    MatrixXXi mask = MatrixXXi::Zero(this->height * cell_size, this->width * cell_size);
+
+    // draw boundaries
+    for(unsigned int i=0; i<this->get_height(); i++) {
+        for(unsigned int j=0; j<this->get_width(); j++) {
+            const Cell* cell = &this->cells[i][j];
+
+            // southwest
+            unsigned int x1 = j * cell_size;
+            unsigned int y1 = i * cell_size;
+
+            // northeast
+            unsigned int x2 = (j+1) * cell_size - 1;
+            unsigned int y2 = (i+1) * cell_size - 1;
+
+            // draw cell borders
+            if(!cell->is_linked(cell->get_north())) {
+                for(unsigned int x=x1; x<=x2; x++) {
+                    mask(y2, x) = 1;
+                }
+            }
+
+            if(!cell->is_linked(cell->get_west())) {
+                for(unsigned int y=y1; y<=y2; y++) {
+                    mask(y, x1) = 1;
+                }
+            }
+
+            if(!cell->is_linked(cell->get_east())) {
+                for(unsigned int y=y1; y<=y2; y++) {
+                    mask(y, x2) = 1;
+                }
+            }
+
+            if(!cell->is_linked(cell->get_south())) {
+                for(unsigned int x=x1; x<=x2; x++) {
+                    mask(y1, x) = 1;
+                }
+            }
+        }
+    }
+
+    return mask;
+}
+
 void Maze::build_algo_binary_tree() {
     for(unsigned int i=0; i<this->height; i++) {
         for(unsigned int j=0; j<this->width; j++) {

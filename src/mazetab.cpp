@@ -49,6 +49,35 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *layout = new QVBoxLayout;
     widget->setLayout(layout);
 
+    // explanation label
+    layout->addWidget(new QLabel(tr("Construct 2D mazes to introduce tortuosity in the simulation.")));
+
+    // maze algo
+    layout->addWidget(new QLabel(tr("<b>Maze generator algorithm</b>")));
+    this->maze_algo_selector = new QComboBox();
+
+    this->maze_algo_selector->addItem(tr("Please select an algorithm..."));
+    this->maze_algo_selector->addItem(tr("Binary Tree"));
+    this->maze_algo_selector->addItem(tr("Sidewinder"));
+    this->maze_algo_selector->setCurrentIndex(0);
+    layout->addWidget(this->maze_algo_selector, 1, 0);
+
+    // maze results
+    layout->addWidget(new QLabel(tr("<b>Maze results</b>")));
+
+    QWidget* mazeholder = new QWidget;
+    QGridLayout* mazegrid = new QGridLayout;
+    mazeholder->setLayout(mazegrid);
+    layout->addWidget(mazeholder);
+
+    for(unsigned int y=0; y<3; y++) {
+        for(unsigned int x=0; x<3; x++) {
+            this->generate_maze(mazegrid, y, x);
+        }
+    }
+}
+
+void MazeTab::generate_maze(QGridLayout* mazegrid, unsigned int grow, unsigned int gcol) {
     unsigned int rows = 14;
     unsigned int cols = 14;
     Maze maze(rows, cols);
@@ -75,5 +104,5 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
 
     QLabel *mazelabel = new QLabel;
     mazelabel->setPixmap(pixmap);
-    layout->addWidget(mazelabel);
+    mazegrid->addWidget(mazelabel, grow, gcol);
 }

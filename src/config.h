@@ -23,7 +23,7 @@
 #define CONFIG_H
 
 #define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.4.3"
+#define PROGRAM_VERSION "0.4.4"
 
 enum {
     NONE,

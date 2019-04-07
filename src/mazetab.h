@@ -27,6 +27,7 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QPainter>
+#include <QComboBox>
 
 #include "mazerenderer.h"
 
@@ -34,7 +35,7 @@ class MazeTab : public QWidget {
     Q_OBJECT
 
 private:
-
+    QComboBox* maze_algo_selector;
 
 public:
     /**
@@ -45,6 +46,7 @@ public:
 
 
 private:
+    void generate_maze(QGridLayout* mazegrid, unsigned int grow, unsigned int gcol);
 
 private slots:
 

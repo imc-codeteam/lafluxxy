@@ -93,6 +93,22 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
 }
 
 /**
+ * @brief      Get the selected maze
+ *
+ * @return     Pointer to maze.
+ */
+Maze* MazeTab::get_maze() const {
+    if(this->mazeholder != nullptr) {
+        int maze_id = this->mazeholder->get_selected_maze_id();
+        if(maze_id != -1) {
+            return this->mazeholder->get_maze(maze_id * -1 - 2);
+        }
+    }
+
+    return nullptr;
+}
+
+/**
  * @brief      Sets the maze generation algorithm type.
  *
  * @param[in]  maze_algo_type  The maze algorithm type
@@ -113,7 +129,16 @@ void MazeTab::build_mazes() {
         delete this->mazeholder;
     }
 
+    if(this->button_select_maze != nullptr) {
+        delete this->button_select_maze;
+    }
+
     this->mazeholder = new MazeHolder();
     this->layout->addWidget(this->mazeholder);
     this->mazeholder->build_mazes(this->input_maze_height->value(), this->input_maze_width->value());
+
+    this->button_select_maze = new QPushButton("Select maze");
+    this->layout->addWidget(this->button_select_maze);
+
+    emit signal_mazes_generated();
 }

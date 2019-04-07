@@ -86,6 +86,34 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
     return data;
 }
 
+/**
+ * @brief      Generate a pixmap from a maze
+ *
+ * @param[in]  maze     The maze
+ * @param[in]  maxsize  Maximum size of img in px
+ *
+ * @return     The maze pixmap.
+ */
+QPixmap MazeRenderer::generate_maze_pixmap(const Maze& maze, unsigned int maxsize) {
+    unsigned int cell_size = maxsize / std::max(maze.get_width(), maze.get_height());
+    std::vector<uint8_t> graph_data = this->create_image(maze, cell_size);
+
+    unsigned int img_width = maze.get_width() * cell_size + 1;
+    unsigned int img_height = maze.get_height() * cell_size + 1;
+    unsigned int mazewidth = img_width;
+    unsigned int mazeheight = img_height;
+
+    // Qt Images need to be 32-bits aligned
+    img_width += ((img_width * 3) % 4);
+    img_height += ((img_height * 3) % 4);
+
+    QImage img(&graph_data[0], img_width, img_height, QImage::Format_RGB888);
+    QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
+    QPixmap pixmap = QPixmap::fromImage(cropped);
+
+    return pixmap;
+}
+
 void MazeRenderer::draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const std::array<uint8_t, 3>& color) {
     if(x1 == x2) {
         for(unsigned int y=y1; y<y2; y++) {

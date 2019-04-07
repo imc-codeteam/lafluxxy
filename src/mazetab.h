@@ -37,14 +37,16 @@ class MazeTab : public QWidget {
     Q_OBJECT
 
 private:
-    QComboBox* maze_algo_selector;          // select maze generation algorithm
-    QPushButton* button_generate_mazes;     // button to construct mazes
-    QVBoxLayout* layout;                    // main layout
-    MazeHolder* mazeholder = nullptr;       // widget to hold generated mazes
-    QSpinBox* input_maze_width;             // width of the mazes
-    QSpinBox* input_maze_height;            // height of the mazes
+    QComboBox* maze_algo_selector;                  // select maze generation algorithm
+    QPushButton* button_generate_mazes;             // button to construct mazes
+    QVBoxLayout* layout;                            // main layout
+    QSpinBox* input_maze_width;                     // width of the mazes
+    QSpinBox* input_maze_height;                    // height of the mazes
 
-    int maze_algo;                          // type of maze generation algorithm
+    MazeHolder* mazeholder = nullptr;               // widget to hold generated mazes
+    QPushButton* button_select_maze = nullptr;      // button to select the maze
+
+    int maze_algo;                                  // type of maze generation algorithm
 
 public:
     /**
@@ -53,6 +55,17 @@ public:
      * @param      parent  Parent Widget
      */
     explicit MazeTab(QWidget *parent = 0);
+
+    inline QPushButton* get_button_select_maze() const {
+        return this->button_select_maze;
+    }
+
+    /**
+     * @brief      Get the selected maze
+     *
+     * @return     Pointer to maze.
+     */
+    Maze* get_maze() const;
 
 private:
 
@@ -68,6 +81,9 @@ private slots:
      * @brief      Builds mazes.
      */
     void build_mazes();
+
+signals:
+    void signal_mazes_generated();
 
 };
 

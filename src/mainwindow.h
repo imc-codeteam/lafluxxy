@@ -61,6 +61,12 @@ public:
 
     ~MainWindow();
 
+public slots:
+    /**
+     * @brief      Connect the maze build button to the action
+     */
+    void connect_maze_build_button();
+
 private slots:
     /**
      * @brief      Close the application
@@ -89,6 +95,16 @@ private slots:
      * @param[in]  tcalc  Number of seconds spent on step
      */
     void handle_results_step(unsigned int i, double tcalc);
+
+    /**
+     * @brief      Action pressing build and select maze button
+     */
+    void press_build_and_select_maze();
+
+    /**
+     * @brief      Connect pre-generated maze to simulation
+     */
+    void press_select_maze();
 
 private:
     /**

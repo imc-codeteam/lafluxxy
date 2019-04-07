@@ -43,17 +43,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // set window parameters
     this->setWindowTitle(tr(PROGRAM_NAME) + tr(" v.") + QString(PROGRAM_VERSION));    // set window label
-    this->setMinimumSize(1024, 768);                     // set minimum size of the window
-    this->resize(1024, 768);                             // resize the windows
+    this->setMinimumSize(1280, 800);                     // set minimum size of the window
+    this->resize(1280, 800);                             // resize the windows
 
     // build connections
     connect(this->input_tab->get_button_submit(), SIGNAL(clicked()), this, SLOT(launch_calculation()));
+    connect(this->input_tab->get_button_select_maze(), SIGNAL(clicked()), this, SLOT(press_build_and_select_maze()));
+    connect(this->maze_tab, SIGNAL(signal_mazes_generated()), this, SLOT(connect_maze_build_button()));
 }
 
 /**
  * @brief      Destroys the object.
  */
 MainWindow::~MainWindow(){}
+
+/**
+ * @brief      Connect the maze build button to the action
+ */
+void MainWindow::connect_maze_build_button() {
+    connect(this->maze_tab->get_button_select_maze(), SIGNAL(released()), this, SLOT(press_select_maze()));
+}
 
 /**
  * @brief      Close the application
@@ -170,4 +179,22 @@ void MainWindow::build_menu() {
     connect(action_quit, &QAction::triggered, this, &MainWindow::exit);
 
     setMenuBar(menuBar);
+}
+
+/**
+ * @brief      Action pressing build and select maze button
+ */
+void MainWindow::press_build_and_select_maze() {
+    this->tabs->setCurrentIndex(this->tabs->indexOf(this->maze_tab));
+}
+
+/**
+ * @brief      Connect pre-generated maze to simulation
+ */
+void MainWindow::press_select_maze() {
+    Maze* maze = this->maze_tab->get_maze();
+    if(maze != nullptr) {
+        this->input_tab->set_maze(new Maze(*maze));
+        this->tabs->setCurrentIndex(this->tabs->indexOf(this->input_tab));
+    }
 }

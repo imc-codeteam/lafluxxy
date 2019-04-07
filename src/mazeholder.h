@@ -55,6 +55,14 @@ public:
      */
     void build_mazes(unsigned int mrows, unsigned int mcols);
 
+    inline int get_selected_maze_id() const {
+        return this->maze_selector->checkedId();
+    }
+
+    inline Maze* get_maze(unsigned int id) const {
+        return this->mazes[id].get();
+    }
+
 private:
     /**
      * @brief      Generate single maze

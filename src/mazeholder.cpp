@@ -58,23 +58,7 @@ void MazeHolder::generate_maze(QGridLayout* mazegrid, unsigned int rows, unsigne
     this->mazes.back()->build_algo_binary_tree();
     this->mazes.back()->build_path_dijkstra(rows / 2, cols / 2);
     const Maze& maze = *this->mazes.back().get();
-
-    unsigned int cell_size = 256 / std::max(rows, cols);
-    std::vector<uint8_t> graph_data = this->mz.create_image(maze, cell_size);
-
-    unsigned int img_width = maze.get_width() * cell_size + 1;
-    unsigned int img_height = maze.get_height() * cell_size + 1;
-    unsigned int mazewidth = img_width;
-    unsigned int mazeheight = img_height;
-
-    // Qt Images need to be 32-bits aligned
-    img_width += ((img_width * 3) % 4);
-    img_height += ((img_height * 3) % 4);
-
-    QImage img(&graph_data[0], img_width, img_height, QImage::Format_RGB888);
-    QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
-    QPixmap pixmap = QPixmap::fromImage(cropped);
-    // pixmap = pixmap.scaled(img.width() * 2, img.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QPixmap pixmap = this->mz.generate_maze_pixmap(maze, 128);
 
     QLabel *mazelabel = new QLabel;
     mazelabel->setPixmap(pixmap);

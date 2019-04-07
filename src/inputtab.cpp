@@ -67,6 +67,15 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
     gridlayout->setColumnStretch(1, 1);
     this->build_general_parameters(gridlayout);
 
+    // implement maze
+    QWidget* input_maze_widget = new QWidget();
+    layout->addWidget(input_maze_widget);
+    input_maze_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QGridLayout *grid_input_maze = new QGridLayout();
+    input_maze_widget->setLayout(grid_input_maze);
+    grid_input_maze->setColumnStretch(1, 1);
+    this->build_maze_parameters(grid_input_maze);
+
     // set launch button
     this->button_submit = new QPushButton("Launch calculation");
     layout->addWidget(this->button_submit);
@@ -109,8 +118,25 @@ TwoDimRD* InputTab::build_reaction_system() {
     return reaction_system;
 }
 
+void InputTab::set_maze(Maze* _maze) {
+    if(this->maze != nullptr) {
+        delete this->maze;
+    }
+
+    this->button_maze_select->setVisible(false);
+    this->maze = _maze;
+
+    QPixmap pixmap = this->mz.generate_maze_pixmap(*this->maze, 128);
+    this->label_maze_img->setPixmap(pixmap);
+    this->label_maze_properties->setText("Maze properties\nTest");
+    this->label_maze_properties->setVisible(true);
+    this->label_maze_img->setVisible(true);
+}
+
 /**
  * @brief      Build selector widget for reactions
+ *
+ * @param      gridlayout  The gridlayout
  */
 void InputTab::build_reaction_settings(QGridLayout *gridlayout) {
     this->reaction_selector = new QComboBox();
@@ -129,6 +155,8 @@ void InputTab::build_reaction_settings(QGridLayout *gridlayout) {
 
 /**
  * @brief      Builds general parameters.
+ *
+ * @param      gridlayout  The gridlayout
  */
 void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     this->input_diffusion_X = new QDoubleSpinBox();
@@ -232,6 +260,33 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     label_cores_info->setPixmap(pixmap_cores_info);
     label_cores_info->setToolTip("Too high numbers will actually slow down the calculation as the process becomes limited by inter-process communication.");
     gridlayout->addWidget(label_cores_info, row, 3);
+    row++;
+}
+
+/**
+ * @brief      Builds maze parameters.
+ *
+ * @param      gridlayout  The gridlayout
+ */
+void InputTab::build_maze_parameters(QGridLayout* gridlayout) {
+    unsigned int row = 0;
+
+    gridlayout->addWidget(new QLabel("<b>Maze parameters</b>"), row, 0);
+    row++;
+
+    gridlayout->addWidget(new QLabel("(Optional) Introduce tortuosity in the simulation by setting a maze."), row, 0);
+    row++;
+
+    this->button_maze_select = new QPushButton("Build and select maze");
+    gridlayout->addWidget(this->button_maze_select, row, 0);
+    row++;
+
+    this->label_maze_img = new QLabel;
+    this->label_maze_properties = new QLabel;
+    gridlayout->addWidget(this->label_maze_img , row, 0);
+    gridlayout->addWidget(this->label_maze_properties , row, 1);
+    this->label_maze_img->setVisible(false);
+    this->label_maze_properties->setVisible(false);
     row++;
 }
 

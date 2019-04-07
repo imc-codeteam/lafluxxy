@@ -22,6 +22,8 @@
 #ifndef _MAZE_RENDERER_H
 #define _MAZE_RENDERER_H
 
+#include <QPixmap>
+
 #include "maze.h"
 #include "colorschemes/viridis.h"
 
@@ -37,6 +39,8 @@ public:
     inline void set_color_scheme(const std::vector<float>* _color_scheme) {
         this->color_scheme = _color_scheme;
     }
+
+    QPixmap generate_maze_pixmap(const Maze& maze, unsigned int maxsize);
 
 private:
     void draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const std::array<uint8_t, 3>& color);

@@ -41,6 +41,7 @@
 #include "input_brusselator.h"
 #include "reaction_lotka_volterra.h"
 #include "reaction_brusselator.h"
+#include "mazerenderer.h"
 
 class InputTab : public QWidget {
     Q_OBJECT
@@ -64,6 +65,13 @@ private:
     QPushButton* button_submit;
     QCheckBox* checkbox_pbc;
 
+    QPushButton* button_maze_select;
+    QLabel* label_maze_img;
+    QLabel* label_maze_properties;
+
+    Maze* maze = nullptr;
+    MazeRenderer mz;
+
 public:
     /**
      * @brief Input tab constructor
@@ -75,20 +83,35 @@ public:
         return this->button_submit;
     }
 
+    inline QPushButton* get_button_select_maze() const {
+        return this->button_maze_select;
+    }
+
     TwoDimRD* build_reaction_system();
+
+    void set_maze(Maze* _maze);
 
 private:
     /**
      * @brief      Build selector widget for reactions
      *
-     * @return     Selector widget
+     * @param      gridlayout  The gridlayout
      */
     void build_reaction_settings(QGridLayout *gridlayout);
 
     /**
      * @brief      Builds general parameters.
+     *
+     * @param      gridlayout  The gridlayout
      */
     void build_general_parameters(QGridLayout *gridlayout);
+
+    /**
+     * @brief      Builds maze parameters.
+     *
+     * @param      gridlayout  The gridlayout
+     */
+    void build_maze_parameters(QGridLayout* gridlayout);
 
 private slots:
     /**

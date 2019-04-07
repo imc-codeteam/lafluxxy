@@ -208,9 +208,6 @@ void Maze::build_path_dijkstra(unsigned int irow, unsigned int icol) {
         frontier = new_frontier;
         path_length++;
     }
-
-    this->print();
-    std::cout << this->path_lengths << std::endl;
 }
 
 /**

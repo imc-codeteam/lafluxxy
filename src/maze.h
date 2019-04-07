@@ -130,6 +130,14 @@ public:
 
     void print() const;
 
+    inline int get_path_length(unsigned int row, unsigned int col) const {
+        return this->path_lengths(row, col);
+    }
+
+    inline int get_max_length() const {
+        return this->path_lengths.maxCoeff();
+    }
+
     inline unsigned int get_width() const {
         return this->width;
     }

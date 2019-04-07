@@ -49,12 +49,14 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *layout = new QVBoxLayout;
     widget->setLayout(layout);
 
-    Maze maze(13,13);
+    unsigned int rows = 14;
+    unsigned int cols = 14;
+    Maze maze(rows, cols);
     maze.build_algo_binary_tree();
-    maze.build_path_dijkstra();
+    maze.build_path_dijkstra(rows / 2, cols / 2);
 
     MazeRenderer mz;
-    unsigned int cell_size = 64;
+    unsigned int cell_size = 16;
     std::vector<uint8_t> graph_data = mz.create_image(maze, cell_size);
 
     unsigned int img_width = maze.get_width() * cell_size + 1;
@@ -63,12 +65,13 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     unsigned int mazeheight = img_height;
 
     // Qt Images need to be 32-bits aligned
-    img_width += (4 - img_width % 4);
-    img_height += (4 - img_height % 4);
+    img_width += ((img_width * 3) % 4);
+    img_height += ((img_height * 3) % 4);
 
-    QImage img(&graph_data[0], img_width, img_height, QImage::Format_Grayscale8);
+    QImage img(&graph_data[0], img_width, img_height, QImage::Format_RGB888);
     QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
     QPixmap pixmap = QPixmap::fromImage(cropped);
+    pixmap = pixmap.scaled(img.width() * 2, img.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     QLabel *mazelabel = new QLabel;
     mazelabel->setPixmap(pixmap);

@@ -23,17 +23,36 @@
 #define _MAZE_RENDERER_H
 
 #include "maze.h"
+#include "colorschemes/viridis.h"
 
 class MazeRenderer {
 private:
+    const std::vector<float>* color_scheme;
 
 public:
     MazeRenderer();
 
     std::vector<uint8_t> create_image(const Maze& maze, unsigned int cell_size = 10);
 
+    inline void set_color_scheme(const std::vector<float>* _color_scheme) {
+        this->color_scheme = _color_scheme;
+    }
+
 private:
-    void draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
+    void draw_line(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const std::array<uint8_t, 3>& color);
+
+    void fill_rectangle(std::vector<uint8_t>& data, unsigned int width, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const std::array<uint8_t, 3>& color);
+
+    /**
+     * @brief      Obtain color from data point using color scheme
+     *
+     * @param[in]  val     The value
+     * @param[in]  minval  Minimum value
+     * @param[in]  maxval  Maximum value
+     *
+     * @return     The color.
+     */
+    std::array<uint8_t, 3> get_color(double val, double minval, double maxval) const;
 };
 
 #endif // _MAZE_RENDERER_H

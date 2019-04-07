@@ -21,14 +21,12 @@
 
 #pragma once
 
-#include <Eigen/Dense>
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
-
 #include <iostream>
 #include <fstream>
 #include <memory>
 #include <vector>
 
+#include "matrices.h"
 #include "reaction_system.h"
 
 class TwoDimRD {
@@ -59,6 +57,9 @@ private:
     std::unique_ptr<ReactionSystem> reaction_system;    //!< Pointer to reaction system
 
     bool pbc = true;    //!< Whether to employ periodic boundary conditions
+    bool mask = false;  //!< Whether to employ a diffusivity mask (internal no-flux walls)
+
+    MatrixXXi matmask;          //!< Matrix to store the mask
 
     unsigned int ncores;
 
@@ -140,8 +141,32 @@ public:
      */
     const MatrixXXd& get_concentration_matrix(unsigned int frame, bool first) const;
 
+    /**
+     * @brief      Set the number of cores
+     *
+     * @param[in]  _ncores  Number of cores
+     */
     inline void set_cores(unsigned int _ncores) {
         this->ncores = _ncores;
+    }
+
+    /**
+     * @brief      Set the diffusivity mask
+     *
+     * @param[in]  _mask  The mask
+     */
+    inline void set_mask(const MatrixXXi& _mask) {
+        this->matmask = _mask;
+        this->mask = true;
+    }
+
+    /**
+     * @brief      Gets the mask.
+     *
+     * @return     The mask.
+     */
+    inline const auto& get_mask() const {
+        return this->matmask;
     }
 
 private:
@@ -171,10 +196,25 @@ private:
     void laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c);
 
     /**
+     * @brief      Calculate Laplacian using central finite difference with zero-flux mask
+     *
+     * @param      delta_c  Concentration update matrix
+     * @param      c        Current concentration matrix
+     *
+     * Note that this overwrites the current delta matrices!
+     */
+    void laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c);
+
+    /**
      * @brief      Calculate reaction term
      *
      * Add the value to the current delta matrices
      */
     void add_reaction();
+
+    /**
+     * @brief      Apply mask to concentrations
+     */
+    void apply_mask();
 
 };

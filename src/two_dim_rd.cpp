@@ -134,6 +134,10 @@ void TwoDimRD::init() {
 
     this->reaction_system->init(this->a, this->b);
 
+    if(this->mask) {
+        this->apply_mask();
+    }
+
     this->delta_a = MatrixXXd::Zero(this->width, this->height);
     this->delta_b = MatrixXXd::Zero(this->width, this->height);
 
@@ -150,7 +154,10 @@ void TwoDimRD::update() {
     for(unsigned int j=0; j<this->tsteps; j++) {
 
         // calculate laplacian
-        if(this->pbc) {
+        if(this->mask) {
+            this->laplacian_2d_mask(this->delta_a, this->a);
+            this->laplacian_2d_mask(this->delta_b, this->b);
+        } else if(this->pbc) {
             this->laplacian_2d_pbc(this->delta_a, this->a);
             this->laplacian_2d_pbc(this->delta_b, this->b);
         } else {
@@ -172,6 +179,11 @@ void TwoDimRD::update() {
         // add delta term to concentrations
         this->a += this->delta_a;
         this->b += this->delta_b;
+
+        // apply mask
+        if(this->mask) {
+            this->apply_mask();
+        }
 
         // update time step
         this->t += this->dt;
@@ -260,19 +272,67 @@ void TwoDimRD::laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c) {
             double ddy = 0;
 
             if(i == 0) {
-                ddx = c(i+1,j) - c(i, j);
+                ddy = c(i+1,j) - c(i, j);
             } else if(i == (height - 1)) {
-                ddx = c(i-1,j) - c(i, j);
+                ddy = c(i-1,j) - c(i, j);
             } else {
-                ddx = (-2.0 * c(i,j) + c(i-1,j) + c(i+1,j));
+                ddy = (-2.0 * c(i,j) + c(i-1,j) + c(i+1,j));
             }
 
             if(j == 0) {
-                ddy = c(i,j+1) - c(i, j);
+                ddx = c(i,j+1) - c(i, j);
             } else if(j == (width - 1)) {
-                ddy = c(i,j-1) - c(i, j);
+                ddx = c(i,j-1) - c(i, j);
             } else {
-                ddy = (-2.0 * c(i,j) + c(i,j-1) + c(i,j+1));
+                ddx = (-2.0 * c(i,j) + c(i,j-1) + c(i,j+1));
+            }
+
+            // calculate laplacian
+            delta_c(i,j) = (ddx + ddy) * idx2;
+        }
+    }
+}
+
+/**
+ * @brief      Calculate Laplacian using central finite difference with zero-flux mask
+ *
+ * @param      delta_c  Concentration update matrix
+ * @param      c        Current concentration matrix
+ *
+ * Note that this overwrites the current delta matrices!
+ */
+void TwoDimRD::laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c) {
+    unsigned int height = c.rows();
+    unsigned int width = c.cols();
+
+    const double idx2 = 1.0 / (dx * dx);
+
+    omp_set_num_threads(this->ncores);
+    #pragma omp parallel for
+    for(unsigned int i=0; i<height; i++) {
+        for(unsigned int j=0; j<width; j++) {
+
+            if(this->matmask(i,j) == 1) {
+                continue;
+            }
+
+            double ddx = 0;
+            double ddy = 0;
+
+            if(this->matmask(i-1,j) == 1) {         // north boundary
+                ddy = c(i+1,j) - c(i, j);
+            } else if(this->matmask(i+1,j) == 1) {  // south boundary
+                ddy = c(i-1,j) - c(i, j);
+            } else {                                // otherwise
+                ddy = (-2.0 * c(i,j) + c(i-1,j) + c(i+1,j));
+            }
+
+            if(this->matmask(i,j-1) == 1) {         // west boundary
+                ddx = c(i,j+1) - c(i, j);
+            } else if(this->matmask(i,j+1) == 1) {  // east boundary
+                ddx = c(i,j-1) - c(i, j);
+            } else {
+                ddx = (-2.0 * c(i,j) + c(i,j-1) + c(i,j+1));
             }
 
             // calculate laplacian
@@ -298,6 +358,24 @@ void TwoDimRD::add_reaction() {
             this->reaction_system->reaction(a, b, &ra, &rb);
             this->delta_a(i,j) += ra;
             this->delta_b(i,j) += rb;
+        }
+    }
+}
+
+/**
+ * @brief      Calculate reaction term
+ *
+ * Add the value to the current delta matrices
+ */
+void TwoDimRD::apply_mask() {
+    omp_set_num_threads(this->ncores);
+    #pragma omp parallel for schedule(static)
+    for(unsigned int i=0; i<this->height; i++) {
+        for(unsigned int j=0; j<this->width; j++) {
+            if(this->matmask(i,j) == 1) {
+                this->a(i,j) = 0.0;
+                this->b(i,j) = 0.0;
+            }
         }
     }
 }

@@ -64,8 +64,13 @@ void RenderArea::prev_img() {
  *
  * @param[in]  data  Raw concentration data
  */
-void RenderArea::add_graph(const MatrixXXd& data) {
-    auto graph_data = this->convert_data(data);
+void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
+    std::vector<uint8_t> graph_data;
+    if(mask.cols() != data.cols() || mask.rows() != data.rows()) {
+        graph_data = this->convert_data(data, MatrixXXi::Zero(data.rows(), data.cols()));
+    } else {
+        graph_data = this->convert_data(data, mask);
+    }
 
     unsigned int width = data.cols() + (data.cols() * 3) % 4;
     unsigned int height = data.rows() + (data.rows() * 3) % 4;
@@ -91,13 +96,21 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
 }
 
 /**
+ * @brief      Clear all results
+ */
+void RenderArea::clear() {
+    this->graphs.clear();
+    this->ctr = 0;
+}
+
+/**
  * @brief      Convert raw concentration data to color graph
  *
  * @param[in]  data  The raw concentration data
  *
  * @return     ByteArray with colors
  */
-std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data) const {
+std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data, const MatrixXXi& mask) const {
     const double minval = data.minCoeff();
     const double maxval = data.maxCoeff();
 
@@ -109,6 +122,13 @@ std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data) const {
     for(unsigned int y=0; y<nrows; y++) {
         for(unsigned int x=0; x<ncols; x++) {
             if(y >= data.rows() || x >= data.cols()) {
+                result.push_back(0);
+                result.push_back(0);
+                result.push_back(0);
+                continue;
+            }
+
+            if(mask(data.rows() - y - 1, x) == 1) {
                 result.push_back(0);
                 result.push_back(0);
                 result.push_back(0);

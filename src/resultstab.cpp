@@ -65,18 +65,28 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     QGridLayout *gridlayout = new QGridLayout;
     gridwidget->setLayout(gridlayout);
 
+    this->button_first = new QToolButton(this);
+    this->button_first->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    gridlayout->addWidget(this->button_first, 0, 0);
+    connect(this->button_first, SIGNAL(clicked()), this, SLOT(goto_first()));
+
     this->button_prev = new QToolButton(this);
-    this->button_prev->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
-    gridlayout->addWidget(this->button_prev, 0, 0);
+    this->button_prev->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
+    gridlayout->addWidget(this->button_prev, 0, 1);
     connect(this->button_prev, SIGNAL(clicked()), this, SLOT(prev_img()));
 
     this->button_next = new QToolButton(this);
-    this->button_next->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
-    gridlayout->addWidget(this->button_next, 0, 1);
+    this->button_next->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
+    gridlayout->addWidget(this->button_next, 0, 2);
     connect(this->button_next, SIGNAL(clicked()), this, SLOT(next_img()));
 
+    this->button_last = new QToolButton(this);
+    this->button_last->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+    gridlayout->addWidget(this->button_last, 0, 3);
+    connect(this->button_last, SIGNAL(clicked()), this, SLOT(goto_last()));
+
     this->label_frame = new QLabel(this);
-    gridlayout->addWidget(this->label_frame, 0, 2);
+    gridlayout->addWidget(this->label_frame, 0, 4);
     main_layout->addWidget(gridwidget);
 
     // show integration time statistics
@@ -100,21 +110,15 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     main_layout->addWidget(progress_widget);
 }
 
+/**
+ * @brief      Update progress bar
+ *
+ * @param[in]  i      Current integration frame number
+ * @param[in]  total  Total number of frames
+ */
 void ResultsTab::update_progress(unsigned int i, unsigned int total) {
     this->progress_bar->setRange(0, total);
     this->progress_bar->setValue(i);
-}
-
-void ResultsTab::next_img() {
-    this->renderarea_X->next_img();
-    this->renderarea_Y->next_img();
-    this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
-}
-
-void ResultsTab::prev_img() {
-    this->renderarea_X->prev_img();
-    this->renderarea_Y->prev_img();
-    this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
 /**
@@ -124,8 +128,8 @@ void ResultsTab::prev_img() {
  * @param[in]  dt    Wall clock integration time
  */
 void ResultsTab::add_frame(unsigned int i, double dt) {
-    this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true));
-    this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false));
+    this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true), this->reaction_system->get_mask());
+    this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false), this->reaction_system->get_mask());
 
     // update render area
     if(i == 0) {
@@ -141,4 +145,60 @@ void ResultsTab::add_frame(unsigned int i, double dt) {
         this->label_integration_time->setText(tr("Last frame:\t\t") + QString::number(this->dts.back()) + tr(" sec\nAverage:\t\t") +
                                               QString::number(avg) + tr(" sec\n") + tr("Estimated remaining:\t") + QString::number(remaining) + tr(" sec\n"));
     }
+
+    this->update_frame_label();
+}
+
+/**
+ * @brief      Clear all previous results
+ */
+void ResultsTab::clear() {
+    this->dts.clear();
+    this->renderarea_X->clear();
+    this->renderarea_Y->clear();
+    this->label_frame->setText("");
+    this->label_integration_time->setText("");
+}
+
+/**
+ * @brief      Update frame label
+ */
+void ResultsTab::update_frame_label() {
+    this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
+}
+
+/**
+ * @brief      Show next time frame
+ */
+void ResultsTab::next_img() {
+    this->renderarea_X->next_img();
+    this->renderarea_Y->next_img();
+    this->update_frame_label();
+}
+
+/**
+ * @brief      Show previous time frame
+ */
+void ResultsTab::prev_img() {
+    this->renderarea_X->prev_img();
+    this->renderarea_Y->prev_img();
+    this->update_frame_label();
+}
+
+/**
+ * @brief      Show first frame
+ */
+void ResultsTab::goto_first() {
+    this->renderarea_X->set_ctr(0);
+    this->renderarea_Y->set_ctr(0);
+    this->update_frame_label();
+}
+
+/**
+ * @brief      Show last frame
+ */
+void ResultsTab::goto_last() {
+    this->renderarea_X->set_ctr(this->renderarea_X->get_num_graphs()-1);
+    this->renderarea_Y->set_ctr(this->renderarea_Y->get_num_graphs()-1);
+    this->update_frame_label();
 }

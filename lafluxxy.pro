@@ -71,7 +71,8 @@ HEADERS  += src/mainwindow.h \
             src/worker_thread.h \
             src/maze.h \
             src/mazerenderer.h \
-            src/mazeholder.h
+            src/mazeholder.h \
+            src/matrices.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

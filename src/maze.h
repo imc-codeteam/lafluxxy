@@ -28,8 +28,7 @@
 #include <random>
 #include <QByteArray>
 
-#include <Eigen/Dense>
-typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> MatrixXXi;
+#include "matrices.h"
 
 class Cell {
 private:

@@ -55,10 +55,30 @@ public:
 
     void prev_img();
 
+    /**
+     * @brief      Gets the counter.
+     *
+     * @return     The counter.
+     */
     inline unsigned int get_ctr() const {
         return this->ctr;
     }
 
+    /**
+     * @brief      Sets the counter.
+     *
+     * @param[in]  _ctr  The counter
+     */
+    inline void set_ctr(unsigned int _ctr) {
+        this->ctr = _ctr;
+        this->update();
+    }
+
+    /**
+     * @brief      Gets the number of graphs.
+     *
+     * @return     The number of graphs.
+     */
     inline unsigned int get_num_graphs() const {
         return this->graphs.size();
     }
@@ -66,13 +86,24 @@ public:
     /**
      * @brief      Adds a graph.
      *
-     * @param[in]  data  Raw concentration data
+     * @param[in]  X     Concentrations
+     * @param[in]  mask  The mask
      */
-    void add_graph(const MatrixXXd& X);
+    void add_graph(const MatrixXXd& X, const MatrixXXi& mask);
 
+    /**
+     * @brief      Sets the color scheme.
+     *
+     * @param[in]  _color_scheme  The color scheme
+     */
     inline void set_color_scheme(const std::vector<float>* _color_scheme) {
         this->color_scheme = _color_scheme;
     }
+
+    /**
+     * @brief      Clear all results
+     */
+    void clear();
 
 protected:
     /**
@@ -86,12 +117,12 @@ private:
     /**
      * @brief      Convert raw concentration data to color graph
      *
-     * @param[in]  data          The raw concentration data
-     * @param[in]  color_scheme  The color scheme
+     * @param[in]  data  The raw concentration data
+     * @param[in]  mask  The mask
      *
      * @return     ByteArray with colors
      */
-    std::vector<uint8_t> convert_data(const MatrixXXd& data) const;
+    std::vector<uint8_t> convert_data(const MatrixXXd& data, const MatrixXXi& mask) const;
 
     /**
      * @brief      Obtain color from data point using color scheme

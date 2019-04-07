@@ -75,6 +75,9 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
     input_maze_widget->setLayout(grid_input_maze);
     grid_input_maze->setColumnStretch(1, 1);
     this->build_maze_parameters(grid_input_maze);
+    this->checkbox_enable_maze = new QCheckBox("Enable maze");
+    grid_input_maze->addWidget(this->checkbox_enable_maze);
+    this->checkbox_enable_maze->setVisible(false);
 
     // set launch button
     this->button_submit = new QPushButton("Launch calculation");
@@ -83,6 +86,7 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
 
     // connect signals
     connect(this->reaction_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_reaction_input(int)));
+    connect(this->checkbox_enable_maze, SIGNAL(stateChanged(int)), SLOT(action_enable_maze(int)));
 }
 
 TwoDimRD* InputTab::build_reaction_system() {
@@ -111,7 +115,13 @@ TwoDimRD* InputTab::build_reaction_system() {
         break;
     }
 
+    // set periodic boundary conditions
     reaction_system->set_pbc(this->checkbox_pbc->isChecked());
+
+    // check for maze and apply mask
+    if(this->maze != nullptr && this->checkbox_enable_maze->checkState() == Qt::Checked) {
+        reaction_system->set_mask(this->maze->get_mask(this->mask_cell_size));
+    }
 
     reaction_system->set_parameters(this->reaction_settings->get_parameter_string());
 
@@ -156,6 +166,9 @@ void InputTab::set_maze(Maze* _maze) {
                                          );
     this->label_maze_properties->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     this->label_maze_properties->setAlignment(Qt::AlignLeft);
+
+    this->checkbox_enable_maze->setVisible(true);
+    this->checkbox_enable_maze->setCheckState(Qt::Unchecked);
 }
 
 /**
@@ -431,5 +444,33 @@ void InputTab::set_default_values() {
             }
             continue;
         }
+    }
+}
+
+/**
+ * @brief      Action to enable maze
+ */
+void InputTab::action_enable_maze(int state) {
+    if(state == Qt::Checked) {
+        const unsigned int mzmax = std::max(this->maze->get_width(), this->maze->get_height());
+        unsigned int cellx = this->input_width->value() / mzmax;
+        unsigned int celly = this->input_height->value() / mzmax;
+        unsigned int gridx = this->maze->get_width() * cellx;
+        unsigned int gridy = this->maze->get_height() * celly;
+
+        this->input_width->setValue(gridx);
+        this->input_height->setValue(gridy);
+        this->input_width->setEnabled(false);
+        this->input_height->setEnabled(false);
+
+        this->mask_cell_size = cellx;
+
+    } else if(state == Qt::Unchecked) {
+        this->input_width->setValue(256);
+        this->input_height->setValue(256);
+        this->input_width->setEnabled(true);
+        this->input_height->setEnabled(true);
+
+        this->mask_cell_size = 0;
     }
 }

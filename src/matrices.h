@@ -19,19 +19,8 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
-#define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.5.0"
-
-enum {
-    NONE,
-    LOTKA_VOLTERRA,
-    GRAY_SCOTT,
-    FITZHUGH_NAGUMO,
-    BRUSSELATOR,
-    BARKLEY
-};
-
-#endif // CONFIG_H
+#include <Eigen/Dense>
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXi;

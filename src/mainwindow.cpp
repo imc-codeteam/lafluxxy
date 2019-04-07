@@ -89,6 +89,21 @@ void MainWindow::about() {
  * @brief      Launch the simulation
  */
 void MainWindow::launch_calculation() {
+    if(this->results_tab->get_num_frames() > 0) {
+        QMessageBox msgBox;
+        msgBox.setText(tr("<b>Warning</b>: This action will delete all previous simulation results!"));
+        msgBox.setInformativeText(tr("A previous set of simulation results exists. Continuing will discard these results.<br><br><b>Are you sure you wish to continue?</b>"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Warning);
+        int ret = msgBox.exec();
+
+        if(ret == QMessageBox::Cancel) {
+            return;
+        }
+    }
+
+    this->results_tab->clear();
     this->tdrd = std::unique_ptr<TwoDimRD>(this->input_tab->build_reaction_system());
     this->results_tab->set_reaction_system(this->tdrd.get());
 

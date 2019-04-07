@@ -71,6 +71,8 @@ private:
 
     Maze* maze = nullptr;
     MazeRenderer mz;
+    unsigned int mask_cell_size = 0;
+    QCheckBox* checkbox_enable_maze;
 
 public:
     /**
@@ -130,6 +132,11 @@ private slots:
      * @brief      Set default values
      */
     void set_default_values();
+
+    /**
+     * @brief      Action to enable maze
+     */
+    void action_enable_maze(int state);
 };
 
 #endif // INPUTTAB_H

@@ -19,32 +19,25 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _MAZETAB_H
-#define _MAZETAB_H
+#pragma once
 
+#include <memory>
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QScrollArea>
+#include <QGridLayout>
 #include <QLabel>
-#include <QPainter>
-#include <QComboBox>
-#include <QPushButton>
-#include <QSpinBox>
+#include <QButtonGroup>
+#include <QRadioButton>
 
-#include "mazeholder.h"
+#include "mazerenderer.h"
 
-class MazeTab : public QWidget {
+class MazeHolder : public QWidget {
     Q_OBJECT
 
 private:
-    QComboBox* maze_algo_selector;          // select maze generation algorithm
-    QPushButton* button_generate_mazes;     // button to construct mazes
-    QVBoxLayout* layout;                    // main layout
-    MazeHolder* mazeholder = nullptr;       // widget to hold generated mazes
-    QSpinBox* input_maze_width;             // width of the mazes
-    QSpinBox* input_maze_height;            // height of the mazes
-
-    int maze_algo;                          // type of maze generation algorithm
+    QGridLayout* mazegrid;                          // grid to store mazes in
+    std::vector<std::unique_ptr<Maze> > mazes;      // store mazes
+    MazeRenderer mz;                                // object to render images from a maze
+    QButtonGroup* maze_selector;                    // select maze
 
 public:
     /**
@@ -52,23 +45,28 @@ public:
      *
      * @param      parent  Parent Widget
      */
-    explicit MazeTab(QWidget *parent = 0);
-
-private:
-
-private slots:
-    /**
-     * @brief      Sets the maze generation algorithm type.
-     *
-     * @param[in]  maze_algo_type  The maze algorithm type
-     */
-    void set_algo_type(int maze_algo_type);
+    explicit MazeHolder(QWidget *parent = 0);
 
     /**
      * @brief      Builds mazes.
+     *
+     * @param[in]  mrows  Number of rows in mazes
+     * @param[in]  mcols  Number of columns in mazes
      */
-    void build_mazes();
+    void build_mazes(unsigned int mrows, unsigned int mcols);
+
+private:
+    /**
+     * @brief      Generate single maze
+     *
+     * @param      mazegrid  Target layout to place Maze image in
+     * @param[in]  rows      Number of rows for the mazes
+     * @param[in]  cols      Number of columns for the mazes
+     * @param[in]  row       Row number in grid
+     * @param[in]  col       Column number in grid
+     */
+    void generate_maze(QGridLayout* mazegrid, unsigned int rows = 10, unsigned int cols = 10, unsigned int row = 0, unsigned int col = 0);
+
+private slots:
 
 };
-
-#endif // _MAZETAB_H

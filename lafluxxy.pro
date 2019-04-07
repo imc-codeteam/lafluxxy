@@ -51,7 +51,8 @@ SOURCES += src/main.cpp\
            src/reaction_system.cpp \
            src/worker_thread.cpp \
            src/maze.cpp \
-           src/mazerenderer.cpp
+           src/mazerenderer.cpp \
+           src/mazeholder.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
@@ -69,7 +70,8 @@ HEADERS  += src/mainwindow.h \
             src/reaction_system.h \
             src/worker_thread.h \
             src/maze.h \
-            src/mazerenderer.h
+            src/mazerenderer.h \
+            src/mazeholder.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

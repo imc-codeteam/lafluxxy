@@ -22,8 +22,9 @@
 #include "mazetab.h"
 
 /**
- * @brief Input tab constructor
- * @param parent widget
+ * @brief      Constructs the object.
+ *
+ * @param      parent  Parent Widget
  */
 MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -46,7 +47,7 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     // add Widget to ScrollArea
     scrollArea->setWidget(widget);
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    this->layout = new QVBoxLayout;
     widget->setLayout(layout);
 
     // explanation label
@@ -60,49 +61,59 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     this->maze_algo_selector->addItem(tr("Binary Tree"));
     this->maze_algo_selector->addItem(tr("Sidewinder"));
     this->maze_algo_selector->setCurrentIndex(0);
-    layout->addWidget(this->maze_algo_selector, 1, 0);
+    layout->addWidget(this->maze_algo_selector);
+
+    QWidget* mazedimholder = new QWidget;
+    QGridLayout* mazedimgrid = new QGridLayout();
+    mazedimholder->setLayout(mazedimgrid);
+    this->input_maze_width = new QSpinBox();
+    this->input_maze_width->setMinimum(4);
+    this->input_maze_width->setMaximum(128);
+    this->input_maze_width->setValue(16);
+    this->input_maze_height = new QSpinBox();
+    this->input_maze_height->setMinimum(4);
+    this->input_maze_height->setMaximum(128);
+    this->input_maze_height->setValue(16);
+    mazedimgrid->addWidget(new QLabel(tr("Maze width")), 0, 0);
+    mazedimgrid->addWidget(this->input_maze_width, 0, 1);
+    mazedimgrid->addWidget(new QLabel(tr("Maze height")), 1, 0);
+    mazedimgrid->addWidget(this->input_maze_height, 1, 1);
+    this->layout->addWidget(mazedimholder);
+
+    this->button_generate_mazes = new QPushButton("Generate mazes");
+    this->button_generate_mazes->setEnabled(false);
+    layout->addWidget(this->button_generate_mazes);
+
+    // connect signals
+    connect(this->maze_algo_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_algo_type(int)));
+    connect(this->button_generate_mazes, SIGNAL(released()), SLOT(build_mazes()));
 
     // maze results
     layout->addWidget(new QLabel(tr("<b>Maze results</b>")));
+}
 
-    QWidget* mazeholder = new QWidget;
-    QGridLayout* mazegrid = new QGridLayout;
-    mazeholder->setLayout(mazegrid);
-    layout->addWidget(mazeholder);
-
-    for(unsigned int y=0; y<3; y++) {
-        for(unsigned int x=0; x<3; x++) {
-            this->generate_maze(mazegrid, y, x);
-        }
+/**
+ * @brief      Sets the maze generation algorithm type.
+ *
+ * @param[in]  maze_algo_type  The maze algorithm type
+ */
+void MazeTab::set_algo_type(int maze_algo_type) {
+    this->maze_algo = maze_algo_type;
+    if(maze_algo_type != 0) {
+        this->button_generate_mazes->setEnabled(true);
     }
 }
 
-void MazeTab::generate_maze(QGridLayout* mazegrid, unsigned int grow, unsigned int gcol) {
-    unsigned int rows = 14;
-    unsigned int cols = 14;
-    Maze maze(rows, cols);
-    maze.build_algo_binary_tree();
-    maze.build_path_dijkstra(rows / 2, cols / 2);
+/**
+ * @brief      Builds mazes.
+ */
+void MazeTab::build_mazes() {
+    // clean up any old results
+    if(this->mazeholder != nullptr) {
+        delete this->mazeholder;
+    }
 
-    MazeRenderer mz;
-    unsigned int cell_size = 16;
-    std::vector<uint8_t> graph_data = mz.create_image(maze, cell_size);
-
-    unsigned int img_width = maze.get_width() * cell_size + 1;
-    unsigned int img_height = maze.get_height() * cell_size + 1;
-    unsigned int mazewidth = img_width;
-    unsigned int mazeheight = img_height;
-
-    // Qt Images need to be 32-bits aligned
-    img_width += ((img_width * 3) % 4);
-    img_height += ((img_height * 3) % 4);
-
-    QImage img(&graph_data[0], img_width, img_height, QImage::Format_RGB888);
-    QImage cropped = img.copy(0, (3 - mazeheight % 4), mazewidth, mazeheight + (2 - mazeheight % 4));
-    QPixmap pixmap = QPixmap::fromImage(cropped);
-    pixmap = pixmap.scaled(img.width() * 2, img.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-    QLabel *mazelabel = new QLabel;
-    mazelabel->setPixmap(pixmap);
-    mazegrid->addWidget(mazelabel, grow, gcol);
+    this->mazeholder = new MazeHolder();
+    this->layout->addWidget(this->mazeholder);
+    this->mazeholder->build_mazes(this->input_maze_height->value(), this->input_maze_width->value());
 }

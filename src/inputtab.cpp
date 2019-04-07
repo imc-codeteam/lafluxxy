@@ -118,6 +118,11 @@ TwoDimRD* InputTab::build_reaction_system() {
     return reaction_system;
 }
 
+/**
+ * @brief      Sets the maze.
+ *
+ * @param      _maze  The maze
+ */
 void InputTab::set_maze(Maze* _maze) {
     if(this->maze != nullptr) {
         delete this->maze;
@@ -126,11 +131,20 @@ void InputTab::set_maze(Maze* _maze) {
     this->button_maze_select->setVisible(false);
     this->maze = _maze;
 
+    // show maze image
     QPixmap pixmap = this->mz.generate_maze_pixmap(*this->maze, 128);
     this->label_maze_img->setPixmap(pixmap);
-    this->label_maze_properties->setText("Maze properties\nTest");
-    this->label_maze_properties->setVisible(true);
+    this->label_maze_img->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->label_maze_img->setVisible(true);
+
+    // display maze properties
+    this->label_maze_properties->setVisible(true);
+    this->label_maze_properties->setText(tr("<b>Maze properties</b><br><br>Width:\t") + QString::number(this->maze->get_width()) + tr("<br>Height:\t") + QString::number(this->maze->get_height()));
+    this->label_maze_properties->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    this->label_maze_properties->setAlignment(Qt::AlignLeft);
+
+    // calculate Maze integration settings
+
 }
 
 /**
@@ -274,7 +288,7 @@ void InputTab::build_maze_parameters(QGridLayout* gridlayout) {
     gridlayout->addWidget(new QLabel("<b>Maze parameters</b>"), row, 0);
     row++;
 
-    gridlayout->addWidget(new QLabel("(Optional) Introduce tortuosity in the simulation by setting a maze."), row, 0);
+    gridlayout->addWidget(new QLabel("(Optional) Introduce tortuosity in the simulation by setting a maze."), row, 0, row, 2);
     row++;
 
     this->button_maze_select = new QPushButton("Build and select maze");

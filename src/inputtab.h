@@ -89,6 +89,11 @@ public:
 
     TwoDimRD* build_reaction_system();
 
+    /**
+     * @brief      Sets the maze.
+     *
+     * @param      _maze  The maze
+     */
     void set_maze(Maze* _maze);
 
 private:

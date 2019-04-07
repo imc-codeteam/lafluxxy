@@ -75,13 +75,17 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     gridlayout->addWidget(this->button_next, 0, 1);
     connect(this->button_next, SIGNAL(clicked()), this, SLOT(next_img()));
 
-    this->frame_label = new QLabel(this);
-    gridlayout->addWidget(this->frame_label, 0, 2);
-
+    this->label_frame = new QLabel(this);
+    gridlayout->addWidget(this->label_frame, 0, 2);
     main_layout->addWidget(gridwidget);
 
+    // show integration time statistics
+    main_layout->addWidget(new QLabel(tr("<b>Integration time</b>")));
+    this->label_integration_time = new QLabel;
+    main_layout->addWidget(this->label_integration_time);
+
     // set up progress bar
-    main_layout->addWidget(new QLabel("Simulation progress:"));
+    main_layout->addWidget(new QLabel("<b>Simulation progress</b>"));
     QWidget *progress_widget = new QWidget;
     QGridLayout *progress_layout = new QGridLayout;
     progress_widget->setLayout(progress_layout);
@@ -104,16 +108,22 @@ void ResultsTab::update_progress(unsigned int i, unsigned int total) {
 void ResultsTab::next_img() {
     this->renderarea_X->next_img();
     this->renderarea_Y->next_img();
-    this->frame_label->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
+    this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
 void ResultsTab::prev_img() {
     this->renderarea_X->prev_img();
     this->renderarea_Y->prev_img();
-    this->frame_label->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
+    this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
-void ResultsTab::add_frame(unsigned int i) {
+/**
+ * @brief      Adds a frame.
+ *
+ * @param[in]  i     Frame index
+ * @param[in]  dt    Wall clock integration time
+ */
+void ResultsTab::add_frame(unsigned int i, double dt) {
     this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true));
     this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false));
 
@@ -121,5 +131,14 @@ void ResultsTab::add_frame(unsigned int i) {
     if(i == 0) {
         this->renderarea_X->update();
         this->renderarea_Y->update();
+    }
+
+    // update running time
+    if(i != 0) {
+        this->dts.push_back(dt);
+        double avg = std::accumulate(this->dts.begin(), this->dts.end(), 0.0) / (double)dts.size();
+        double remaining = avg * (this->progress_bar->maximum() - this->progress_bar->value());
+        this->label_integration_time->setText(tr("Last frame:\t\t") + QString::number(this->dts.back()) + tr(" sec\nAverage:\t\t") +
+                                              QString::number(avg) + tr(" sec\n") + tr("Estimated remaining:\t") + QString::number(remaining) + tr(" sec\n"));
     }
 }

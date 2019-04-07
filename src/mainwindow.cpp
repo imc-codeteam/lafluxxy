@@ -72,6 +72,20 @@ void MainWindow::exit() {
 }
 
 /**
+ * @brief      Gives About pop-up window
+ */
+void MainWindow::about() {
+    QMessageBox message_box;
+    message_box.setText(tr(PROGRAM_NAME) + tr(" ") + tr(PROGRAM_VERSION) +
+                        tr(".\n\nAuthors:\nIvo Filot <i.a.w.filot@tue.nl>\n") +
+                        tr("\n") + tr(PROGRAM_NAME) + tr(" is licensed under the GPLv3 license.\n") +
+                        tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3."));
+    message_box.setIcon(QMessageBox::Information);
+    message_box.setWindowTitle(tr("About ") + tr(PROGRAM_NAME));
+    message_box.exec();
+}
+
+/**
  * @brief      Launch the simulation
  */
 void MainWindow::launch_calculation() {
@@ -123,8 +137,7 @@ void MainWindow::handle_simulation_canceled() {
  */
 void MainWindow::handle_results_step(unsigned int i, double tcalc) {
     this->results_tab->update_progress(i+1, this->tdrd->get_num_steps());
-    this->results_tab->add_frame(i+1);
-    // std::cout << tcalc << std::endl;
+    this->results_tab->add_frame(i+1, tcalc);
 }
 
 /**
@@ -177,6 +190,7 @@ void MainWindow::build_menu() {
 
     // connect actions
     connect(action_quit, &QAction::triggered, this, &MainWindow::exit);
+    connect(action_about, &QAction::triggered, this, &MainWindow::about);
 
     setMenuBar(menuBar);
 }

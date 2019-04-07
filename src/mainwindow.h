@@ -74,6 +74,11 @@ private slots:
     void exit();
 
     /**
+     * @brief      Gives About pop-up window
+     */
+    void about();
+
+    /**
      * @brief      Launch an RD simulation
      */
     void launch_calculation();

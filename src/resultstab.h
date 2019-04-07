@@ -41,10 +41,13 @@ private:
     QToolButton *button_next;
     QToolButton *button_prev;
     QProgressBar *progress_bar;
-    QLabel *frame_label;
+    QLabel *label_frame;
     QToolButton *button_stop;
+    QLabel *label_integration_time;
 
     TwoDimRD* reaction_system;
+
+    std::vector<double> dts;
 
 public:
     /**
@@ -63,7 +66,13 @@ public:
         return this->button_stop;
     }
 
-    void add_frame(unsigned int i);
+    /**
+     * @brief      Adds a frame.
+     *
+     * @param[in]  i     Frame index
+     * @param[in]  dt    Wall clock integration time
+     */
+    void add_frame(unsigned int i, double dt = 0.0);
 
 private:
 

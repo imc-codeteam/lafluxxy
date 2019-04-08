@@ -29,6 +29,7 @@
 #include <QToolButton>
 #include <QStyle>
 #include <QProgressBar>
+#include <QSlider>
 
 #include "renderarea.h"
 
@@ -43,6 +44,8 @@ private:
     QToolButton *button_prev;
     QToolButton *button_first;
     QToolButton *button_last;
+
+    QSlider *slider_frame;
 
     QProgressBar *progress_bar;
     QLabel *label_frame;
@@ -109,7 +112,15 @@ public:
     }
 
 private:
+    /**
+     * @brief      Update the label for the frame position
+     */
     void update_frame_label();
+
+    /**
+     * @brief      Update the slider
+     */
+    void update_slider_frame();
 
 private slots:
     /**
@@ -131,6 +142,11 @@ private slots:
      * @brief      Show last frame
      */
     void goto_last();
+
+    /**
+     * @brief      Execute when slider is moved
+     */
+    void slider_moved(int value);
 };
 
 #endif // _RESULTSTAB_H

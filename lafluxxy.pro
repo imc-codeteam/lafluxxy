@@ -14,6 +14,7 @@ TEMPLATE = app
 gcc {
   QMAKE_CXXFLAGS += -fopenmp
   QMAKE_LFLAGS += -fopenmp
+  QMAKE_CXXFLAGS_RELEASE -= -O2
   QMAKE_CXXFLAGS_RELEASE *= -O3
 }
 

@@ -117,6 +117,8 @@ void MazeTab::set_algo_type(int maze_algo_type) {
     this->maze_algo = maze_algo_type;
     if(maze_algo_type != 0) {
         this->button_generate_mazes->setEnabled(true);
+    } else {
+        this->button_generate_mazes->setEnabled(false);
     }
 }
 

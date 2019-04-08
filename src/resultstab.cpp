@@ -28,12 +28,12 @@
 ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *main_layout = new QVBoxLayout;
     this->setLayout(main_layout);
-    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
     // add a ScrollArea widget and define properties
     QScrollArea *scroll_area = new QScrollArea(this);     //Create scroll area Widget
     scroll_area->setContentsMargins(0,0,0,0);
-    scroll_area->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    scroll_area->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     scroll_area->setWidgetResizable(true);
 
     // add ScrollArea to QWidget
@@ -42,8 +42,6 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     // create new Widget for in the QScrollArea and set properties
     QWidget* widget = new QWidget();
     widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // add Widget to ScrollArea
     scroll_area->setWidget(widget);
 
     // set concentrations layout
@@ -61,6 +59,13 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
     // set up frame interface
+    this->slider_frame = new QSlider(Qt::Horizontal);
+    main_layout->addWidget(this->slider_frame);
+    this->slider_frame->setMinimum(0);
+    this->slider_frame->setMaximum(0);
+    this->slider_frame->setTickPosition(QSlider::TicksBelow);
+    connect(this->slider_frame, SIGNAL(valueChanged(int)), this, SLOT(slider_moved(int)));
+
     QWidget *gridwidget = new QWidget;
     QGridLayout *gridlayout = new QGridLayout;
     gridwidget->setLayout(gridlayout);
@@ -106,8 +111,11 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->button_stop->setWhatsThis(tr("Cancel simulation"));
     this->button_stop->setEnabled(false);
     progress_layout->addWidget(this->button_stop, 0, 1);
-
     main_layout->addWidget(progress_widget);
+
+    QLabel* fill = new QLabel;
+    fill->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    main_layout->addWidget(fill);
 }
 
 /**
@@ -146,6 +154,10 @@ void ResultsTab::add_frame(unsigned int i, double dt) {
                                               QString::number(avg) + tr(" sec\n") + tr("Estimated remaining:\t") + QString::number(remaining) + tr(" sec\n"));
     }
 
+    // update slider
+    this->update_slider_frame();
+
+    // update frame label
     this->update_frame_label();
 }
 
@@ -168,12 +180,32 @@ void ResultsTab::update_frame_label() {
 }
 
 /**
+ * @brief      Update the slider
+ */
+void ResultsTab::update_slider_frame() {
+    const unsigned int num_graphs = this->renderarea_X->get_num_graphs();
+    this->slider_frame->setMinimum(1);
+    this->slider_frame->setMaximum(num_graphs);
+    this->slider_frame->setValue(this->renderarea_X->get_ctr()+1);
+    if(num_graphs < 20) {
+        this->slider_frame->setTickInterval(1);
+    } else if(num_graphs < 50) {
+        this->slider_frame->setTickInterval(2);
+    }  else if(num_graphs < 100) {
+        this->slider_frame->setTickInterval(5);
+    } else {
+        this->slider_frame->setTickInterval(num_graphs / 20);
+    }
+}
+
+/**
  * @brief      Show next time frame
  */
 void ResultsTab::next_img() {
     this->renderarea_X->next_img();
     this->renderarea_Y->next_img();
     this->update_frame_label();
+    this->update_slider_frame();
 }
 
 /**
@@ -183,6 +215,7 @@ void ResultsTab::prev_img() {
     this->renderarea_X->prev_img();
     this->renderarea_Y->prev_img();
     this->update_frame_label();
+    this->update_slider_frame();
 }
 
 /**
@@ -192,6 +225,7 @@ void ResultsTab::goto_first() {
     this->renderarea_X->set_ctr(0);
     this->renderarea_Y->set_ctr(0);
     this->update_frame_label();
+    this->update_slider_frame();
 }
 
 /**
@@ -200,5 +234,15 @@ void ResultsTab::goto_first() {
 void ResultsTab::goto_last() {
     this->renderarea_X->set_ctr(this->renderarea_X->get_num_graphs()-1);
     this->renderarea_Y->set_ctr(this->renderarea_Y->get_num_graphs()-1);
+    this->update_frame_label();
+    this->update_slider_frame();
+}
+
+/**
+ * @brief      Execute when slider is moved
+ */
+void ResultsTab::slider_moved(int value) {
+    this->renderarea_X->set_ctr(value - 1);
+    this->renderarea_Y->set_ctr(value - 1);
     this->update_frame_label();
 }

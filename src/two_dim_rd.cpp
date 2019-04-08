@@ -206,7 +206,7 @@ void TwoDimRD::laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c) {
 
     omp_set_num_threads(this->ncores);
     #pragma omp parallel for schedule(static)
-    for(unsigned int i=0; i<this->height; i++) {
+    for(int i=0; i<this->height; i++) {
         // indices
         unsigned i1;
         unsigned i2;
@@ -265,7 +265,7 @@ void TwoDimRD::laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c) {
 
     omp_set_num_threads(this->ncores);
     #pragma omp parallel for
-    for(unsigned int i=0; i<height; i++) {
+    for(int i=0; i<height; i++) {
         for(unsigned int j=0; j<width; j++) {
 
             double ddx = 0;
@@ -309,7 +309,7 @@ void TwoDimRD::laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c) {
 
     omp_set_num_threads(this->ncores);
     #pragma omp parallel for
-    for(unsigned int i=0; i<height; i++) {
+    for(int i=0; i<height; i++) {
         for(unsigned int j=0; j<width; j++) {
 
             if(this->matmask(i,j) == 1) {
@@ -349,7 +349,7 @@ void TwoDimRD::laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c) {
 void TwoDimRD::add_reaction() {
     omp_set_num_threads(this->ncores);
     #pragma omp parallel for schedule(static)
-    for(unsigned int i=0; i<this->height; i++) {
+    for(int i=0; i<this->height; i++) {
         for(unsigned int j=0; j<this->width; j++) {
             const double a = this->a(i,j);
             const double b = this->b(i,j);
@@ -370,7 +370,7 @@ void TwoDimRD::add_reaction() {
 void TwoDimRD::apply_mask() {
     omp_set_num_threads(this->ncores);
     #pragma omp parallel for schedule(static)
-    for(unsigned int i=0; i<this->height; i++) {
+    for(int i=0; i<this->height; i++) {
         for(unsigned int j=0; j<this->width; j++) {
             if(this->matmask(i,j) == 1) {
                 this->a(i,j) = 0.0;

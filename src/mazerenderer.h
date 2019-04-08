@@ -23,6 +23,7 @@
 #define _MAZE_RENDERER_H
 
 #include <QPixmap>
+#include <array>
 
 #include "maze.h"
 #include "colorschemes/viridis.h"

@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = lafluxxy
 TEMPLATE = app
+CONFIG += c++14
 
 gcc {
   QMAKE_CXXFLAGS += -fopenmp
@@ -81,4 +82,5 @@ linux {
 
 win32 {
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
+    INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
 }

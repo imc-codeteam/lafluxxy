@@ -33,7 +33,7 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     // add a ScrollArea widget and define properties
     QScrollArea *scroll_area = new QScrollArea(this);     //Create scroll area Widget
     scroll_area->setContentsMargins(0,0,0,0);
-    scroll_area->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+    scroll_area->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     scroll_area->setWidgetResizable(true);
 
     // add ScrollArea to QWidget
@@ -112,10 +112,6 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->button_stop->setEnabled(false);
     progress_layout->addWidget(this->button_stop, 0, 1);
     main_layout->addWidget(progress_widget);
-
-    QLabel* fill = new QLabel;
-    fill->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    main_layout->addWidget(fill);
 }
 
 /**

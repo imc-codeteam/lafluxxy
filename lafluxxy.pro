@@ -22,7 +22,7 @@ gcc {
 msvc {
   QMAKE_CXXFLAGS += -openmp
   QMAKE_CXXFLAGS_RELEASE *= -O2
-  #RC_FILE = lafluxxy.rc
+  RC_FILE = lafluxxy.rc
 }
 
 # The following define makes your compiler emit warnings if you use

@@ -23,6 +23,9 @@
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    // set Window icon
+    this->setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/../lafluxxy_logo.ico"));
+
     //build drop-down menu
     this->build_menu();
 

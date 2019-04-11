@@ -42,6 +42,9 @@ QSize RenderArea::minimumSizeHint() const {
     return QSize(256, 256);
 }
 
+/**
+ * @brief      Show next image
+ */
 void RenderArea::next_img() {
     this->ctr++;
     if(this->ctr >= this->graphs.size()) {
@@ -50,6 +53,9 @@ void RenderArea::next_img() {
     this->update();
 }
 
+/**
+ * @brief      Show previous image
+ */
 void RenderArea::prev_img() {
     if(this->ctr == 0) {
         this->ctr = this->graphs.size() - 1;
@@ -101,6 +107,18 @@ void RenderArea::paintEvent(QPaintEvent * /* event */) {
 void RenderArea::clear() {
     this->graphs.clear();
     this->ctr = 0;
+}
+
+/**
+ * @brief      Gets the current image.
+ *
+ * @return     The current image.
+ */
+const QPixmap& RenderArea::get_current_image() const {
+    if(this->ctr >= this->graphs.size()) {
+        throw std::runtime_error("Cannot return current image");
+    }
+    return this->graphs[this->ctr];
 }
 
 /**

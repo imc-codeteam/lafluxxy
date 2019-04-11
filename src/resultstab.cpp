@@ -58,6 +58,16 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->renderarea_Y->set_color_scheme(&magma);
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
+    this->button_save_image_X = new QToolButton(this);
+    this->button_save_image_X->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+    concentrations_layout->addWidget(this->button_save_image_X, 2, 0);
+    connect(this->button_save_image_X, SIGNAL(clicked()), this, SLOT(save_concentration_X()));
+
+    this->button_save_image_Y = new QToolButton(this);
+    this->button_save_image_Y->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+    concentrations_layout->addWidget(this->button_save_image_Y, 2, 1);
+    connect(this->button_save_image_Y, SIGNAL(clicked()), this, SLOT(save_concentration_Y()));
+
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
     main_layout->addWidget(this->slider_frame);
@@ -195,6 +205,16 @@ void ResultsTab::update_slider_frame() {
 }
 
 /**
+ * @brief      Saves an image.
+ *
+ * @param[in]  img   The image
+ */
+void ResultsTab::save_image(const QPixmap& img) {
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.png)"));
+    img.save(filename, "PNG");
+}
+
+/**
  * @brief      Show next time frame
  */
 void ResultsTab::next_img() {
@@ -241,4 +261,26 @@ void ResultsTab::slider_moved(int value) {
     this->renderarea_X->set_ctr(value - 1);
     this->renderarea_Y->set_ctr(value - 1);
     this->update_frame_label();
+}
+
+/**
+ * @brief      Save the concentration profile of X to a file
+ */
+void ResultsTab::save_concentration_X() {
+    try {
+        this->save_image(this->renderarea_X->get_current_image());
+    } catch(const std::exception& e) {
+        return;
+    }
+}
+
+/**
+ * @brief      Save the concentration profile of X to a file
+ */
+void ResultsTab::save_concentration_Y() {
+    try {
+        this->save_image(this->renderarea_Y->get_current_image());
+    } catch(const std::exception& e) {
+        return;
+    }
 }

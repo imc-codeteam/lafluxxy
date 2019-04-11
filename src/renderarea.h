@@ -51,8 +51,14 @@ public:
 
     QSize sizeHint() const override;
 
+    /**
+     * @brief      Show next image
+     */
     void next_img();
 
+    /**
+     * @brief      Show previous image
+     */
     void prev_img();
 
     /**
@@ -104,6 +110,13 @@ public:
      * @brief      Clear all results
      */
     void clear();
+
+    /**
+     * @brief      Gets the current image.
+     *
+     * @return     The current image.
+     */
+    const QPixmap& get_current_image() const;
 
 protected:
     /**

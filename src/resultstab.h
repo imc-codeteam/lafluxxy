@@ -30,6 +30,7 @@
 #include <QStyle>
 #include <QProgressBar>
 #include <QSlider>
+#include <QFileDialog>
 
 #include "renderarea.h"
 
@@ -39,6 +40,9 @@ class ResultsTab : public QWidget {
 private:
     RenderArea *renderarea_X;
     RenderArea *renderarea_Y;
+
+    QToolButton *button_save_image_X;
+    QToolButton *button_save_image_Y;
 
     QToolButton *button_next;
     QToolButton *button_prev;
@@ -122,6 +126,13 @@ private:
      */
     void update_slider_frame();
 
+    /**
+     * @brief      Saves an image.
+     *
+     * @param[in]  img   The image
+     */
+    void save_image(const QPixmap& img);
+
 private slots:
     /**
      * @brief      Show next time frame
@@ -147,6 +158,16 @@ private slots:
      * @brief      Execute when slider is moved
      */
     void slider_moved(int value);
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_concentration_X();
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_concentration_Y();
 };
 
 #endif // _RESULTSTAB_H

@@ -26,7 +26,8 @@
 /**
  * @brief      Class for Gray-Scott Reaction
  *
- * See: * https://arxiv.org/pdf/1501.01990.pdf
+ * See: * DOI: 10.1088/1742-5468/2016/04/043301
+        * https://arxiv.org/pdf/1501.01990.pdf
  *      * http://www.theshapeofmath.com/princeton/dynsys/turinginst3
  *      * http://mrob.com/pub/comp/xmorphia/uskate-world.html
  */

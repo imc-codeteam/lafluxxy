@@ -46,6 +46,7 @@ void InputReaction::build_input_boxes() {
     for(unsigned int i=0; i<input_names.size(); i++) {
         this->gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
         QDoubleSpinBox *box = new QDoubleSpinBox();
+        box->setDecimals(6);
         this->input_boxes.emplace(input_names[i], box);
         box->setValue(this->input_default_values[i]);
         this->gridlayout->addWidget(box, i, 1);

@@ -40,6 +40,7 @@
 #include "input_gray_scott.h"
 #include "input_brusselator.h"
 #include "reaction_lotka_volterra.h"
+#include "reaction_gray_scott.h"
 #include "reaction_brusselator.h"
 #include "mazerenderer.h"
 

@@ -105,7 +105,7 @@ TwoDimRD* InputTab::build_reaction_system() {
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
         break;
         case GRAY_SCOTT:
-            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionGrayScott()));
         break;
         case BRUSSELATOR:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBrusselator()));

@@ -19,19 +19,52 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
-#define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.5.3"
+#include "reaction_system.h"
 
-enum {
-    NONE,
-    LOTKA_VOLTERRA,
-    GRAY_SCOTT,
-    FITZHUGH_NAGUMO,
-    BRUSSELATOR,
-    BARKLEY
+/**
+ * @brief      Class for Gray-Scott Reaction
+ *
+ * See: * https://arxiv.org/pdf/1501.01990.pdf
+ *      * http://www.theshapeofmath.com/princeton/dynsys/turinginst3
+ *      * http://mrob.com/pub/comp/xmorphia/uskate-world.html
+ */
+class ReactionGrayScott : public ReactionSystem {
+private:
+    double f = 0.06;
+    double k = 0.0609;
+
+public:
+    /**
+     * @brief      Constructs the object.
+     */
+    ReactionGrayScott();
+
+    /**
+     * @brief      Perform a reaction step
+     *
+     * @param[in]  a     Concentration matrix A
+     * @param[in]  b     Concentration matrix B
+     * @param      ra    Pointer to reaction term for A
+     * @param      rb    Pointer to reaction term for B
+     */
+    void reaction(double a, double b, double *ra, double *rb) const;
+
+    /**
+     * @brief      Initialize the system
+     *
+     * @param      a     Concentration matrix A
+     * @param      b     Concentration matrix B
+     */
+    void init(MatrixXXd& a, MatrixXXd& b) const;
+
+    /**
+     * @brief      Sets the parameters.
+     *
+     * @param[in]  params  The parameters
+     */
+    void set_parameters(const std::string& params);
+
+private:
 };
-
-#endif // CONFIG_H

@@ -49,6 +49,7 @@ SOURCES += src/main.cpp\
            src/renderarea.cpp \
            src/two_dim_rd.cpp \
            src/reaction_lotka_volterra.cpp \
+           src/reaction_gray_scott.cpp \
            src/reaction_brusselator.cpp \
            src/reaction_system.cpp \
            src/worker_thread.cpp \
@@ -63,6 +64,7 @@ HEADERS  += src/mainwindow.h \
             src/mazetab.h \
             src/input_reaction.h \
             src/input_lotka_volterra.h \
+            src/reaction_gray_scott.h \
             src/input_brusselator.h \
             src/input_gray_scott.h \
             src/renderarea.h \

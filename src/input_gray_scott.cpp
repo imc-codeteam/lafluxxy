@@ -27,9 +27,9 @@
  */
 InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
     this->reaction_type = GRAY_SCOTT;
-    this->input_names = {"alpha", "beta", "gamma", "delta"};
-    this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
-    this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};
+    this->input_names = {"f", "k"};
+    this->input_labels = {"f", "k"};
+    this->input_default_values = {0.06, 0.0609};
 
     this->set_label();
     this->build_input_boxes();
@@ -45,5 +45,5 @@ void InputGrayScott::set_label() {
  * @return     The default parameter settings.
  */
 std::string InputGrayScott::get_default_parameter_settings() {
-    return std::string("");
+    return std::string("dX=2e-5;dY=1e-5;dx=0.005;dt=0.1;width=256;height=256;steps=20;tsteps=1000;pbc=1");
 }

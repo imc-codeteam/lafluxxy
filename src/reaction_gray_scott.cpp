@@ -19,19 +19,50 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#include "reaction_gray_scott.h"
 
-#define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.5.3"
+ReactionGrayScott::ReactionGrayScott() {
 
-enum {
-    NONE,
-    LOTKA_VOLTERRA,
-    GRAY_SCOTT,
-    FITZHUGH_NAGUMO,
-    BRUSSELATOR,
-    BARKLEY
-};
+}
 
-#endif // CONFIG_H
+
+void ReactionGrayScott::reaction(double a, double b, double *ra, double *rb) const {
+    double r = a * b * b;
+    *ra = -r + this->f * (1.0 - a);
+    *rb =  r - (this->f + this->k) * b;
+}
+
+
+void ReactionGrayScott::init(MatrixXXd& a, MatrixXXd& b) const {
+    this->init_random_rectangles(a, b);
+}
+
+/**
+ * @brief      Sets the parameters.
+ *
+ * @param[in]  params  The parameters
+ */
+void ReactionGrayScott::set_parameters(const std::string& params) {
+    auto map = this->parse_parameters(params);
+
+    auto got = map.find("k");
+    if(got != map.end()) {
+        this->k = got->second;
+    } else {
+        throw std::runtime_error("Cannot find parameter k");
+    }
+
+    got = map.find("f");
+    if(got != map.end()) {
+        this->f = got->second;
+    } else {
+        throw std::runtime_error("Cannot find parameter f");
+    }
+
+    // std::vector<std::string> paramlist = {"k", "f"};
+    // std::cout << "Succesfully loaded the following parameters" << std::endl;
+    // for(const std::string& variable : paramlist) {
+    //     auto got = map.find(variable);
+    //     std::cout << "    " << variable << " = " << got->second << std::endl;
+    // }
+}

@@ -118,6 +118,19 @@ protected:
     void init_half_screen(MatrixXXd& a, MatrixXXd& b, double ca, double cb) const;
 
     /**
+     * @brief      Initialize central rectangle with random noise everywhere
+     *
+     * @param      a      Concentration matrix A
+     * @param      b      Concentration matrix B
+     * @param[in]  a0     Initial concentration A
+     * @param[in]  b0     Initial concentration B
+     * @param[in]  ca     Concentration of A in central square
+     * @param[in]  cb     Concentration of B in central square
+     * @param[in]  noise  Gaussian noise
+     */
+    void init_central_square_gaussian_noise(MatrixXXd& a, MatrixXXd& b, double a0, double b0, double ca, double cb, double noise) const;
+
+    /**
      * @brief      provide normal distribution
      *
      * @return     returns value at normal distribution

@@ -34,7 +34,7 @@ void ReactionGrayScott::reaction(double a, double b, double *ra, double *rb) con
 
 
 void ReactionGrayScott::init(MatrixXXd& a, MatrixXXd& b) const {
-    this->init_random_rectangles(a, b);
+    this->init_central_square_gaussian_noise(a, b, 1.0, 0.0, 0.5, 0.25, 0.05);
 }
 
 /**

@@ -180,6 +180,39 @@ void ReactionSystem::init_half_screen(MatrixXXd& a, MatrixXXd& b, double ca, dou
 }
 
 /**
+ * @brief      Initialize central rectangle with random noise everywhere
+ *
+ * @param      a      Concentration matrix A
+ * @param      b      Concentration matrix B
+ * @param[in]  a0     Initial concentration A
+ * @param[in]  b0     Initial concentration B
+ * @param[in]  ca     Concentration of A in central square
+ * @param[in]  cb     Concentration of B in central square
+ * @param[in]  noise  Gaussian noise
+ */
+void ReactionSystem::init_central_square_gaussian_noise(MatrixXXd& a, MatrixXXd& b, double a0, double b0, double ca, double cb, double noise) const {
+    unsigned int width = a.cols();
+    unsigned int height = a.rows();
+
+    a = MatrixXXd::Ones(height, width) * a0;
+    b = MatrixXXd::Ones(height, width) * b0;
+
+    for(unsigned int i=height/2-10; i<height/2+10; i++) {
+        for(unsigned int j=width/2-10; j<width/2+10; j++) {
+            a(i,j) = ca;
+            b(i,j) = cb;
+        }
+    }
+
+    for(unsigned int i=0; i<height; i++) {
+        for(unsigned int j=0; j<width; j++) {
+            a(i,j) += this->normal_dist() * noise;
+            b(i,j) += this->normal_dist() * noise;
+        }
+    }
+}
+
+/**
  * @brief      Parse parameters
  *
  * @param[in]  params  string containing list of parameters

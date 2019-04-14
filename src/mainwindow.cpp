@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(this->input_tab->get_button_submit(), SIGNAL(clicked()), this, SLOT(launch_calculation()));
     connect(this->input_tab->get_button_select_maze(), SIGNAL(clicked()), this, SLOT(press_build_and_select_maze()));
     connect(this->maze_tab, SIGNAL(signal_mazes_generated()), this, SLOT(connect_maze_build_button()));
+    connect(this->results_tab->get_button_copy_to_movie(), SIGNAL(released()), this, SLOT(copy_data_to_movietab()));
 }
 
 /**
@@ -171,6 +172,9 @@ void MainWindow::create_tabs() {
 
     this->results_tab = new ResultsTab();
     this->tabs->addTab(this->results_tab, tr("Results"));
+
+    this->movie_tab = new MovieTab();
+    this->tabs->addTab(this->movie_tab, tr("Movie"));
 }
 
 /**
@@ -229,4 +233,12 @@ void MainWindow::press_select_maze() {
         this->input_tab->set_maze(new Maze(*maze));
         this->tabs->setCurrentIndex(this->tabs->indexOf(this->input_tab));
     }
+}
+
+/**
+ * @brief      Copy all results to movietab
+ */
+void MainWindow::copy_data_to_movietab() {
+    this->movie_tab->set_concentrations(this->tdrd->get_concentrations(true), this->tdrd->get_concentrations(false), this->tdrd->get_mask());
+    this->tabs->setCurrentIndex(this->tabs->indexOf(this->movie_tab));
 }

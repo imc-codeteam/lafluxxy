@@ -142,6 +142,17 @@ public:
     const MatrixXXd& get_concentration_matrix(unsigned int frame, bool first) const;
 
     /**
+     * @brief      Gets the concentrations.
+     *
+     * @param[in]  first  Whether to return concentrations of X
+     *
+     * @return     The concentrations.
+     */
+    inline const auto& get_concentrations(bool first) const {
+        return first ? this->ta : this->tb;
+    }
+
+    /**
      * @brief      Set the number of cores
      *
      * @param[in]  _ncores  Number of cores

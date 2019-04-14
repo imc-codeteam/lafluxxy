@@ -19,13 +19,9 @@
  *                                                                        *
  **************************************************************************/
 
-#include "resultstab.h"
+#include "movietab.h"
 
-/**
- * @brief Results tab constructor
- * @param parent widget
- */
-ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
+MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     QVBoxLayout *main_layout = new QVBoxLayout;
     this->setLayout(main_layout);
     this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
@@ -53,20 +49,32 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->renderarea_X->set_color_scheme(&viridis);
     concentrations_layout->addWidget(this->renderarea_X, 1, 0);
 
+    concentrations_layout->addWidget(new QLabel("Minimum value for X"), 2, 0);
+    this->value_min_x = new QDoubleSpinBox();
+    this->value_min_x->setDecimals(3);
+    concentrations_layout->addWidget(this->value_min_x, 3, 0);
+    concentrations_layout->addWidget(new QLabel("Maximum value for X"), 4, 0);
+    this->value_max_x = new QDoubleSpinBox();
+    this->value_max_x->setDecimals(3);
+    concentrations_layout->addWidget(this->value_max_x, 5, 0);
+
     concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
     this->renderarea_Y = new RenderArea();
     this->renderarea_Y->set_color_scheme(&magma);
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
-    this->button_save_image_X = new QToolButton(this);
-    this->button_save_image_X->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-    concentrations_layout->addWidget(this->button_save_image_X, 2, 0);
-    connect(this->button_save_image_X, SIGNAL(clicked()), this, SLOT(save_concentration_X()));
+    concentrations_layout->addWidget(new QLabel("Minimum value for Y"), 2, 1);
+    this->value_min_y = new QDoubleSpinBox();
+    this->value_min_y->setDecimals(3);
+    concentrations_layout->addWidget(this->value_min_y, 3, 1);
+    concentrations_layout->addWidget(new QLabel("Maximum value for Y"), 4, 1);
+    this->value_max_y = new QDoubleSpinBox();
+    this->value_max_y->setDecimals(3);
+    concentrations_layout->addWidget(this->value_max_y, 5, 1);
 
-    this->button_save_image_Y = new QToolButton(this);
-    this->button_save_image_Y->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-    concentrations_layout->addWidget(this->button_save_image_Y, 2, 1);
-    connect(this->button_save_image_Y, SIGNAL(clicked()), this, SLOT(save_concentration_Y()));
+    this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
+    main_layout->addWidget(this->button_rebuild_graphs);
+    connect(this->button_rebuild_graphs, SIGNAL(released()), this, SLOT(rebuild_graphs()));
 
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
@@ -103,100 +111,58 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->label_frame = new QLabel(this);
     gridlayout->addWidget(this->label_frame, 0, 4);
     main_layout->addWidget(gridwidget);
-
-    this->button_copy_to_movie = new QPushButton("Copy data to movie tab");
-    main_layout->addWidget(this->button_copy_to_movie);
-    this->button_copy_to_movie->setEnabled(false);
-
-    // show integration time statistics
-    main_layout->addWidget(new QLabel(tr("<b>Integration time</b>")));
-    this->label_integration_time = new QLabel;
-    main_layout->addWidget(this->label_integration_time);
-
-    // set up progress bar
-    main_layout->addWidget(new QLabel("<b>Simulation progress</b>"));
-    QWidget *progress_widget = new QWidget;
-    QGridLayout *progress_layout = new QGridLayout;
-    progress_widget->setLayout(progress_layout);
-    this->progress_bar = new QProgressBar;
-    progress_layout->addWidget(this->progress_bar, 0, 0);
-    this->button_stop = new QToolButton(this);
-    this->button_stop->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
-    this->button_stop->setWhatsThis(tr("Cancel simulation"));
-    this->button_stop->setEnabled(false);
-    progress_layout->addWidget(this->button_stop, 0, 1);
-    main_layout->addWidget(progress_widget);
 }
 
-/**
- * @brief      Update progress bar
- *
- * @param[in]  i      Current integration frame number
- * @param[in]  total  Total number of frames
- */
-void ResultsTab::update_progress(unsigned int i, unsigned int total) {
-    this->progress_bar->setRange(0, total);
-    this->progress_bar->setValue(i);
-}
+void MovieTab::set_concentrations(const std::vector<MatrixXXd>& _conc_X, const std::vector<MatrixXXd>& _conc_Y, const MatrixXXi& _mask) {
+    this->clear();
+    this->concentrations_X = _conc_X;
+    this->concentrations_Y = _conc_Y;
+    this->mask = _mask;
 
-/**
- * @brief      Adds a frame.
- *
- * @param[in]  i     Frame index
- * @param[in]  dt    Wall clock integration time
- */
-void ResultsTab::add_frame(unsigned int i, double dt) {
-    this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true), this->reaction_system->get_mask());
-    this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false), this->reaction_system->get_mask());
+    double minval = 1e6;
+    double maxval = -1e6;
 
-    // update render area
-    if(i == 0) {
-        this->renderarea_X->update();
-        this->renderarea_Y->update();
+    for(const auto& mat : this->concentrations_X) {
+        minval = std::min(minval, mat.minCoeff());
+        maxval = std::max(maxval, mat.maxCoeff());
     }
 
-    // update running time
-    if(i != 0) {
-        this->dts.push_back(dt);
-        double avg = std::accumulate(this->dts.begin(), this->dts.end(), 0.0) / (double)dts.size();
-        double remaining = avg * (this->progress_bar->maximum() - this->progress_bar->value());
-        this->label_integration_time->setText(tr("Last frame:\t\t") + QString::number(this->dts.back()) + tr(" sec\nAverage:\t\t") +
-                                              QString::number(avg) + tr(" sec\n") + tr("Estimated remaining:\t") + QString::number(remaining) + tr(" sec\n"));
+    this->renderarea_X->set_minval(minval);
+    this->renderarea_X->set_maxval(maxval);
+    this->renderarea_X->use_boundary_values(true);
+    this->value_min_x->setValue(minval);
+    this->value_max_x->setValue(maxval);
+
+    for(const auto& mat : this->concentrations_Y) {
+        minval = std::min(minval, mat.minCoeff());
+        maxval = std::max(maxval, mat.maxCoeff());
     }
 
-    // update slider
-    this->update_slider_frame();
+    this->renderarea_Y->set_minval(minval);
+    this->renderarea_Y->set_maxval(maxval);
+    this->renderarea_Y->use_boundary_values(true);
+    this->value_min_y->setValue(minval);
+    this->value_max_y->setValue(maxval);
 
-    // update frame label
+    for(unsigned int i=0; i<this->concentrations_X.size(); i++) {
+        this->renderarea_X->add_graph(this->concentrations_X[i], this->mask);
+        this->renderarea_Y->add_graph(this->concentrations_Y[i], this->mask);
+    }
+
     this->update_frame_label();
-}
-
-/**
- * @brief      Clear all previous results
- */
-void ResultsTab::clear() {
-    this->dts.clear();
-    this->renderarea_X->clear();
-    this->renderarea_Y->clear();
-    this->label_frame->setText("");
-    this->label_integration_time->setText("");
-    this->button_copy_to_movie->setEnabled(false);
 }
 
 /**
  * @brief      Update frame label
  */
-void ResultsTab::update_frame_label() {
-    if(this->renderarea_X->get_num_graphs() > 0) {
-        this->button_copy_to_movie->setEnabled(true);
-    }
+void MovieTab::update_frame_label() {
     this->label_frame->setText(tr("Frame: ") + QString::number(this->renderarea_X->get_ctr()+1) + "/" + QString::number(this->renderarea_X->get_num_graphs()));
 }
 
 /**
  * @brief      Update the slider
  */
-void ResultsTab::update_slider_frame() {
+void MovieTab::update_slider_frame() {
     const unsigned int num_graphs = this->renderarea_X->get_num_graphs();
     this->slider_frame->setMinimum(1);
     this->slider_frame->setMaximum(num_graphs);
@@ -213,19 +179,9 @@ void ResultsTab::update_slider_frame() {
 }
 
 /**
- * @brief      Saves an image.
- *
- * @param[in]  img   The image
- */
-void ResultsTab::save_image(const QPixmap& img) {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.png)"));
-    img.save(filename, "PNG");
-}
-
-/**
  * @brief      Show next time frame
  */
-void ResultsTab::next_img() {
+void MovieTab::next_img() {
     this->renderarea_X->next_img();
     this->renderarea_Y->next_img();
     this->update_frame_label();
@@ -235,7 +191,7 @@ void ResultsTab::next_img() {
 /**
  * @brief      Show previous time frame
  */
-void ResultsTab::prev_img() {
+void MovieTab::prev_img() {
     this->renderarea_X->prev_img();
     this->renderarea_Y->prev_img();
     this->update_frame_label();
@@ -245,7 +201,7 @@ void ResultsTab::prev_img() {
 /**
  * @brief      Show first frame
  */
-void ResultsTab::goto_first() {
+void MovieTab::goto_first() {
     this->renderarea_X->set_ctr(0);
     this->renderarea_Y->set_ctr(0);
     this->update_frame_label();
@@ -255,7 +211,7 @@ void ResultsTab::goto_first() {
 /**
  * @brief      Show last frame
  */
-void ResultsTab::goto_last() {
+void MovieTab::goto_last() {
     this->renderarea_X->set_ctr(this->renderarea_X->get_num_graphs()-1);
     this->renderarea_Y->set_ctr(this->renderarea_Y->get_num_graphs()-1);
     this->update_frame_label();
@@ -265,30 +221,38 @@ void ResultsTab::goto_last() {
 /**
  * @brief      Execute when slider is moved
  */
-void ResultsTab::slider_moved(int value) {
+void MovieTab::slider_moved(int value) {
     this->renderarea_X->set_ctr(value - 1);
     this->renderarea_Y->set_ctr(value - 1);
     this->update_frame_label();
 }
 
 /**
- * @brief      Save the concentration profile of X to a file
+ * @brief      Clear all previous results
  */
-void ResultsTab::save_concentration_X() {
-    try {
-        this->save_image(this->renderarea_X->get_current_image());
-    } catch(const std::exception& e) {
-        return;
-    }
+void MovieTab::clear() {
+    this->renderarea_X->clear();
+    this->renderarea_Y->clear();
 }
 
 /**
- * @brief      Save the concentration profile of X to a file
+ * @brief      Change boundary values
  */
-void ResultsTab::save_concentration_Y() {
-    try {
-        this->save_image(this->renderarea_Y->get_current_image());
-    } catch(const std::exception& e) {
-        return;
+void MovieTab::rebuild_graphs() {
+    this->clear();
+
+    this->renderarea_X->set_minval(this->value_min_x->value());
+    this->renderarea_X->set_maxval(this->value_max_x->value());
+    this->renderarea_X->use_boundary_values(true);
+    this->renderarea_Y->set_minval(this->value_min_y->value());
+    this->renderarea_Y->set_maxval(this->value_max_y->value());
+    this->renderarea_Y->use_boundary_values(true);
+
+    for(unsigned int i=0; i<this->concentrations_X.size(); i++) {
+        this->renderarea_X->add_graph(this->concentrations_X[i], this->mask);
+        this->renderarea_Y->add_graph(this->concentrations_Y[i], this->mask);
     }
+
+    this->goto_first();
+    this->update_frame_label();
 }

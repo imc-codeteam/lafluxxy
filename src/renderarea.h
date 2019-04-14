@@ -39,6 +39,10 @@ private:
     unsigned int ctr;
     const std::vector<float>* color_scheme;
 
+    bool flag_boundary_values = false;
+    double graphs_minval = 0.0;
+    double graphs_maxval = 0.0;
+
 public:
     /**
      * @brief      Constructs the object.
@@ -117,6 +121,33 @@ public:
      * @return     The current image.
      */
     const QPixmap& get_current_image() const;
+
+    /**
+     * @brief      Sets the minimum value for the coloring of the graphs
+     *
+     * @param[in]  _minval  The minval
+     */
+    inline void set_minval(double _minval) {
+        this->graphs_minval = _minval;
+    }
+
+    /**
+     * @brief      Sets the maximum value for the coloring of the graphs
+     *
+     * @param[in]  _maxval  The maxval
+     */
+    inline void set_maxval(double _maxval) {
+        this->graphs_maxval = _maxval;
+    }
+
+    /**
+     * @brief      Set flag whether to use use-supplied boundary values
+     *
+     * @param[in]  _boundary_values  Whether to use use-supplied boundary values
+     */
+    inline void use_boundary_values(bool _boundary_values) {
+        this->flag_boundary_values = _boundary_values;
+    }
 
 protected:
     /**

@@ -36,6 +36,7 @@
 #include "inputtab.h"
 #include "resultstab.h"
 #include "mazetab.h"
+#include "movietab.h"
 
 #include "two_dim_rd.h"
 #include "worker_thread.h"
@@ -53,6 +54,7 @@ private:
     InputTab *input_tab;
     ResultsTab *results_tab;
     MazeTab *maze_tab;
+    MovieTab *movie_tab;
 
     std::unique_ptr<TwoDimRD> tdrd;
 
@@ -110,6 +112,11 @@ private slots:
      * @brief      Connect pre-generated maze to simulation
      */
     void press_select_maze();
+
+    /**
+     * @brief      Copy all results to movietab
+     */
+    void copy_data_to_movietab();
 
 private:
     /**

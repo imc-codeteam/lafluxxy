@@ -55,7 +55,8 @@ SOURCES += src/main.cpp\
            src/worker_thread.cpp \
            src/maze.cpp \
            src/mazerenderer.cpp \
-           src/mazeholder.cpp
+           src/mazeholder.cpp \
+           src/movietab.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
@@ -76,7 +77,8 @@ HEADERS  += src/mainwindow.h \
             src/maze.h \
             src/mazerenderer.h \
             src/mazeholder.h \
-            src/matrices.h
+            src/matrices.h \
+            src/movietab.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

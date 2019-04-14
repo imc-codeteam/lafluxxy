@@ -129,8 +129,16 @@ const QPixmap& RenderArea::get_current_image() const {
  * @return     ByteArray with colors
  */
 std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data, const MatrixXXi& mask) const {
-    const double minval = data.minCoeff();
-    const double maxval = data.maxCoeff();
+    double minval = 0.0;
+    double maxval = 0.0;
+
+    if(flag_boundary_values) {
+        minval = this->graphs_minval;
+        maxval = this->graphs_maxval;
+    } else {
+        minval = data.minCoeff();
+        maxval = data.maxCoeff();
+    }
 
     std::vector<uint8_t> result;
     // Qt Images need to be 32-bits aligned

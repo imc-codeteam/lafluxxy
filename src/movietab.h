@@ -19,8 +19,7 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _RESULTSTAB_H
-#define _RESULTSTAB_H
+#pragma once
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -31,19 +30,18 @@
 #include <QProgressBar>
 #include <QSlider>
 #include <QFileDialog>
+#include <QDoubleSpinBox>
 #include <QPushButton>
 
+#include "two_dim_rd.h"
 #include "renderarea.h"
 
-class ResultsTab : public QWidget {
+class MovieTab : public QWidget {
     Q_OBJECT
 
 private:
     RenderArea *renderarea_X;
     RenderArea *renderarea_Y;
-
-    QToolButton *button_save_image_X;
-    QToolButton *button_save_image_Y;
 
     QToolButton *button_next;
     QToolButton *button_prev;
@@ -51,81 +49,23 @@ private:
     QToolButton *button_last;
 
     QSlider *slider_frame;
-
-    QProgressBar *progress_bar;
     QLabel *label_frame;
-    QPushButton *button_copy_to_movie;
 
-    QToolButton *button_stop;
-    QLabel *label_integration_time;
+    QDoubleSpinBox *value_min_x;
+    QDoubleSpinBox *value_max_x;
+    QDoubleSpinBox *value_min_y;
+    QDoubleSpinBox *value_max_y;
 
-    TwoDimRD* reaction_system;
+    QPushButton *button_rebuild_graphs;
 
-    std::vector<double> dts;
+    std::vector<MatrixXXd> concentrations_X;
+    std::vector<MatrixXXd> concentrations_Y;
+    MatrixXXi mask;
 
 public:
-    /**
-     * @brief Input tab constructor
-     * @param parent widget
-     */
-    explicit ResultsTab(QWidget *parent = 0);
+    explicit MovieTab(QWidget *parent = 0);
 
-    /**
-     * @brief      Update progress bar
-     *
-     * @param[in]  i      Current integration frame number
-     * @param[in]  total  Total number of frames
-     */
-    void update_progress(unsigned int i, unsigned int total);
-
-    /**
-     * @brief      Sets the reaction system.
-     *
-     * @param      _reaction_system  The reaction system
-     */
-    inline void set_reaction_system(TwoDimRD* _reaction_system) {
-        this->reaction_system = _reaction_system;
-    }
-
-    /**
-     * @brief      Gets the stop button.
-     *
-     * @return     The stop button.
-     */
-    inline QToolButton* get_stop_button() const {
-        return this->button_stop;
-    }
-
-    /**
-     * @brief      Gets the button copy to movie.
-     *
-     * @return     The button copy to movie.
-     */
-    inline QPushButton* get_button_copy_to_movie() const {
-        return this->button_copy_to_movie;
-    }
-
-    /**
-     * @brief      Adds a frame.
-     *
-     * @param[in]  i     Frame index
-     * @param[in]  dt    Wall clock integration time
-     */
-    void add_frame(unsigned int i, double dt = 0.0);
-
-    /**
-     * @brief      Clear all previous results
-     */
-    void clear();
-
-    /**
-     * @brief      Get number of frames stored
-     *
-     * @return     The number frames.
-     */
-    inline unsigned int get_num_frames() const {
-        return this->renderarea_X->get_num_graphs();
-    }
+    void set_concentrations(const std::vector<MatrixXXd>& _conc_X, const std::vector<MatrixXXd>& _conc_Y, const MatrixXXi& _mask);
 
 private:
     /**
@@ -137,13 +77,6 @@ private:
      * @brief      Update the slider
      */
     void update_slider_frame();
-
-    /**
-     * @brief      Saves an image.
-     *
-     * @param[in]  img   The image
-     */
-    void save_image(const QPixmap& img);
 
 private slots:
     /**
@@ -172,14 +105,12 @@ private slots:
     void slider_moved(int value);
 
     /**
-     * @brief      Save the concentration profile of X to a file
+     * @brief      Clear all previous results
      */
-    void save_concentration_X();
+    void clear();
 
     /**
-     * @brief      Save the concentration profile of X to a file
+     * @brief      Rebuild all graphs
      */
-    void save_concentration_Y();
+    void rebuild_graphs();
 };
-
-#endif // _RESULTSTAB_H

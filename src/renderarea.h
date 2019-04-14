@@ -28,8 +28,7 @@
 
 #include "two_dim_rd.h"
 #include "reaction_lotka_volterra.h"
-#include "colorschemes/viridis.h"
-#include "colorschemes/magma.h"
+#include "colorscheme.h"
 
 class RenderArea : public QWidget {
     Q_OBJECT
@@ -37,7 +36,7 @@ class RenderArea : public QWidget {
 private:
     std::vector<QPixmap> graphs;
     unsigned int ctr;
-    const std::vector<float>* color_scheme;
+    std::unique_ptr<ColorScheme> color_scheme;
 
     bool flag_boundary_values = false;
     double graphs_minval = 0.0;
@@ -104,10 +103,10 @@ public:
     /**
      * @brief      Sets the color scheme.
      *
-     * @param[in]  _color_scheme  The color scheme
+     * @param[in]  name  The name
      */
-    inline void set_color_scheme(const std::vector<float>* _color_scheme) {
-        this->color_scheme = _color_scheme;
+    inline void set_color_scheme(const std::string& name) {
+        this->color_scheme = std::make_unique<ColorScheme>(name);
     }
 
     /**
@@ -167,17 +166,6 @@ private:
      * @return     ByteArray with colors
      */
     std::vector<uint8_t> convert_data(const MatrixXXd& data, const MatrixXXi& mask) const;
-
-    /**
-     * @brief      Obtain color from data point using color scheme
-     *
-     * @param[in]  val     The value
-     * @param[in]  minval  Minimum value
-     * @param[in]  maxval  Maximum value
-     *
-     * @return     The color.
-     */
-    std::array<uint8_t, 3> get_color(double val, double minval, double maxval) const;
 
 private slots:
 

@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include <QDoubleSpinBox>
 #include <QPushButton>
+#include <QComboBox>
 
 #include "two_dim_rd.h"
 #include "renderarea.h"
@@ -55,6 +56,9 @@ private:
     QDoubleSpinBox *value_max_x;
     QDoubleSpinBox *value_min_y;
     QDoubleSpinBox *value_max_y;
+
+    QComboBox *color_scheme_x;
+    QComboBox *color_scheme_y;
 
     QPushButton *button_rebuild_graphs;
 

@@ -161,7 +161,7 @@ std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data, const Matri
                 continue;
             }
 
-            auto cols = this->get_color(data(data.rows() - y - 1, x), minval, maxval);
+            auto cols = this->color_scheme->get_color(data(data.rows() - y - 1, x), minval, maxval);
             result.push_back(cols[0]);
             result.push_back(cols[1]);
             result.push_back(cols[2]);
@@ -169,28 +169,4 @@ std::vector<uint8_t> RenderArea::convert_data(const MatrixXXd& data, const Matri
     }
 
     return result;
-}
-
-/**
- * @brief      Obtain color from data point using color scheme
- *
- * @param[in]  val     The value
- * @param[in]  minval  Minimum value
- * @param[in]  maxval  Maximum value
- *
- * @return     The color.
- */
-std::array<uint8_t, 3> RenderArea::get_color(double val, double minval, double maxval) const {
-    if(val <= minval) {
-        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(0) * 256.0f), uint8_t(this->color_scheme->at(1) * 256.0f), uint8_t(this->color_scheme->at(2) * 256.0f)};
-    }
-
-    if(val >= maxval) {
-        const unsigned int sz = this->color_scheme->size();
-        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(sz-3) * 256.0f), uint8_t(this->color_scheme->at(sz-2) * 256.0f), uint8_t(this->color_scheme->at(sz-1) * 256.0f)};
-    }
-
-    unsigned int idx = (val - minval) / (maxval - minval) * (this->color_scheme->size() / 3 - 1);
-
-    return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(idx*3) * 256.0f), uint8_t(this->color_scheme->at(idx*3+1) * 256.0f), uint8_t(this->color_scheme->at(idx*3+2) * 256.0f)};
 }

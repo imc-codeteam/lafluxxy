@@ -44,9 +44,11 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     QGridLayout *concentrations_layout = new QGridLayout;
     widget->setLayout(concentrations_layout);
 
+    // left hand side
+
     concentrations_layout->addWidget(new QLabel(tr("Concentration X")), 0, 0);
     this->renderarea_X = new RenderArea();
-    this->renderarea_X->set_color_scheme(&viridis);
+    this->renderarea_X->set_color_scheme("viridis");
     concentrations_layout->addWidget(this->renderarea_X, 1, 0);
 
     concentrations_layout->addWidget(new QLabel("Minimum value for X"), 2, 0);
@@ -57,10 +59,16 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->value_max_x = new QDoubleSpinBox();
     this->value_max_x->setDecimals(3);
     concentrations_layout->addWidget(this->value_max_x, 5, 0);
+    this->color_scheme_x = new QComboBox();
+    concentrations_layout->addWidget(this->color_scheme_x, 6, 0);
+    this->color_scheme_x->addItem("Viridis");
+    this->color_scheme_x->addItem("Magma");
+
+    // right hand side
 
     concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
     this->renderarea_Y = new RenderArea();
-    this->renderarea_Y->set_color_scheme(&magma);
+    this->renderarea_Y->set_color_scheme("magma");
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
     concentrations_layout->addWidget(new QLabel("Minimum value for Y"), 2, 1);
@@ -71,6 +79,11 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->value_max_y = new QDoubleSpinBox();
     this->value_max_y->setDecimals(3);
     concentrations_layout->addWidget(this->value_max_y, 5, 1);
+    this->color_scheme_y = new QComboBox();
+    concentrations_layout->addWidget(this->color_scheme_y, 6, 1);
+    this->color_scheme_y->addItem("Viridis");
+    this->color_scheme_y->addItem("Magma");
+    this->color_scheme_y->setCurrentIndex(1);
 
     this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
     main_layout->addWidget(this->button_rebuild_graphs);

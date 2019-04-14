@@ -155,14 +155,14 @@ void TwoDimRD::update() {
 
         // calculate laplacian
         if(this->mask) {
-            this->laplacian_2d_mask(this->delta_a, this->a);
-            this->laplacian_2d_mask(this->delta_b, this->b);
+            this->laplacian_2d_mask_cached(this->delta_a, this->a);
+            this->laplacian_2d_mask_cached(this->delta_b, this->b);
         } else if(this->pbc) {
-            this->laplacian_2d_pbc(this->delta_a, this->a);
-            this->laplacian_2d_pbc(this->delta_b, this->b);
+            this->laplacian_2d_pbc_cached(this->delta_a, this->a);
+            this->laplacian_2d_pbc_cached(this->delta_b, this->b);
         } else {
-            this->laplacian_2d_zeroflux(this->delta_a, this->a);
-            this->laplacian_2d_zeroflux(this->delta_b, this->b);
+            this->laplacian_2d_zeroflux_cached(this->delta_a, this->a);
+            this->laplacian_2d_zeroflux_cached(this->delta_b, this->b);
         }
 
         // multiply with diffusion coefficient
@@ -241,10 +241,72 @@ void TwoDimRD::laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c) {
 
             // calculate laplacian
             delta_c(i,j) = (-4.0 * c(i,j)
-                                 + c(i1, j)
-                                 + c(i2, j)
-                                 + c(i, j1)
-                                 + c(i, j2) ) * idx2;
+                                 + c(i1,j)
+                                 + c(i2,j)
+                                 + c(i,j1)
+                                 + c(i,j2) ) * idx2;
+        }
+    }
+}
+
+/**
+ * @brief      Calculate Laplacian using central finite difference with periodic boundary conditions
+ *
+ * This function attempt to reduce cache misses
+ *
+ * @param      delta_c  Concentration update matrix
+ * @param      c        Current concentration matrix
+ *
+ * Note that this overwrites the current delta matrices!
+ */
+void TwoDimRD::laplacian_2d_pbc_cached(MatrixXXd& delta_c, MatrixXXd& c) {
+    const double idx2 = 1.0 / (this->dx * this->dx);
+
+    omp_set_num_threads(this->ncores);
+    #pragma omp parallel for schedule(static)
+    for(int i=0; i<(int)this->height; i++) {
+        // indices
+        unsigned i1;
+        unsigned i2;
+
+        if(i == 0) {
+            i1 = this->height-1;
+            i2 = i+1;
+        } else if(i == ((int)this->height-1)) {
+            i1 = i-1;
+            i2 = 0;
+        } else {
+            i1 = i-1;
+            i2 = i+1;
+        }
+
+        const auto& row_up = c.row(i1);
+        const auto& row_cur = c.row(i);
+        const auto& row_down = c.row(i2);
+
+        // loop over x axis
+        for(unsigned int j=0; j<this->width; j++) {
+            // indices
+            unsigned j1;
+            unsigned j2;
+
+            if(j == 0) {
+                j1 = this->width-1;
+                j2 = j+1;
+            } else if(j == (this->width-1)) {
+                j1 = j-1;
+                j2 = 0;
+            } else {
+                j1 = j-1;
+                j2 = j+1;
+            }
+
+            // calculate laplacian
+            delta_c(i,j) = (-4.0 * row_cur(j)
+                                 + row_down(j)
+                                 + row_up(j)
+                                 + row_cur(j1)
+                                 + row_cur(j2) ) * idx2;
         }
     }
 }
@@ -294,6 +356,57 @@ void TwoDimRD::laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c) {
 }
 
 /**
+ * @brief      Calculate Laplacian using central finite difference with zero-flux boundaries
+ *
+ * This function attempt to reduce cache misses
+ *
+ * @param      delta_c  Concentration update matrix
+ * @param      c        Current concentration matrix
+ *
+ * Note that this overwrites the current delta matrices!
+ */
+void TwoDimRD::laplacian_2d_zeroflux_cached(MatrixXXd& delta_c, MatrixXXd& c) {
+    unsigned int mheight = c.rows();
+    unsigned int mwidth = c.cols();
+
+    const double idx2 = 1.0 / (dx * dx);
+
+    omp_set_num_threads(this->ncores);
+    #pragma omp parallel for
+    for(int i=0; i<(int)mheight; i++) {
+
+        const auto& row_down = c.row(i > 0 ? i-1 : i);
+        const auto& row_cur = c.row(i);
+        const auto& row_up = c.row(i < ((int)mheight-1) ? i+1 : i);
+
+        for(unsigned int j=0; j<mwidth; j++) {
+
+            double ddx = 0;
+            double ddy = 0;
+
+            if(i == 0) {
+                ddy = row_up(j) - row_cur(j);
+            } else if(i == ((int)mheight - 1)) {
+                ddy = row_down(j) - row_cur(j);
+            } else {
+                ddy = (-2.0 * row_cur(j) + row_down(j) + row_up(j));
+            }
+
+            if(j == 0) {
+                ddx = c(i,j+1) - c(i, j);
+            } else if(j == (mwidth - 1)) {
+                ddx = c(i,j-1) - c(i, j);
+            } else {
+                ddx = (-2.0 * row_cur(j) + row_cur(j-1) + row_cur(j+1));
+            }
+
+            // calculate laplacian
+            delta_c(i,j) = (ddx + ddy) * idx2;
+        }
+    }
+}
+
+/**
  * @brief      Calculate Laplacian using central finite difference with zero-flux mask
  *
  * @param      delta_c  Concentration update matrix
@@ -333,6 +446,65 @@ void TwoDimRD::laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c) {
                 ddx = c(i,j-1) - c(i, j);
             } else {
                 ddx = (-2.0 * c(i,j) + c(i,j-1) + c(i,j+1));
+            }
+
+            // calculate laplacian
+            delta_c(i,j) = (ddx + ddy) * idx2;
+        }
+    }
+}
+
+/**
+ * @brief      Calculate Laplacian using central finite difference with zero-flux mask
+ *
+ * This function attempt to reduce cache misses
+ *
+ * @param      delta_c  Concentration update matrix
+ * @param      c        Current concentration matrix
+ *
+ * Note that this overwrites the current delta matrices!
+ */
+void TwoDimRD::laplacian_2d_mask_cached(MatrixXXd& delta_c, MatrixXXd& c) {
+    unsigned int mheight = c.rows();
+    unsigned int mwidth = c.cols();
+
+    const double idx2 = 1.0 / (dx * dx);
+
+    omp_set_num_threads(this->ncores);
+    #pragma omp parallel for
+    for(int i=0; i<(int)mheight; i++) {
+
+        const auto& row_down = c.row(i > 0 ? i-1 : i);
+        const auto& row_cur = c.row(i);
+        const auto& row_up = c.row(i < ((int)mheight-1) ? i+1 : i);
+
+        const auto& mask_down = this->matmask.row(i > 0 ? i-1 : i);
+        const auto& mask_cur = this->matmask.row(i);
+        const auto& mask_up = this->matmask.row(i < ((int)mheight-1) ? i+1 : i);
+
+        for(unsigned int j=0; j<mwidth; j++) {
+
+            if(mask_cur(j) == 1) {
+                continue;
+            }
+
+            double ddx = 0;
+            double ddy = 0;
+
+            if(mask_up(j) == 1) {                   // north boundary
+                ddy = row_down(j) - row_cur(j);
+            } else if(mask_down(j) == 1) {          // south boundary
+                ddy = row_up(j) - row_cur(j);
+            } else {                                // otherwise
+                ddy = (-2.0 * row_cur(j) + row_down(j) + row_up(j));
+            }
+
+            if(mask_cur(j-1) == 1) {                // west boundary
+                ddx = row_cur(j+1) - row_cur(j);
+            } else if(mask_cur(j+1) == 1) {         // east boundary
+                ddx = row_cur(j-1) - row_cur(j);
+            } else {                                // otherwise
+                ddx = (-2.0 * row_cur(j) + row_cur(j-1) + row_cur(j+1));
             }
 
             // calculate laplacian

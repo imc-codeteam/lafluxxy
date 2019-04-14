@@ -205,6 +205,46 @@ private:
      */
     void laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c);
 
+    /*
+     * CACHE OPTIMIZED FUNCTIONS
+     */
+
+    /**
+     * @brief      Calculate Laplacian using central finite difference with periodic boundary conditions
+     *
+     * This function attempt to reduce cache misses
+     *
+     * @param      delta_c  Concentration update matrix
+     * @param      c        Current concentration matrix
+     *
+     * Note that this overwrites the current delta matrices!
+     */
+    void laplacian_2d_pbc_cached(MatrixXXd& delta_c, MatrixXXd& c);
+
+    /**
+     * @brief      Calculate Laplacian using central finite difference with zero-flux boundaries
+     *
+     * This function attempt to reduce cache misses
+     *
+     * @param      delta_c  Concentration update matrix
+     * @param      c        Current concentration matrix
+     *
+     * Note that this overwrites the current delta matrices!
+     */
+    void laplacian_2d_zeroflux_cached(MatrixXXd& delta_c, MatrixXXd& c);
+
+    /**
+     * @brief      Calculate Laplacian using central finite difference with zero-flux mask
+     *
+     * This function attempt to reduce cache misses
+     *
+     * @param      delta_c  Concentration update matrix
+     * @param      c        Current concentration matrix
+     *
+     * Note that this overwrites the current delta matrices!
+     */
+    void laplacian_2d_mask_cached(MatrixXXd& delta_c, MatrixXXd& c);
+
     /**
      * @brief      Calculate reaction term
      *

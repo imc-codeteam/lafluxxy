@@ -26,12 +26,11 @@
  * https://github.com/BIDS/colormap/blob/master/colormaps.py
  */
 
-#ifndef _VIRIDIS_H
-#define _VIRIDIS_H
+#pragma once
 
 #include <vector>
 
-static const std::vector<float> viridis =
+static const std::vector<float> color_scheme_viridis =
                 {0.267004f, 0.004874f, 0.329415f,
                  0.268510f, 0.009605f, 0.335427f,
                  0.269944f, 0.014625f, 0.341379f,
@@ -288,5 +287,3 @@ static const std::vector<float> viridis =
                  0.974417f, 0.903590f, 0.130215f,
                  0.983868f, 0.904867f, 0.136897f,
                  0.993248f, 0.906157f, 0.143936f};
-
-#endif // _VIRIDIS_H

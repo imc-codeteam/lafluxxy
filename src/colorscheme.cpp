@@ -23,12 +23,27 @@
 
 ColorScheme::ColorScheme(const std::string& name) {
     if(name == "magma") {
-        this->colors = magma;
+        this->colors = color_scheme_magma;
         return;
     }
 
     if(name == "viridis") {
-        this->colors = viridis;
+        this->colors = color_scheme_viridis;
+        return;
+    }
+
+    if(name == "inferno") {
+        this->colors = color_scheme_inferno;
+        return;
+    }
+
+    if(name == "plasma") {
+        this->colors = color_scheme_plasma;
+        return;
+    }
+
+    if(name == "piyg") {
+        this->colors = color_scheme_piyg;
         return;
     }
 

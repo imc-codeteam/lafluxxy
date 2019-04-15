@@ -19,12 +19,16 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _MAGMA_H
-#define _MAGMA_H
+#pragma once
+
+/*
+ * The scheme has been obtained using this link:
+ * https://github.com/BIDS/colormap/blob/master/colormaps.py
+ */
 
 #include <vector>
 
-static const std::vector<float> magma =
+static const std::vector<float> color_scheme_magma =
                {0.001462f, 0.000466f, 0.013866f,
                 0.002258f, 0.001295f, 0.018331f,
                 0.003279f, 0.002305f, 0.023708f,
@@ -281,5 +285,3 @@ static const std::vector<float> magma =
                 0.987691f, 0.977154f, 0.734536f,
                 0.987387f, 0.984288f, 0.742002f,
                 0.987053f, 0.991438f, 0.749504f};
-
-#endif // _MAGMA_H

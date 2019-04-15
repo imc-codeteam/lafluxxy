@@ -59,10 +59,8 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->value_max_x = new QDoubleSpinBox();
     this->value_max_x->setDecimals(3);
     concentrations_layout->addWidget(this->value_max_x, 5, 0);
-    this->color_scheme_x = new QComboBox();
+    this->color_scheme_x = this->build_color_scheme_selector();
     concentrations_layout->addWidget(this->color_scheme_x, 6, 0);
-    this->color_scheme_x->addItem("Viridis");
-    this->color_scheme_x->addItem("Magma");
 
     // right hand side
 
@@ -79,10 +77,8 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->value_max_y = new QDoubleSpinBox();
     this->value_max_y->setDecimals(3);
     concentrations_layout->addWidget(this->value_max_y, 5, 1);
-    this->color_scheme_y = new QComboBox();
+    this->color_scheme_y = this->build_color_scheme_selector();
     concentrations_layout->addWidget(this->color_scheme_y, 6, 1);
-    this->color_scheme_y->addItem("Viridis");
-    this->color_scheme_y->addItem("Magma");
     this->color_scheme_y->setCurrentIndex(1);
 
     this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
@@ -192,6 +188,22 @@ void MovieTab::update_slider_frame() {
 }
 
 /**
+ * @brief      Builds a color scheme selector.
+ *
+ * @return     The color scheme selector.
+ */
+QComboBox* MovieTab::build_color_scheme_selector() {
+    QComboBox* selector = new QComboBox();
+    selector->addItem("Viridis");
+    selector->addItem("Magma");
+    selector->addItem("Plasma");
+    selector->addItem("Inferno");
+    selector->addItem("PiYG");
+
+    return selector;
+}
+
+/**
  * @brief      Show next time frame
  */
 void MovieTab::next_img() {
@@ -253,6 +265,9 @@ void MovieTab::clear() {
  */
 void MovieTab::rebuild_graphs() {
     this->clear();
+
+    this->renderarea_X->set_color_scheme(this->color_scheme_x->currentText().toLower().toStdString());
+    this->renderarea_Y->set_color_scheme(this->color_scheme_y->currentText().toLower().toStdString());
 
     this->renderarea_X->set_minval(this->value_min_x->value());
     this->renderarea_X->set_maxval(this->value_max_x->value());

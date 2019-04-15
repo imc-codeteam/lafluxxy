@@ -24,21 +24,27 @@
 
 #include <QPixmap>
 #include <array>
+#include <memory>
 
 #include "maze.h"
-#include "colorschemes/viridis.h"
+#include "colorscheme.h"
 
 class MazeRenderer {
 private:
-    const std::vector<float>* color_scheme;
+    std::unique_ptr<ColorScheme> color_scheme;
 
 public:
     MazeRenderer();
 
     std::vector<uint8_t> create_image(const Maze& maze, unsigned int cell_size = 10);
 
-    inline void set_color_scheme(const std::vector<float>* _color_scheme) {
-        this->color_scheme = _color_scheme;
+    /**
+     * @brief      Sets the color scheme.
+     *
+     * @param[in]  name  The name
+     */
+    inline void set_color_scheme(const std::string& name) {
+        this->color_scheme = std::make_unique<ColorScheme>(name);
     }
 
     QPixmap generate_maze_pixmap(const Maze& maze, unsigned int maxsize);

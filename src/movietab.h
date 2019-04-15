@@ -82,6 +82,13 @@ private:
      */
     void update_slider_frame();
 
+    /**
+     * @brief      Builds a color scheme selector.
+     *
+     * @return     The color scheme selector.
+     */
+    QComboBox* build_color_scheme_selector();
+
 private slots:
     /**
      * @brief      Show next time frame

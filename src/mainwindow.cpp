@@ -83,7 +83,8 @@ void MainWindow::about() {
     message_box.setText(tr(PROGRAM_NAME) + tr(" ") + tr(PROGRAM_VERSION) +
                         tr(".\n\nAuthors:\nIvo Filot <i.a.w.filot@tue.nl>\n") +
                         tr("\n") + tr(PROGRAM_NAME) + tr(" is licensed under the GPLv3 license.\n") +
-                        tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3."));
+                        tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3.\n\n") +
+                        tr("Color schemes have been obtained from Matplotlib - https://matplotlib.org/index.html."));
     message_box.setIcon(QMessageBox::Information);
     message_box.setWindowTitle(tr("About ") + tr(PROGRAM_NAME));
     message_box.exec();

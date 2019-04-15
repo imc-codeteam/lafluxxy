@@ -22,7 +22,7 @@
 #include "mazerenderer.h"
 
 MazeRenderer::MazeRenderer() {
-    this->set_color_scheme(&viridis);
+    this->set_color_scheme("viridis");
 }
 
 std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int cell_size) {
@@ -46,7 +46,7 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
             unsigned int x2 = (j+1) * cell_size;
             unsigned int y2 = img_height - (i * cell_size) - 1;
 
-            auto col = this->get_color((double)(maxval - maze.get_path_length(i,j)), minval, maxval);
+            auto col = this->color_scheme->get_color((double)(maxval - maze.get_path_length(i,j)), minval, maxval);
             this->fill_rectangle(data, img_width, x1, y1, x2, y2, col);
         }
     }
@@ -144,28 +144,4 @@ void MazeRenderer::fill_rectangle(std::vector<uint8_t>& data, unsigned int width
             data[idx+2] = color[2];
         }
     }
-}
-
-/**
- * @brief      Obtain color from data point using color scheme
- *
- * @param[in]  val     The value
- * @param[in]  minval  Minimum value
- * @param[in]  maxval  Maximum value
- *
- * @return     The color.
- */
-std::array<uint8_t, 3> MazeRenderer::get_color(double val, double minval, double maxval) const {
-    if(val <= minval) {
-        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(0) * 256.0f), uint8_t(this->color_scheme->at(1) * 256.0f), uint8_t(this->color_scheme->at(2) * 256.0f)};
-    }
-
-    if(val >= maxval) {
-        const unsigned int sz = this->color_scheme->size();
-        return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(sz-3) * 256.0f), uint8_t(this->color_scheme->at(sz-2) * 256.0f), uint8_t(this->color_scheme->at(sz-1) * 256.0f)};
-    }
-
-    unsigned int idx = (val - minval) / (maxval - minval) * (this->color_scheme->size() / 3 - 1);
-
-    return std::array<uint8_t, 3>{uint8_t(this->color_scheme->at(idx*3) * 256.0f), uint8_t(this->color_scheme->at(idx*3+1) * 256.0f), uint8_t(this->color_scheme->at(idx*3+2) * 256.0f)};
 }

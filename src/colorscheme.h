@@ -27,6 +27,9 @@
 
 #include "colorschemes/magma.h"
 #include "colorschemes/viridis.h"
+#include "colorschemes/plasma.h"
+#include "colorschemes/inferno.h"
+#include "colorschemes/piyg.h"
 
 class ColorScheme {
 private:
@@ -45,6 +48,7 @@ public:
      * @return     The color.
      */
     std::array<uint8_t, 3> get_color(double val, double minval, double maxval) const;
+
 private:
 
 };

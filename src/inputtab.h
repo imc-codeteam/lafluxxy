@@ -38,10 +38,16 @@
 #include "two_dim_rd.h"
 #include "input_lotka_volterra.h"
 #include "input_gray_scott.h"
+#include "input_barkley.h"
+#include "input_fitzhugh_nagumo.h"
 #include "input_brusselator.h"
+
 #include "reaction_lotka_volterra.h"
 #include "reaction_gray_scott.h"
+#include "reaction_barkley.h"
+#include "reaction_fitzhugh_nagumo.h"
 #include "reaction_brusselator.h"
+
 #include "mazerenderer.h"
 
 class InputTab : public QWidget {

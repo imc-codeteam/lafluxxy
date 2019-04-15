@@ -107,11 +107,17 @@ TwoDimRD* InputTab::build_reaction_system() {
         case GRAY_SCOTT:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionGrayScott()));
         break;
+        case BARKLEY:
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBarkley()));
+        break;
+        case FITZHUGH_NAGUMO:
+            reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionFitzhughNagumo()));
+        break;
         case BRUSSELATOR:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBrusselator()));
         break;
         default:
-            // do nothing
+            throw std::logic_error("Invalid reaction system encountered.");
         break;
     }
 
@@ -346,6 +352,12 @@ void InputTab::set_reaction_input(int reactype) {
         break;
         case GRAY_SCOTT:
             this->reaction_settings = new InputGrayScott();
+        break;
+        case FITZHUGH_NAGUMO:
+            this->reaction_settings = new InputFitzhughNagumo();
+        break;
+        case BARKLEY:
+            this->reaction_settings = new InputBarkley();
         break;
         case BRUSSELATOR:
             this->reaction_settings = new InputBrusselator();

@@ -66,7 +66,7 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
 
     concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
     this->renderarea_Y = new RenderArea();
-    this->renderarea_Y->set_color_scheme("magma");
+    this->renderarea_Y->set_color_scheme("piyg");
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
     concentrations_layout->addWidget(new QLabel("Minimum value for Y"), 2, 1);
@@ -79,7 +79,7 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     concentrations_layout->addWidget(this->value_max_y, 5, 1);
     this->color_scheme_y = this->build_color_scheme_selector();
     concentrations_layout->addWidget(this->color_scheme_y, 6, 1);
-    this->color_scheme_y->setCurrentIndex(1);
+    this->color_scheme_y->setCurrentText("PiYG");
 
     this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
     main_layout->addWidget(this->button_rebuild_graphs);
@@ -128,30 +128,23 @@ void MovieTab::set_concentrations(const std::vector<MatrixXXd>& _conc_X, const s
     this->concentrations_Y = _conc_Y;
     this->mask = _mask;
 
-    double minval = 1e6;
-    double maxval = -1e6;
+    double minval_x =_conc_X.back().minCoeff();
+    double maxval_x =_conc_X.back().maxCoeff();
 
-    for(const auto& mat : this->concentrations_X) {
-        minval = std::min(minval, mat.minCoeff());
-        maxval = std::max(maxval, mat.maxCoeff());
-    }
-
-    this->renderarea_X->set_minval(minval);
-    this->renderarea_X->set_maxval(maxval);
+    this->renderarea_X->set_minval(minval_x);
+    this->renderarea_X->set_maxval(maxval_x);
     this->renderarea_X->use_boundary_values(true);
-    this->value_min_x->setValue(minval);
-    this->value_max_x->setValue(maxval);
+    this->value_min_x->setValue(minval_x);
+    this->value_max_x->setValue(maxval_x);
 
-    for(const auto& mat : this->concentrations_Y) {
-        minval = std::min(minval, mat.minCoeff());
-        maxval = std::max(maxval, mat.maxCoeff());
-    }
+    double minval_y =_conc_Y.back().minCoeff();
+    double maxval_y =_conc_Y.back().maxCoeff();
 
-    this->renderarea_Y->set_minval(minval);
-    this->renderarea_Y->set_maxval(maxval);
+    this->renderarea_Y->set_minval(minval_y);
+    this->renderarea_Y->set_maxval(maxval_y);
     this->renderarea_Y->use_boundary_values(true);
-    this->value_min_y->setValue(minval);
-    this->value_max_y->setValue(maxval);
+    this->value_min_y->setValue(minval_y);
+    this->value_max_y->setValue(maxval_y);
 
     for(unsigned int i=0; i<this->concentrations_X.size(); i++) {
         this->renderarea_X->add_graph(this->concentrations_X[i], this->mask);
@@ -159,6 +152,7 @@ void MovieTab::set_concentrations(const std::vector<MatrixXXd>& _conc_X, const s
     }
 
     this->update_frame_label();
+    this->update_slider_frame();
 }
 
 /**

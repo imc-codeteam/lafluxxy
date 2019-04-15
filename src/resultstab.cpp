@@ -55,7 +55,7 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
 
     concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
     this->renderarea_Y = new RenderArea();
-    this->renderarea_Y->set_color_scheme("magma");
+    this->renderarea_Y->set_color_scheme("piyg");
     concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
 
     this->button_save_image_X = new QToolButton(this);

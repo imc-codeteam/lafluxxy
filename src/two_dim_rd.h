@@ -194,7 +194,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_pbc(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_pbc(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /**
      * @brief      Calculate Laplacian using central finite difference with zero-flux boundaries
@@ -204,7 +204,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_zeroflux(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_zeroflux(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /**
      * @brief      Calculate Laplacian using central finite difference with zero-flux mask
@@ -214,7 +214,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_mask(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_mask(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /*
      * CACHE OPTIMIZED FUNCTIONS
@@ -230,7 +230,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_pbc_cached(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_pbc_cached(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /**
      * @brief      Calculate Laplacian using central finite difference with zero-flux boundaries
@@ -242,7 +242,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_zeroflux_cached(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_zeroflux_cached(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /**
      * @brief      Calculate Laplacian using central finite difference with zero-flux mask
@@ -254,7 +254,7 @@ private:
      *
      * Note that this overwrites the current delta matrices!
      */
-    void laplacian_2d_mask_cached(MatrixXXd& delta_c, MatrixXXd& c);
+    void laplacian_2d_mask_cached(MatrixXXd& delta_c, const MatrixXXd& c);
 
     /**
      * @brief      Calculate reaction term

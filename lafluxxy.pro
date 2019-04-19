@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += c++14
 
 gcc {
-  QMAKE_CXXFLAGS += -fopenmp -march=native
+  QMAKE_CXXFLAGS += -fopenmp -march=native -Wall -Wextra
   QMAKE_LFLAGS += -fopenmp -march=native
   QMAKE_CXXFLAGS_RELEASE -= -O2
   QMAKE_CXXFLAGS_RELEASE *= -O3

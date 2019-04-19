@@ -21,9 +21,6 @@
 
 #pragma once
 
-#include <Eigen/Dense>
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
-
 #include <random>
 #include <iostream>
 #include <unordered_map>
@@ -32,6 +29,8 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MatrixXXd;
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include "matrices.h"
 
 class ReactionSystem {
 private:

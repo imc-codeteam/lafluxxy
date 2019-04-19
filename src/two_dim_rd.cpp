@@ -520,14 +520,19 @@ void TwoDimRD::laplacian_2d_mask_cached(MatrixXXd& delta_c, const MatrixXXd& c) 
  */
 void TwoDimRD::add_reaction() {
     omp_set_num_threads(this->ncores);
+
     #pragma omp parallel for schedule(static)
     for(int i=0; i<(int)this->height; i++) {
         for(unsigned int j=0; j<this->width; j++) {
+
             const double a = this->a(i,j);
             const double b = this->b(i,j);
+
             double ra = 0;
             double rb = 0;
+
             this->reaction_system->reaction(a, b, &ra, &rb);
+
             this->delta_a(i,j) += ra;
             this->delta_b(i,j) += rb;
         }

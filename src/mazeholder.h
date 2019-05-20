@@ -54,10 +54,11 @@ public:
     /**
      * @brief      Builds mazes.
      *
+     * @param[in]  algo   The algorithm
      * @param[in]  mrows  Number of rows in mazes
      * @param[in]  mcols  Number of columns in mazes
      */
-    void build_mazes(unsigned int mrows, unsigned int mcols);
+    void build_mazes(MazeAlgorithmType algo, unsigned int mrows, unsigned int mcols);
 
     inline int get_selected_maze_id() const {
         return this->maze_selector->checkedId();
@@ -72,12 +73,13 @@ private:
      * @brief      Generate single maze
      *
      * @param      mazegrid  Target layout to place Maze image in
-     * @param[in]  rows      Number of rows for the mazes
-     * @param[in]  cols      Number of columns for the mazes
-     * @param[in]  row       Row number in grid
-     * @param[in]  col       Column number in grid
+     * @param[in]  algo      The algorithm
+     * @param[in]  rows      The rows
+     * @param[in]  cols      The cols
+     * @param[in]  row       gridlayout row number
+     * @param[in]  col       gridlayout column number
      */
-    void generate_maze(QGridLayout* mazegrid, unsigned int rows = 10, unsigned int cols = 10, unsigned int row = 0, unsigned int col = 0);
+    void generate_maze(QGridLayout* mazegrid,  MazeAlgorithmType algo, unsigned int rows = 10, unsigned int cols = 10, unsigned int row = 0, unsigned int col = 0);
 
 private slots:
 

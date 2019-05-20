@@ -137,7 +137,7 @@ void MazeTab::build_mazes() {
 
     this->mazeholder = new MazeHolder();
     this->layout->addWidget(this->mazeholder);
-    this->mazeholder->build_mazes(this->input_maze_height->value(), this->input_maze_width->value());
+    this->mazeholder->build_mazes(MazeAlgorithmType::ALGO_BINARY_TREE, this->input_maze_height->value(), this->input_maze_width->value());
 
     this->button_select_maze = new QPushButton("Select maze");
     this->layout->addWidget(this->button_select_maze);

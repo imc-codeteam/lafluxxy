@@ -35,13 +35,14 @@ MazeHolder::MazeHolder(QWidget* parent) : QWidget(parent) {
 /**
  * @brief      Builds mazes.
  *
+ * @param[in]  algo   The algorithm
  * @param[in]  mrows  Number of rows in mazes
  * @param[in]  mcols  Number of columns in mazes
  */
-void MazeHolder::build_mazes(unsigned int mrows, unsigned int mcols) {
+void MazeHolder::build_mazes(MazeAlgorithmType algo, unsigned int mrows, unsigned int mcols) {
     for(unsigned int y=0; y<3; y++) {
         for(unsigned int x=0; x<3; x++) {
-            this->generate_maze(this->mazegrid, mrows, mcols, y, x);
+            this->generate_maze(this->mazegrid, algo, mrows, mcols, y, x);
         }
     }
 }
@@ -50,11 +51,14 @@ void MazeHolder::build_mazes(unsigned int mrows, unsigned int mcols) {
  * @brief      Generate single maze
  *
  * @param      mazegrid  Target layout to place Maze image in
- * @param[in]  row       Row number
- * @param[in]  col       Column number
+ * @param[in]  algo      The algorithm
+ * @param[in]  rows      The rows
+ * @param[in]  cols      The cols
+ * @param[in]  row       gridlayout row number
+ * @param[in]  col       gridlayout column number
  */
-void MazeHolder::generate_maze(QGridLayout* mazegrid, unsigned int rows, unsigned int cols, unsigned int row, unsigned int col) {
-    Maze* maze = this->mb.build_maze(MazeAlgorithmType::ALGO_BINARY_TREE, rows, cols);
+void MazeHolder::generate_maze(QGridLayout* mazegrid, MazeAlgorithmType algo, unsigned int rows, unsigned int cols, unsigned int row, unsigned int col) {
+    Maze* maze = this->mb.build_maze(algo, rows, cols);
     this->mazes.push_back(std::unique_ptr<Maze>(maze));
 
     QPixmap pixmap = this->mz.generate_maze_pixmap(*maze, 128);

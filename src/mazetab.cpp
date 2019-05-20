@@ -60,9 +60,13 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     // build map to hold maze algorithms
     algo_names.emplace_back("Binary Tree");
     algo_names.emplace_back("Sidewinder");
+    algo_names.emplace_back("Aldous-Broder");
+    algo_names.emplace_back("Prim's Simplified");
 
     algo_enums.emplace_back(MazeAlgorithmType::ALGO_BINARY_TREE);
     algo_enums.emplace_back(MazeAlgorithmType::ALGO_SIDEWINDER);
+    algo_enums.emplace_back(MazeAlgorithmType::ALGO_ALDOUS_BRODER);
+    algo_enums.emplace_back(MazeAlgorithmType::ALGO_PRIMS_SIMPLIFIED);
 
     this->maze_algo_selector->addItem(tr("Please select an algorithm..."));
     for(const auto& name : algo_names) {
@@ -143,9 +147,13 @@ void MazeTab::build_mazes() {
         delete this->button_select_maze;
     }
 
+    if(this->maze_algo_selector->currentIndex() == 0) {
+        return;
+    }
+
     this->mazeholder = new MazeHolder();
     this->layout->addWidget(this->mazeholder);
-    this->mazeholder->build_mazes(this->algo_enums[this->maze_algo_selector->currentIndex()], this->input_maze_height->value(), this->input_maze_width->value());
+    this->mazeholder->build_mazes(this->algo_enums[this->maze_algo_selector->currentIndex()-1], this->input_maze_height->value(), this->input_maze_width->value());
 
     this->button_select_maze = new QPushButton("Select maze");
     this->layout->addWidget(this->button_select_maze);

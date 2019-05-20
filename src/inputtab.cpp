@@ -143,8 +143,6 @@ void InputTab::set_maze(Maze* _maze) {
     if(this->maze != nullptr) {
         delete this->maze;
     }
-    std::cout << "Setting maze" << std::endl;
-
     this->button_maze_select->setVisible(false);
     this->maze = _maze;
 

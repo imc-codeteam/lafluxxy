@@ -57,9 +57,17 @@ MazeTab::MazeTab(QWidget *parent) : QWidget(parent) {
     layout->addWidget(new QLabel(tr("<b>Maze generator algorithm</b>")));
     this->maze_algo_selector = new QComboBox();
 
+    // build map to hold maze algorithms
+    algo_names.emplace_back("Binary Tree");
+    algo_names.emplace_back("Sidewinder");
+
+    algo_enums.emplace_back(MazeAlgorithmType::ALGO_BINARY_TREE);
+    algo_enums.emplace_back(MazeAlgorithmType::ALGO_SIDEWINDER);
+
     this->maze_algo_selector->addItem(tr("Please select an algorithm..."));
-    this->maze_algo_selector->addItem(tr("Binary Tree"));
-    this->maze_algo_selector->addItem(tr("Sidewinder"));
+    for(const auto& name : algo_names) {
+        this->maze_algo_selector->addItem(tr(name.c_str()));
+    }
     this->maze_algo_selector->setCurrentIndex(0);
     layout->addWidget(this->maze_algo_selector);
 
@@ -137,7 +145,7 @@ void MazeTab::build_mazes() {
 
     this->mazeholder = new MazeHolder();
     this->layout->addWidget(this->mazeholder);
-    this->mazeholder->build_mazes(MazeAlgorithmType::ALGO_BINARY_TREE, this->input_maze_height->value(), this->input_maze_width->value());
+    this->mazeholder->build_mazes(this->algo_enums[this->maze_algo_selector->currentIndex()], this->input_maze_height->value(), this->input_maze_width->value());
 
     this->button_select_maze = new QPushButton("Select maze");
     this->layout->addWidget(this->button_select_maze);

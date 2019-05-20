@@ -31,6 +31,8 @@
 #include <QPushButton>
 #include <QSpinBox>
 
+#include <unordered_map>
+
 #include "mazeholder.h"
 
 class MazeTab : public QWidget {
@@ -45,6 +47,9 @@ private:
 
     MazeHolder* mazeholder = nullptr;               // widget to hold generated mazes
     QPushButton* button_select_maze = nullptr;      // button to select the maze
+
+    std::vector<std::string> algo_names;
+    std::vector<MazeAlgorithmType> algo_enums;
 
     int maze_algo;                                  // type of maze generation algorithm
 

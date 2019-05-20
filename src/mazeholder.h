@@ -29,6 +29,7 @@
 #include <QRadioButton>
 
 #include "mazerenderer.h"
+#include "vendor/mazebuilder/src/maze_builder.h"
 
 class MazeHolder : public QWidget {
     Q_OBJECT
@@ -36,7 +37,10 @@ class MazeHolder : public QWidget {
 private:
     QGridLayout* mazegrid;                          // grid to store mazes in
     std::vector<std::unique_ptr<Maze> > mazes;      // store mazes
+
     MazeRenderer mz;                                // object to render images from a maze
+    MazeBuilder mb;                                 // object that build mazes
+
     QButtonGroup* maze_selector;                    // select maze
 
 public:

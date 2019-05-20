@@ -1,0 +1,3 @@
+[submodule "vendor/mazebuilder"]
+	path = vendor/mazebuilder
+	url = git@gitlab.tue.nl:inorganic-materials-chemistry/mazebuilder.git

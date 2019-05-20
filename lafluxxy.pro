@@ -57,7 +57,6 @@ SOURCES += src/main.cpp\
            src/reaction_fitzhugh_nagumo.cpp \
            src/reaction_system.cpp \
            src/worker_thread.cpp \
-           src/maze.cpp \
            src/mazerenderer.cpp \
            src/mazeholder.cpp \
            src/movietab.cpp \
@@ -83,12 +82,33 @@ HEADERS  += src/mainwindow.h \
             src/reaction_fitzhugh_nagumo.h \
             src/reaction_system.h \
             src/worker_thread.h \
-            src/maze.h \
             src/mazerenderer.h \
             src/mazeholder.h \
             src/matrices.h \
             src/movietab.h \
             src/colorscheme.h
+
+# files from external library mazebuilder
+SOURCES += vendor/mazebuilder/src/cell.cpp \
+           vendor/mazebuilder/src/maze.cpp \
+           vendor/mazebuilder/src/maze_algorithm.cpp \
+           vendor/mazebuilder/src/maze_algorithm_aldous_broder.cpp \
+           vendor/mazebuilder/src/maze_algorithm_binary_tree.cpp \
+           vendor/mazebuilder/src/maze_algorithm_prims_simplified.cpp \
+           vendor/mazebuilder/src/maze_algorithm_sidewinder.cpp \
+           vendor/mazebuilder/src/maze_builder.cpp \
+           vendor/mazebuilder/src/maze_statistics.cpp
+
+# files from external library mazebuilder
+HEADERS += vendor/mazebuilder/src/cell.h \
+           vendor/mazebuilder/src/maze.h \
+           vendor/mazebuilder/src/maze_algorithm.h \
+           vendor/mazebuilder/src/maze_algorithm_aldous_broder.h \
+           vendor/mazebuilder/src/maze_algorithm_binary_tree.h \
+           vendor/mazebuilder/src/maze_algorithm_prims_simplified.h \
+           vendor/mazebuilder/src/maze_algorithm_sidewinder.h \
+           vendor/mazebuilder/src/maze_builder.h \
+           vendor/mazebuilder/src/maze_statistics.h
 
 linux {
     INCLUDEPATH += /usr/include/eigen3

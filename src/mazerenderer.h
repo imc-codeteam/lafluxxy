@@ -26,12 +26,14 @@
 #include <array>
 #include <memory>
 
-#include "maze.h"
+#include "vendor/mazebuilder/src/maze.h"
 #include "colorscheme.h"
+#include "vendor/mazebuilder/src/maze_statistics.h"
 
 class MazeRenderer {
 private:
     std::unique_ptr<ColorScheme> color_scheme;
+    MazeStatistics mazestats;
 
 public:
     MazeRenderer();

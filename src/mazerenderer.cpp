@@ -26,36 +26,35 @@ MazeRenderer::MazeRenderer() {
 }
 
 std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int cell_size) {
-    unsigned int img_width = maze.get_width() * cell_size + 1;
-    unsigned int img_height = maze.get_height() * cell_size + 1;
+    unsigned int img_width = maze.cols() * cell_size + 1;
+    unsigned int img_height = maze.rows() * cell_size + 1;
     img_width += (img_width * 3) % 4;
     img_height += (img_height * 3) % 4;
 
+    // perform Dijkstra algorithm
+    auto dijkstra = this->mazestats.perform_dijkstra(maze, maze.cols()/2, maze.rows()/2);
+
     std::vector<uint8_t> data(img_width * img_height * 3, 255);
     const double minval = 0.0;
-    const double maxval = (double)maze.get_max_length();
-
-    const auto& cells = maze.get_cells();
+    const double maxval = (double)dijkstra.maxCoeff();
 
     // fill background
-    for(unsigned int i=0; i<maze.get_height(); i++) {
-        for(unsigned int j=0; j<maze.get_width(); j++) {
+    for(unsigned int i=0; i<maze.rows(); i++) {
+        for(unsigned int j=0; j<maze.cols(); j++) {
             unsigned int x1 = j * cell_size;
             unsigned int y1 = img_height - ((i+1) * cell_size) - 1;
 
             unsigned int x2 = (j+1) * cell_size;
             unsigned int y2 = img_height - (i * cell_size) - 1;
 
-            auto col = this->color_scheme->get_color((double)(maxval - maze.get_path_length(i,j)), minval, maxval);
+            auto col = this->color_scheme->get_color((double)(maxval - dijkstra(i,j)), minval, maxval);
             this->fill_rectangle(data, img_width, x1, y1, x2, y2, col);
         }
     }
 
     // draw boundaries
-    for(unsigned int i=0; i<maze.get_height(); i++) {
-        for(unsigned int j=0; j<maze.get_width(); j++) {
-            const Cell* cell = &cells[i][j];
-
+    for(unsigned int i=0; i<maze.rows(); i++) {
+        for(unsigned int j=0; j<maze.cols(); j++) {
             unsigned int x1 = j * cell_size;
             unsigned int y1 = img_height - ((i+1) * cell_size) - 1;
 
@@ -63,19 +62,19 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
             unsigned int y2 = img_height - (i * cell_size) - 1;
 
             // draw cell borders
-            if(cell->get_north() == nullptr) {
+            if(maze(i,j).get_north() == nullptr) {
                 this->draw_line(data, img_width, x1, y1, x2, y1, std::array<uint8_t, 3>{0, 0, 0});
             }
 
-            if(cell->get_west() == nullptr) {
+            if(maze(i,j).get_west() == nullptr) {
                 this->draw_line(data, img_width, x1, y1, x1, y2, std::array<uint8_t, 3>{0, 0, 0});
             }
 
-            if(!cell->is_linked(cell->get_east())) {
+            if(!maze(i,j).is_linked(maze(i,j).get_east())) {
                 this->draw_line(data, img_width, x2, y1, x2, y2, std::array<uint8_t, 3>{0, 0, 0});
             }
 
-            if(!cell->is_linked(cell->get_south())) {
+            if(!maze(i,j).is_linked(maze(i,j).get_south())) {
                 this->draw_line(data, img_width, x1, y2, x2, y2, std::array<uint8_t, 3>{0, 0, 0});
             }
         }
@@ -93,11 +92,11 @@ std::vector<uint8_t> MazeRenderer::create_image(const Maze& maze, unsigned int c
  * @return     The maze pixmap.
  */
 QPixmap MazeRenderer::generate_maze_pixmap(const Maze& maze, unsigned int maxsize) {
-    unsigned int cell_size = maxsize / std::max(maze.get_width(), maze.get_height());
+    unsigned int cell_size = maxsize / std::max(maze.cols(), maze.rows());
     std::vector<uint8_t> graph_data = this->create_image(maze, cell_size);
 
-    unsigned int img_width = maze.get_width() * cell_size + 1;
-    unsigned int img_height = maze.get_height() * cell_size + 1;
+    unsigned int img_width = maze.cols() * cell_size + 1;
+    unsigned int img_height = maze.rows() * cell_size + 1;
     unsigned int mazewidth = img_width;
     unsigned int mazeheight = img_height;
 

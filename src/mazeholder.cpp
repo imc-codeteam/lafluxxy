@@ -54,11 +54,10 @@ void MazeHolder::build_mazes(unsigned int mrows, unsigned int mcols) {
  * @param[in]  col       Column number
  */
 void MazeHolder::generate_maze(QGridLayout* mazegrid, unsigned int rows, unsigned int cols, unsigned int row, unsigned int col) {
-    this->mazes.push_back(std::make_unique<Maze>(rows, cols));
-    this->mazes.back()->build_algo_binary_tree();
-    this->mazes.back()->build_path_dijkstra(rows / 2, cols / 2);
-    const Maze& maze = *this->mazes.back().get();
-    QPixmap pixmap = this->mz.generate_maze_pixmap(maze, 128);
+    Maze* maze = this->mb.build_maze(MazeAlgorithmType::ALGO_BINARY_TREE, rows, cols);
+    this->mazes.push_back(std::unique_ptr<Maze>(maze));
+
+    QPixmap pixmap = this->mz.generate_maze_pixmap(*maze, 128);
 
     QLabel *mazelabel = new QLabel;
     mazelabel->setPixmap(pixmap);

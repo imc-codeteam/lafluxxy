@@ -143,6 +143,7 @@ void InputTab::set_maze(Maze* _maze) {
     if(this->maze != nullptr) {
         delete this->maze;
     }
+    std::cout << "Setting maze" << std::endl;
 
     this->button_maze_select->setVisible(false);
     this->maze = _maze;
@@ -154,18 +155,18 @@ void InputTab::set_maze(Maze* _maze) {
     this->label_maze_img->setVisible(true);
 
     // calculate Maze integration settings
-    const unsigned int mzmax = std::max(this->maze->get_width(), this->maze->get_height());
+    const unsigned int mzmax = std::max(this->maze->cols(), this->maze->rows());
     unsigned int cellx = this->input_width->value() / mzmax;
     unsigned int celly = this->input_height->value() / mzmax;
-    unsigned int gridx = this->maze->get_width() * cellx;
-    unsigned int gridy = this->maze->get_height() * celly;
+    unsigned int gridx = this->maze->cols() * cellx;
+    unsigned int gridy = this->maze->rows() * celly;
 
     // display maze properties
     this->label_maze_properties->setVisible(true);
     this->label_maze_properties->setText(tr("<b>Maze properties</b><br>Rows:\t") +
-                                         QString::number(this->maze->get_height()) +
-                                         tr("<br>Columns:\t") + QString::number(this->maze->get_width()) +
-                                         tr("<br>Longest path:\t") + QString::number(this->maze->get_max_length()) +
+                                         QString::number(this->maze->rows()) +
+                                         tr("<br>Columns:\t") + QString::number(this->maze->cols()) +
+                                         // tr("<br>Longest path:\t") + QString::number(this->maze->get_max_length()) +
                                          tr("<br><br>This matrix can be integrated on a ") + QString::number(gridx) + tr("x") + QString::number(gridy) + tr(" grid.<br>") +
                                          tr("Maze cell size: ") + QString::number(cellx) + tr("x") + QString::number(celly) + tr("<br>") +
                                          tr("Accessible area size: ") + QString::number(cellx-2) + tr("x") + QString::number(celly-2) + tr("<br>")
@@ -464,11 +465,11 @@ void InputTab::set_default_values() {
  */
 void InputTab::action_enable_maze(int state) {
     if(state == Qt::Checked) {
-        const unsigned int mzmax = std::max(this->maze->get_width(), this->maze->get_height());
+        const unsigned int mzmax = std::max(this->maze->cols(), this->maze->rows());
         unsigned int cellx = this->input_width->value() / mzmax;
         unsigned int celly = this->input_height->value() / mzmax;
-        unsigned int gridx = this->maze->get_width() * cellx;
-        unsigned int gridy = this->maze->get_height() * celly;
+        unsigned int gridx = this->maze->cols() * cellx;
+        unsigned int gridy = this->maze->rows() * celly;
 
         this->input_width->setValue(gridx);
         this->input_height->setValue(gridy);

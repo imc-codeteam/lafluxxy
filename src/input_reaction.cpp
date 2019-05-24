@@ -29,29 +29,41 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     this->reaction_label = new QLabel();
     this->layout->addWidget(this->reaction_label);
 
-    // build input boxes
-    QWidget *widget = new QWidget();
-    layout->addWidget(widget);
-    this->gridlayout = new QGridLayout();
-    widget->setLayout(this->gridlayout);
+    // build grid layout for the input boxes
+    QWidget *kinetic_param_widget = new QWidget();
+    layout->addWidget(kinetic_param_widget);
+    this->kinetic_param_gridlayout = new QGridLayout();
+    kinetic_param_widget->setLayout(this->kinetic_param_gridlayout);
 
+    // create button to allow the user to pick default settings
+    QWidget *default_settings_widget = new QWidget();
+    layout->addWidget(default_settings_widget);
+    this->default_sets_gridlayout = new QGridLayout();
+    default_settings_widget->setLayout(this->default_sets_gridlayout);
     this->button_set_defaults = new QPushButton(" Set default integration settings");
-    QIcon icon_button_set_defaults = style()->standardIcon(QStyle::SP_BrowserReload);
+    QIcon icon_button_set_defaults = style()->standardIcon(QStyle::SP_ArrowDown);
     this->button_set_defaults->setIcon(icon_button_set_defaults);
     this->button_set_defaults->setToolTip("Overwrite the integration settings below with default settings for this kinetic system.");
-    layout->addWidget(this->button_set_defaults);
+    this->default_sets_gridlayout->addWidget(this->button_set_defaults, 0, 1);
 }
 
+/**
+ * @brief      Builds input boxes.
+ */
 void InputReaction::build_input_boxes() {
+    // always clear any existing items in the input boxes
+    this->input_boxes.clear();
+
+    // build new boxes
     for(unsigned int i=0; i<input_names.size(); i++) {
-        this->gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
+        this->kinetic_param_gridlayout->addWidget(new QLabel(tr("<html>") + tr(input_labels[i].c_str()) + tr("</html>")), i, 0);
         QDoubleSpinBox *box = new QDoubleSpinBox();
         box->setDecimals(6);
         box->setMinimum(-100.0);
         box->setMaximum(100.0);
         this->input_boxes.emplace(input_names[i], box);
         box->setValue(this->input_default_values[i]);
-        this->gridlayout->addWidget(box, i, 1);
+        this->kinetic_param_gridlayout->addWidget(box, i, 1);
     }
 }
 

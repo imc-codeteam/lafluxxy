@@ -29,6 +29,7 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QStyle>
+#include <QComboBox>
 #include <unordered_map>
 
 #include "config.h"
@@ -38,7 +39,7 @@ class InputReaction : public QWidget {
 
 private:
     std::unordered_map<std::string, QDoubleSpinBox*> input_boxes;
-    QGridLayout *gridlayout;
+    QGridLayout *kinetic_param_gridlayout;
     QPushButton *button_set_defaults;
 
 protected:
@@ -46,6 +47,7 @@ protected:
 
     QVBoxLayout* layout;
     QLabel* reaction_label;
+    QGridLayout *default_sets_gridlayout;
     std::vector<std::string> input_names;
     std::vector<std::string> input_labels;
     std::vector<double> input_default_values;
@@ -57,6 +59,11 @@ public:
      */
     explicit InputReaction(QWidget *parent = 0);
 
+    /**
+     * @brief      Gets the reaction type.
+     *
+     * @return     The reaction type.
+     */
     inline unsigned int get_reaction_type() const {
         return this->reaction_type;
     }
@@ -85,9 +92,15 @@ public:
     }
 
 protected:
+    /**
+     * @brief      Builds input boxes.
+     */
     void build_input_boxes();
 
 private:
+    /**
+     * @brief      Sets the label.
+     */
     virtual void set_label() = 0;
 
 private slots:

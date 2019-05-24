@@ -81,7 +81,10 @@ void MainWindow::exit() {
 void MainWindow::about() {
     QMessageBox message_box;
     message_box.setText(tr(PROGRAM_NAME) + tr(" ") + tr(PROGRAM_VERSION) +
-                        tr(".\n\nAuthors:\nIvo Filot <i.a.w.filot@tue.nl>\n") +
+                        tr("\n\nAuthors:\nIvo Filot\n") +
+                        tr("Anouk de Leeuw den Bouter\n") +
+                        tr("Roos Krösschell\n") +
+                        tr("Fabiënne Lucas\n") +
                         tr("\n") + tr(PROGRAM_NAME) + tr(" is licensed under the GPLv3 license.\n") +
                         tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3.\n\n") +
                         tr("Color schemes have been obtained from Matplotlib - https://matplotlib.org/index.html."));

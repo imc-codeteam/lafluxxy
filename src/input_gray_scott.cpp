@@ -33,6 +33,7 @@ InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
 
     this->set_label();
     this->build_input_boxes();
+    this->build_default_sets();
 }
 
 void InputGrayScott::set_label() {
@@ -45,5 +46,36 @@ void InputGrayScott::set_label() {
  * @return     The default parameter settings.
  */
 std::string InputGrayScott::get_default_parameter_settings() {
+    // obtain default kinetic parameters
+    unsigned int set_idx = this->combobox_default_sets->currentIndex();
+    if(set_idx > 0 && set_idx <= this->kinetic_values_sets.size()) {
+        this->input_default_values = {this->kinetic_values_sets[set_idx-1][0], this->kinetic_values_sets[set_idx-1][1]};
+        this->build_input_boxes();
+    }
+
     return std::string("dX=0.16;dY=0.08;dx=1.0;dt=0.5;width=256;height=256;steps=20;tsteps=1000;pbc=1");
+}
+
+/**
+ * @brief      Add dropdown menu with default integration settings
+ */
+void InputGrayScott::build_default_sets() {
+    this->combobox_default_sets = new QComboBox();
+
+    this->combobox_default_sets->addItem(tr("Please select a default set..."));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson α pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson β pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson γ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson δ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ε pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ζ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson η pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson θ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ι pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson κ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson λ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson μ pattern"));
+    this->combobox_default_sets->setCurrentIndex(0);
+
+    this->default_sets_gridlayout->addWidget(this->combobox_default_sets, 0, 0);
 }

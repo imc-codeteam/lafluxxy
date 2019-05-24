@@ -86,6 +86,22 @@ void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
 }
 
 /**
+ * @brief      Saves an image from the graph
+ *
+ * @param[in]  graph_id  The graph identifier
+ * @param[in]  filename  The filename
+ */
+void RenderArea::save_image(unsigned int graph_id, const QString& filename) {
+    if(graph_id < this->graphs.size()) {
+        QFile file(filename);
+        file.open(QIODevice::WriteOnly);
+        this->graphs[graph_id].save(&file, "PNG");
+    } else {
+        throw std::logic_error("Invalid graph save request; graph id exceeds vector size.");
+    }
+}
+
+/**
  * @brief      Perform paint event call
  *
  * @param      event  The paint event

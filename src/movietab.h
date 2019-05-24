@@ -33,6 +33,9 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QComboBox>
+#include <QDir>
+
+#include <boost/format.hpp>
 
 #include "two_dim_rd.h"
 #include "renderarea.h"
@@ -61,6 +64,8 @@ private:
     QComboBox *color_scheme_y;
 
     QPushButton *button_rebuild_graphs;
+    QPushButton *button_save_image_files;
+    QPushButton *button_save_raw_data;
 
     std::vector<MatrixXXd> concentrations_X;
     std::vector<MatrixXXd> concentrations_Y;
@@ -124,4 +129,14 @@ private slots:
      * @brief      Rebuild all graphs
      */
     void rebuild_graphs();
+
+    /**
+     * @brief      Saves images.
+     */
+    void save_images();
+
+    /**
+     * @brief      Saves raw concentration data
+     */
+    void save_raw_data();
 };

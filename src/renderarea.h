@@ -25,6 +25,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QPixmap>
+#include <QFile>
 
 #include "two_dim_rd.h"
 #include "reaction_lotka_volterra.h"
@@ -99,6 +100,14 @@ public:
      * @param[in]  mask  The mask
      */
     void add_graph(const MatrixXXd& X, const MatrixXXi& mask);
+
+    /**
+     * @brief      Saves an image from the graph
+     *
+     * @param[in]  graph_id  The graph identifier
+     * @param[in]  filename  The filename
+     */
+    void save_image(unsigned int graph_id, const QString& filename);
 
     /**
      * @brief      Sets the color scheme.

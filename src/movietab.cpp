@@ -81,10 +81,6 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     concentrations_layout->addWidget(this->color_scheme_y, 6, 1);
     this->color_scheme_y->setCurrentText("PiYG");
 
-    this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
-    main_layout->addWidget(this->button_rebuild_graphs);
-    connect(this->button_rebuild_graphs, SIGNAL(released()), this, SLOT(rebuild_graphs()));
-
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
     main_layout->addWidget(this->slider_frame);
@@ -92,6 +88,36 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->slider_frame->setMaximum(0);
     this->slider_frame->setTickPosition(QSlider::TicksBelow);
     connect(this->slider_frame, SIGNAL(valueChanged(int)), this, SLOT(slider_moved(int)));
+
+    // add button container
+    QWidget* button_widget = new QWidget();
+    main_layout->addWidget(button_widget);
+    QHBoxLayout* button_layout = new QHBoxLayout();
+    button_widget->setLayout(button_layout);
+
+    // add button to rebuild all graphs
+    this->button_rebuild_graphs = new QPushButton(" Rebuild graphs");
+    QIcon icon_button_rebuild_graphs = style()->standardIcon(QStyle::SP_BrowserReload);
+    this->button_rebuild_graphs->setIcon(icon_button_rebuild_graphs);
+    this->button_rebuild_graphs->setToolTip("Rebuild all graphs using custom color schemes.");
+    button_layout->addWidget(this->button_rebuild_graphs);
+    connect(this->button_rebuild_graphs, SIGNAL(released()), this, SLOT(rebuild_graphs()));
+
+    // add button to save all movie files
+    this->button_save_image_files = new QPushButton(" Save images");
+    QIcon icon_button_save_image_files = style()->standardIcon(QStyle::SP_DialogSaveButton);
+    this->button_save_image_files->setIcon(icon_button_save_image_files);
+    this->button_save_image_files->setToolTip("Save all image files to custom folder.");
+    button_layout->addWidget(this->button_save_image_files);
+    connect(this->button_save_image_files, SIGNAL(released()), this, SLOT(save_images()));
+
+    // add button to save raw data
+    this->button_save_raw_data = new QPushButton(" Save raw data");
+    QIcon icon_button_save_raw_data = style()->standardIcon(QStyle::SP_FileIcon);
+    this->button_save_raw_data->setIcon(icon_button_save_raw_data);
+    this->button_save_raw_data->setToolTip("Save raw data file (compressed file format).");
+    button_layout->addWidget(this->button_save_raw_data);
+    connect(this->button_save_raw_data, SIGNAL(released()), this, SLOT(save_raw_data()));
 
     QWidget *gridwidget = new QWidget;
     QGridLayout *gridlayout = new QGridLayout;
@@ -277,4 +303,28 @@ void MovieTab::rebuild_graphs() {
 
     this->goto_first();
     this->update_frame_label();
+}
+
+/**
+ * @brief      Saves images.
+ */
+void MovieTab::save_images() {
+    QDir output_folder = QFileDialog::getExistingDirectory(0, ("Select Output Folder"), QDir::currentPath());
+
+    for(unsigned int i=0; i<this->renderarea_X->get_num_graphs(); i++) {
+        QString filename_A = output_folder.filePath((boost::format("A%03i.png") % i).str().c_str());
+        this->renderarea_X->save_image(i, filename_A);
+    }
+
+    for(unsigned int i=0; i<this->renderarea_Y->get_num_graphs(); i++) {
+        QString filename_B = output_folder.filePath((boost::format("B%03i.png") % i).str().c_str());
+        this->renderarea_Y->save_image(i, filename_B);
+    }
+}
+
+/**
+ * @brief      Saves raw concentration data
+ */
+void MovieTab::save_raw_data() {
+
 }

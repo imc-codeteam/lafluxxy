@@ -37,7 +37,7 @@ private:
     unsigned int my = 0;
     unsigned int ncells = mx * my;
 
-    unsigned int pencils = 2;
+    unsigned int pencils = 4;
 
     float *a;       //!< concentration of component A
     float *b;       //!< concentration of component B

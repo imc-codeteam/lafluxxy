@@ -45,4 +45,30 @@ __global__ void update(float *x, float *y, const float *ddx, const float *ddy, c
     }
 }
 
+/**
+ * @brief      Perform time-step integration
+ *
+ * @param      x     pointer to concentration of A
+ * @param      y     pointer to concentration of B
+ * @param      mask  maze mask
+ * @param[in]  ddx   diffusion of component A
+ * @param[in]  ddy   diffusion of component B
+ * @param[in]  drx   reaction of component A
+ * @param[in]  dry   reaction of component B
+ */
+__global__ void update_mask(float *x, float *y, float *mask, const float *ddx, const float *ddy, const float *drx, const float *dry) {
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int stride = blockDim.x * gridDim.x;
+
+    for(int i = index; i < d_ncells; i += stride) {
+        if(mask[i] > 0.5f) {
+            x[i] = 0.0;
+            y[i] = 0.0;
+        } else {
+            x[i] += (ddx[i] + drx[i]) * d_dt;
+            y[i] += (ddy[i] + dry[i]) * d_dt;
+        }
+    }
+}
+
 #endif // _UPDATE_H

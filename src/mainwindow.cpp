@@ -209,8 +209,8 @@ void MainWindow::build_menu() {
     action_about->setText(tr("About"));
 
     // add options to menu
-    menuFile->addAction(action_open);
-    menuFile->addAction(action_save);
+    // menuFile->addAction(action_open);
+    // menuFile->addAction(action_save);
     menuFile->addAction(action_quit);
     menuHelp->addAction(action_about);
 

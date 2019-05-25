@@ -115,9 +115,9 @@ __global__ void derivative_x2_masked(const float *f, const float *mask, float *d
 
     if(mask[globalIdx] > 0.5) {
         df[globalIdx] = 0.0;
-    } else if(mask[sj * d_mx + i - 1] > 0.5) { // north boundary
+    } else if(mask[globalIdx - 1] > 0.5) { // west boundary
         df[globalIdx] = s_f[sj * d_mx + i + 1] - s_f[sj * d_mx + i];
-    } else if(mask[sj * d_mx + i + 1] > 0.5) { // south boundary
+    } else if(mask[globalIdx + 1] > 0.5) { // east boundary
         df[globalIdx] = s_f[sj * d_mx + i - 1] - s_f[sj * d_mx + i];
     } else {
         df[globalIdx] = s_f[sj * d_mx + i + 1] - 2.0 * s_f[sj * d_mx + i] + s_f[sj * d_mx + i - 1];
@@ -208,9 +208,9 @@ __global__ void derivative_y2_masked(const float *f, const float *mask, float *d
 
     if(mask[globalIdx] > 0.5) {
         df[globalIdx] = 0.0;
-    } else if(mask[(j-1) * d_pencils + si] > 0.5) {
+    } else if(mask[globalIdx - d_mx] > 0.5) {
         df[globalIdx] = s_f[(j+1) * d_pencils + si] - s_f[j * d_pencils + si];
-    } else if(mask[(j+1) * d_pencils + si] > 0.5) {
+    } else if(mask[globalIdx + d_mx] > 0.5) {
         df[globalIdx] = s_f[(j-1) * d_pencils + si] - s_f[j * d_pencils + si];
     } else {
         df[globalIdx] = s_f[(j+1) * d_pencils + si] - 2.0 * s_f[j * d_pencils + si] + s_f[(j-1) * d_pencils + si];

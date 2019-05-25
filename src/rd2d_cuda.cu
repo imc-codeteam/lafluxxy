@@ -183,7 +183,12 @@ void RD2D_CUDA::update_step() {
 
         // update
         start_event(&startEventKernel);
-        update<<<grid,block>>>(d_a, d_b, d_da, d_db, d_ra, d_rb);
+        if(this->has_mask) {
+            update_mask<<<grid,block>>>(d_a, d_b, d_mask, d_da, d_db, d_ra, d_rb);
+        } else {
+            update<<<grid,block>>>(d_a, d_b, d_da, d_db, d_ra, d_rb);
+        }
+
         this->update_times += stop_event(&startEventKernel, &stopEventKernel);;;
     }
 
@@ -233,6 +238,9 @@ void RD2D_CUDA::initialize_variables(const std::vector<float>& _a,
     memcpy(this->b, &_b[0], sizeof(float) * _b.size());
     memcpy(this->mask, &_mask[0], sizeof(float) * _mask.size());
     // std::cout << donestring << std::endl;
+
+    // calculate semi-optimal pencil size
+    this->pencils = 1024 / this->mx;
 
     // allocate size on device
     // std::cout << "Allocating variables on GPU device... ";

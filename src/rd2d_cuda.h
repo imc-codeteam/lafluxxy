@@ -58,6 +58,15 @@ private:
 
     bool zeroflux = true;
 
+    // time tracking
+    float milliseconds = 0;
+    float laplacian_x_times = 0;
+    float laplacian_y_times = 0;
+    float reaction_times = 0;
+    float update_times = 0;
+    float laplacian_summation_times = 0;
+    float other_times = 0;
+
 public:
     /**
      * @brief      Constructs the object.

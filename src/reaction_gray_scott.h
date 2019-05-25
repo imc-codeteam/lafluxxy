@@ -67,5 +67,13 @@ public:
      */
     void set_parameters(const std::string& params);
 
+    inline double get_f() const {
+        return this->f;
+    }
+
+    inline double get_k() const {
+        return this->k;
+    }
+
 private:
 };

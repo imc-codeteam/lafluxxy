@@ -125,6 +125,17 @@ const MatrixXXd& TwoDimRD::get_concentration_matrix(unsigned int frame, bool fir
 }
 
 /**
+ * @brief      Clean-up any variables that need to be explicitly removed from memory
+ */
+void TwoDimRD::clean() {
+    if(this->do_cuda) {
+        // clear GPU memory and release cuda integrator object
+        this->cuda_integrator->cleanup_variables();
+        this->cuda_integrator.release();
+    }
+}
+
+/**
  * @brief      Initialize the system
  */
 void TwoDimRD::init() {
@@ -141,7 +152,8 @@ void TwoDimRD::init() {
     this->ta.push_back(this->a);
     this->tb.push_back(this->b);
 
-    if(do_cuda) {
+    if(this->do_cuda) {
+        // build cuda integrator object
         this->init_cuda();
     } else {
         this->delta_a = MatrixXXd::Zero(this->width, this->height);
@@ -606,5 +618,11 @@ void TwoDimRD::init_cuda() {
         values_b[i] = (float)*(this->b.data() + i);
     }
 
+    this->cuda_integrator->set_dimensions(this->width, this->height);
+    this->cuda_integrator->set_integration_variables(this->dt, this->dx, this->steps, this->tsteps);
+    this->cuda_integrator->set_kinetic_variables(reinterpret_cast<ReactionGrayScott*>(this->reaction_system.get())->get_f(),
+                                                 reinterpret_cast<ReactionGrayScott*>(this->reaction_system.get())->get_k());
+    this->cuda_integrator->set_diffusion_parameters(this->Da, this->Db);
+    this->cuda_integrator->set_zeroflux(!this->pbc);
     this->cuda_integrator->initialize_variables(values_a, values_b);
 }

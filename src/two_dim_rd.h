@@ -28,15 +28,13 @@
 
 #include "matrices.h"
 #include "reaction_system.h"
+#include "reaction_gray_scott.h"
 #include "rd2d_cuda.h"
 
 class TwoDimRD {
 private:
     double Da;              //!< Diffusion coefficient of compound A
     double Db;              //!< Diffusion coefficient of compound B
-
-    double alpha;           //!< Alpha value in reaction equation
-    double beta;            //!< Beta value in reaction equation
 
     unsigned int width;     //!< width of the system
     unsigned int height;    //!< height of the system
@@ -192,6 +190,11 @@ public:
         return this->matmask;
     }
 
+    /**
+     * @brief      Clean-up any variables that need to be explicitly removed from memory
+     */
+    void clean();
+
 private:
     /**
      * @brief      Initialize the system
@@ -289,5 +292,4 @@ private:
      * @brief      Special instructions for cuda variant of initialization
      */
     void init_cuda();
-
 };

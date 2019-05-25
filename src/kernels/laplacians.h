@@ -94,6 +94,37 @@ __global__ void derivative_x2_zeroflux(const float *f, float *df) {
 }
 
 /**
+ * @brief      Calculate second derivative in y direction with zero-flux boundary conditions
+ *
+ * @param[in]  f     pointer with values
+ * @param      df    pointer with second derivatives
+ */
+__global__ void derivative_x2_masked(const float *f, const float *mask, float *df) {
+    extern __shared__ float s_f[];
+
+    int i   = threadIdx.x;
+    int j   = blockIdx.x * blockDim.y + threadIdx.y;
+    int k   = blockIdx.y;
+    int sj  = threadIdx.y; // local j for shared memory access
+
+    int globalIdx = k * d_mx * d_my + j * d_mx + i;
+
+    s_f[sj * d_mx + i] = f[globalIdx];
+
+    __syncthreads();
+
+    if(mask[globalIdx] > 0.5) {
+        df[globalIdx] = 0.0;
+    } else if(mask[sj * d_mx + i - 1] > 0.5) { // north boundary
+        df[globalIdx] = s_f[sj * d_mx + i + 1] - s_f[sj * d_mx + i];
+    } else if(mask[sj * d_mx + i + 1] > 0.5) { // south boundary
+        df[globalIdx] = s_f[sj * d_mx + i - 1] - s_f[sj * d_mx + i];
+    } else {
+        df[globalIdx] = s_f[sj * d_mx + i + 1] - 2.0 * s_f[sj * d_mx + i] + s_f[sj * d_mx + i - 1];
+    }
+}
+
+/**
  * @brief      Calculate second derivative in y direction with periodic boundary conditions
  *
  * @param[in]  f     pointer with values
@@ -149,6 +180,37 @@ __global__ void derivative_y2_zeroflux(const float *f, float *df) {
     if(j == 0) {
         df[globalIdx] = s_f[(j+1) * d_pencils + si] - s_f[j * d_pencils + si];
     } else if(j == (d_my - 1)) {
+        df[globalIdx] = s_f[(j-1) * d_pencils + si] - s_f[j * d_pencils + si];
+    } else {
+        df[globalIdx] = s_f[(j+1) * d_pencils + si] - 2.0 * s_f[j * d_pencils + si] + s_f[(j-1) * d_pencils + si];
+    }
+}
+
+/**
+ * @brief      Calculate second derivative in y direction with zero-flux boundary conditions
+ *
+ * @param[in]  f     pointer with values
+ * @param      df    pointer with second derivatives
+ */
+__global__ void derivative_y2_masked(const float *f, const float *mask, float *df) {
+    extern __shared__ float s_f[];
+
+    int i  = blockIdx.x * blockDim.x + threadIdx.x;
+    int j  = threadIdx.y;
+    int k  = blockIdx.y;
+    int si = threadIdx.x;
+
+    int globalIdx = k * d_mx * d_my + j * d_mx + i;
+
+    s_f[j * d_pencils + si] = f[globalIdx];
+
+    __syncthreads();
+
+    if(mask[globalIdx] > 0.5) {
+        df[globalIdx] = 0.0;
+    } else if(mask[(j-1) * d_pencils + si] > 0.5) {
+        df[globalIdx] = s_f[(j+1) * d_pencils + si] - s_f[j * d_pencils + si];
+    } else if(mask[(j+1) * d_pencils + si] > 0.5) {
         df[globalIdx] = s_f[(j-1) * d_pencils + si] - s_f[j * d_pencils + si];
     } else {
         df[globalIdx] = s_f[(j+1) * d_pencils + si] - 2.0 * s_f[j * d_pencils + si] + s_f[(j-1) * d_pencils + si];

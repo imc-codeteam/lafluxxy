@@ -607,9 +607,11 @@ void TwoDimRD::init_cuda() {
     this->cuda_integrator = std::make_unique<RD2D_CUDA>();
 
     // initialize values
-    unsigned int ncells = width * height;
+    unsigned int ncells = this->width * this->height;
     std::vector<float> values_a(ncells);
     std::vector<float> values_b(ncells);
+    std::vector<float> values_mask(ncells);
+
     for(unsigned int i=0; i<ncells; i++) {
         values_a[i] = (float)*(this->a.data() + i);
     }
@@ -618,11 +620,21 @@ void TwoDimRD::init_cuda() {
         values_b[i] = (float)*(this->b.data() + i);
     }
 
+    if(!this->mask) {
+        this->matmask = MatrixXXi::Zero(this->height, this->width);
+        values_mask.resize(ncells, 0);
+    } else {
+        for(unsigned int i=0; i<ncells; i++) {
+            values_mask[i] = (float)*(this->matmask.data() + i);
+        }
+    }
+
     this->cuda_integrator->set_dimensions(this->width, this->height);
     this->cuda_integrator->set_integration_variables(this->dt, this->dx, this->steps, this->tsteps);
     this->cuda_integrator->set_kinetic_variables(this->reaction_system->get_kinetic_parameters());
     this->cuda_integrator->set_diffusion_parameters(this->Da, this->Db);
     this->cuda_integrator->set_zeroflux(!this->pbc);
+    this->cuda_integrator->set_mask(this->mask);
     this->cuda_integrator->set_reacttype(this->reaction_system->get_reacttype());
-    this->cuda_integrator->initialize_variables(values_a, values_b);
+    this->cuda_integrator->initialize_variables(values_a, values_b, values_mask);
 }

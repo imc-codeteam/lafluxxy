@@ -39,11 +39,12 @@ private:
 
     unsigned int pencils = 2;
 
-    float *a;   //!< concentration of component A
-    float *b;   //!< concentration of component B
+    float *a;       //!< concentration of component A
+    float *b;       //!< concentration of component B
+    float *mask;    //!< maze mask
 
     // device variables
-    float *d_a, *d_b, *d_dx2, *d_dy2, *d_ra, *d_rb, *d_da, *d_db;
+    float *d_a, *d_b, *d_mask, *d_dx2, *d_dy2, *d_ra, *d_rb, *d_da, *d_db;
 
     // reaction settings of kinetic system
     KINETICS reacttype;         //!< type of the kinetic system
@@ -64,6 +65,7 @@ private:
     std::string donestring = "           [DONE]";
 
     bool zeroflux = true;
+    bool has_mask = false;
 
     // time tracking
     float milliseconds = 0;
@@ -101,7 +103,9 @@ public:
     /**
      * @brief      Initialize all variables
      */
-    void initialize_variables(const std::vector<float>& _a, const std::vector<float>& _b);
+    void initialize_variables(const std::vector<float>& _a,
+                              const std::vector<float>& _b,
+                              const std::vector<float>& _mask);
 
     /**
      * @brief      Run time-integration on GPU
@@ -165,6 +169,15 @@ public:
      */
     inline void set_zeroflux(bool _zeroflux) {
         this->zeroflux = _zeroflux;
+    }
+
+    /**
+     * @brief      Set whether there is a mask in the spatial domain
+     *
+     * @param[in]  _mask  The mask setting
+     */
+    inline void set_mask(bool _mask) {
+        this->has_mask = _mask;
     }
 
     /**

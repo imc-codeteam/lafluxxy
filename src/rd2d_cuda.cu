@@ -90,6 +90,16 @@ void RD2D_CUDA::update_step() {
             start_event(&startEventKernel);
             derivative_y2_zeroflux<<<gridy,blocky,shared_mem_size>>>(d_a, d_dy2);
             this->laplacian_y_times += stop_event(&startEventKernel, &stopEventKernel);
+        } else if(this->has_mask) {
+            // x2 derivative
+            start_event(&startEventKernel);
+            derivative_x2_masked<<<gridx,blockx,shared_mem_size>>>(d_a, d_mask, d_dx2);
+            this->laplacian_x_times += stop_event(&startEventKernel, &stopEventKernel);;
+
+            // y2 derivative
+            start_event(&startEventKernel);
+            derivative_y2_masked<<<gridy,blocky,shared_mem_size>>>(d_a, d_mask, d_dy2);
+            this->laplacian_y_times += stop_event(&startEventKernel, &stopEventKernel);;
         } else {
             // x2 derivative
             start_event(&startEventKernel);
@@ -118,6 +128,16 @@ void RD2D_CUDA::update_step() {
             start_event(&startEventKernel);
             derivative_y2_zeroflux<<<gridy,blocky,shared_mem_size>>>(d_b, d_dy2);
             this->laplacian_y_times += stop_event(&startEventKernel, &stopEventKernel);;
+        } else if(this->has_mask) {
+            // x2 derivative
+            start_event(&startEventKernel);
+            derivative_x2_masked<<<gridx,blockx,shared_mem_size>>>(d_b, d_mask, d_dx2);
+            this->laplacian_x_times += stop_event(&startEventKernel, &stopEventKernel);;
+
+            // y2 derivative
+            start_event(&startEventKernel);
+            derivative_y2_masked<<<gridy,blocky,shared_mem_size>>>(d_b, d_mask, d_dy2);
+            this->laplacian_y_times += stop_event(&startEventKernel, &stopEventKernel);;
         } else {
             // x2 derivative
             start_event(&startEventKernel);
@@ -130,7 +150,7 @@ void RD2D_CUDA::update_step() {
             this->laplacian_y_times += stop_event(&startEventKernel, &stopEventKernel);;
         }
 
-        // sum all three derivative components
+        // sum all derivative components
         start_event(&startEventKernel);
         construct_laplacian_b<<<grid,block>>>(d_db, d_dx2, d_dy2);
         this->laplacian_summation_times += stop_event(&startEventKernel, &stopEventKernel);;
@@ -199,15 +219,19 @@ void RD2D_CUDA::update_step() {
 /**
  * @brief      Initialize all variables
  */
-void RD2D_CUDA::initialize_variables(const std::vector<float>& _a, const std::vector<float>& _b) {
+void RD2D_CUDA::initialize_variables(const std::vector<float>& _a,
+                                     const std::vector<float>& _b,
+                                     const std::vector<float>& _mask) {
     // std::cout << "Loading device variables." << std::endl;
 
     // build initial concentrations
     // std::cout << "Constructing initial concentrations...";
     this->a = new float[this->ncells];
     this->b = new float[this->ncells];
+    this->mask = new float[this->ncells];
     memcpy(this->a, &_a[0], sizeof(float) * _a.size());
     memcpy(this->b, &_b[0], sizeof(float) * _b.size());
+    memcpy(this->mask, &_mask[0], sizeof(float) * _mask.size());
     // std::cout << donestring << std::endl;
 
     // allocate size on device
@@ -215,6 +239,7 @@ void RD2D_CUDA::initialize_variables(const std::vector<float>& _a, const std::ve
     int bytes = this->ncells * sizeof(float);
     checkCuda( cudaMalloc((void**)&this->d_a, bytes) );
     checkCuda( cudaMalloc((void**)&this->d_b, bytes) );
+    checkCuda( cudaMalloc((void**)&this->d_mask, bytes) );
     checkCuda( cudaMalloc((void**)&this->d_dx2, bytes) );
     checkCuda( cudaMalloc((void**)&this->d_dy2, bytes) );
     checkCuda( cudaMalloc((void**)&this->d_ra, bytes) );
@@ -227,6 +252,7 @@ void RD2D_CUDA::initialize_variables(const std::vector<float>& _a, const std::ve
     // std::cout << "Copying data to GPU device...         ";
     checkCuda( cudaMemcpy(this->d_a, this->a, bytes, cudaMemcpyHostToDevice) );
     checkCuda( cudaMemcpy(this->d_b, this->b, bytes, cudaMemcpyHostToDevice) );
+    checkCuda( cudaMemcpy(this->d_mask, this->mask, bytes, cudaMemcpyHostToDevice) );
     checkCuda( cudaMemset(this->d_dx2, 0, bytes) );
     checkCuda( cudaMemset(this->d_dy2, 0, bytes) );
     checkCuda( cudaMemset(this->d_ra, 0, bytes) );
@@ -262,6 +288,7 @@ void RD2D_CUDA::cleanup_variables() {
     // std::cout << "Cleaning Integration variables...     ";
     checkCuda( cudaFree(this->d_a) );
     checkCuda( cudaFree(this->d_b) );
+    checkCuda( cudaFree(this->d_mask) );
     checkCuda( cudaFree(this->d_ra) );
     checkCuda( cudaFree(this->d_rb) );
     checkCuda( cudaFree(this->d_da) );
@@ -271,6 +298,7 @@ void RD2D_CUDA::cleanup_variables() {
 
     delete [] this->a;
     delete [] this->b;
+    delete [] this->mask;
 
     // std::cout << donestring << std::endl;
     // std::cout << std::endl;

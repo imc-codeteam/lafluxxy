@@ -87,6 +87,7 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
     // connect signals
     connect(this->reaction_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_reaction_input(int)));
     connect(this->checkbox_enable_maze, SIGNAL(stateChanged(int)), SLOT(action_enable_maze(int)));
+    connect(this->compute_device, SIGNAL(currentIndexChanged(int)), SLOT(select_computer_device(int)));
 }
 
 TwoDimRD* InputTab::build_reaction_system() {
@@ -283,6 +284,16 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     gridlayout->addWidget(new QLabel("pbc"), row, 0);
     gridlayout->addWidget(this->checkbox_pbc, row, 1);
     gridlayout->addWidget(new QLabel("Whether to implement periodic boundary conditions (checked) or no-flux conditions (unchecked)"), row, 2);
+    row++;
+
+    this->compute_device = new QComboBox();
+    this->compute_device->addItem("CPU");
+    for(const auto& name : this->cm.get_gpu_names()) {
+        this->compute_device->addItem(name.c_str());
+    }
+    gridlayout->addWidget(new QLabel("compute device"), row, 0);
+    gridlayout->addWidget(this->compute_device, row, 1);
+    gridlayout->addWidget(new QLabel("Which computing device to use (CPU or CUDA-GPU)"), row, 2);
     row++;
 
     gridlayout->addWidget(new QLabel("ncores"), row, 0);
@@ -483,5 +494,18 @@ void InputTab::action_enable_maze(int state) {
         this->input_height->setEnabled(true);
 
         this->mask_cell_size = 0;
+    }
+}
+
+/**
+ * @brief      Select a compute device
+ *
+ * @param[in]  state  The state
+ */
+void InputTab::select_computer_device(int state) {
+    if(state == 0) {
+        this->input_ncores->setEnabled(true);
+    } else {
+        this->input_ncores->setEnabled(false);
     }
 }

@@ -40,6 +40,7 @@
 
 #include "two_dim_rd.h"
 #include "worker_thread.h"
+#include "card_manager.h"
 
 namespace Ui {
 class MainWindow;

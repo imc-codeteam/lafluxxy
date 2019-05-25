@@ -110,12 +110,36 @@ HEADERS += vendor/mazebuilder/src/cell.h \
            vendor/mazebuilder/src/maze_builder.h \
            vendor/mazebuilder/src/maze_statistics.h
 
-linux {
-    INCLUDEPATH += /usr/include/eigen3
-    LIBS += -lboost_filesystem -lboost_system
+# cuda sources
+CUDA_SOURCES += src/card_manager.cu
+
+# cuda headers
+HEADERS += src/card_manager.h
+
+unix {
+    # set cuda stuff
+    CUDA_DIR = /usr/local/cuda-10.0
+    CUDA_LIBS =
+    CUDA_LIBRT = /usr/local/cuda-10.0/lib64/libcudart_static.a
+    # CUDA_ARCH = compute_52
+    CUDA_INC = $$join($$CUDA_DIR/include,' -I','-I',' ')
+    NVCCFLAGS = -use_fast_math --compile -cudart static
+
+    cuda.commands = $$CUDA_DIR/bin/nvcc -m64 -c $$NVCCFLAGS $$CUDA_INC $$LIBS  ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
+    cuda.dependency_type = TYPE_C
+    cuda.depend_command = $$CUDA_DIR/bin/nvcc -M $$CUDA_INC $$NVCCFLAGS ${QMAKE_FILE_NAME}
+
+    # other libraries
+    INCLUDEPATH += $$CUDA_DIR/include /usr/include/eigen3
+    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt
+    QMAKE_LIBDIR += $$CUDA_DIR/lib64
 }
 
 win32 {
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
     INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
 }
+
+cuda.input = CUDA_SOURCES
+cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
+QMAKE_EXTRA_UNIX_COMPILERS += cuda

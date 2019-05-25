@@ -111,10 +111,14 @@ HEADERS += vendor/mazebuilder/src/cell.h \
            vendor/mazebuilder/src/maze_statistics.h
 
 # cuda sources
-CUDA_SOURCES += src/card_manager.cu
+CUDA_SOURCES += src/card_manager.cu \
+                src/rd2d_cuda.cu
 
 # cuda headers
-HEADERS += src/card_manager.h
+HEADERS += src/card_manager.h \
+           src/rd2d_cuda.h
+           src/check_cuda.h
+           src/cuda_events.h
 
 unix {
     # set cuda stuff
@@ -122,10 +126,9 @@ unix {
     CUDA_LIBS =
     CUDA_LIBRT = /usr/local/cuda-10.0/lib64/libcudart_static.a
     # CUDA_ARCH = compute_52
-    CUDA_INC = $$join($$CUDA_DIR/include,' -I','-I',' ')
-    NVCCFLAGS = -use_fast_math --compile -cudart static
+    NVCCFLAGS = -use_fast_math --compile -cudart static -O3
 
-    cuda.commands = $$CUDA_DIR/bin/nvcc -m64 -c $$NVCCFLAGS $$CUDA_INC $$LIBS  ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
+    cuda.commands = $$CUDA_DIR/bin/nvcc -m64 -c $$NVCCFLAGS $$LIBS  ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
     cuda.dependency_type = TYPE_C
     cuda.depend_command = $$CUDA_DIR/bin/nvcc -M $$CUDA_INC $$NVCCFLAGS ${QMAKE_FILE_NAME}
 

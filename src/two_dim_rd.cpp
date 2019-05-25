@@ -138,55 +138,63 @@ void TwoDimRD::init() {
         this->apply_mask();
     }
 
-    this->delta_a = MatrixXXd::Zero(this->width, this->height);
-    this->delta_b = MatrixXXd::Zero(this->width, this->height);
-
     this->ta.push_back(this->a);
     this->tb.push_back(this->b);
+
+    if(do_cuda) {
+        this->init_cuda();
+    } else {
+        this->delta_a = MatrixXXd::Zero(this->width, this->height);
+        this->delta_b = MatrixXXd::Zero(this->width, this->height);
+    }
 }
 
 /**
  * @brief      Perform a time-step
  */
 void TwoDimRD::update() {
+    if(do_cuda) {
+        this->update_cuda();
+        this->t += this->tsteps * this->dt;
+    } else {
+        // loop over number of time steps
+        for(unsigned int j=0; j<this->tsteps; j++) {
 
-    // loop over number of time steps
-    for(unsigned int j=0; j<this->tsteps; j++) {
+            // calculate laplacian
+            if(this->mask) {
+                this->laplacian_2d_mask_cached(this->delta_a, this->a);
+                this->laplacian_2d_mask_cached(this->delta_b, this->b);
+            } else if(this->pbc) {
+                this->laplacian_2d_pbc_cached(this->delta_a, this->a);
+                this->laplacian_2d_pbc_cached(this->delta_b, this->b);
+            } else {
+                this->laplacian_2d_zeroflux_cached(this->delta_a, this->a);
+                this->laplacian_2d_zeroflux_cached(this->delta_b, this->b);
+            }
 
-        // calculate laplacian
-        if(this->mask) {
-            this->laplacian_2d_mask_cached(this->delta_a, this->a);
-            this->laplacian_2d_mask_cached(this->delta_b, this->b);
-        } else if(this->pbc) {
-            this->laplacian_2d_pbc_cached(this->delta_a, this->a);
-            this->laplacian_2d_pbc_cached(this->delta_b, this->b);
-        } else {
-            this->laplacian_2d_zeroflux_cached(this->delta_a, this->a);
-            this->laplacian_2d_zeroflux_cached(this->delta_b, this->b);
+            // multiply with diffusion coefficient
+            this->delta_a *= this->Da;
+            this->delta_b *= this->Db;
+
+            // add reaction term
+            this->add_reaction();
+
+            // multiply with time step
+            this->delta_a *= this->dt;
+            this->delta_b *= this->dt;
+
+            // add delta term to concentrations
+            this->a += this->delta_a;
+            this->b += this->delta_b;
+
+            // apply mask
+            if(this->mask) {
+                this->apply_mask();
+            }
+
+            // update time step
+            this->t += this->dt;
         }
-
-        // multiply with diffusion coefficient
-        this->delta_a *= this->Da;
-        this->delta_b *= this->Db;
-
-        // add reaction term
-        this->add_reaction();
-
-        // multiply with time step
-        this->delta_a *= this->dt;
-        this->delta_b *= this->dt;
-
-        // add delta term to concentrations
-        this->a += this->delta_a;
-        this->b += this->delta_b;
-
-        // apply mask
-        if(this->mask) {
-            this->apply_mask();
-        }
-
-        // update time step
-        this->t += this->dt;
     }
 
     this->ta.push_back(this->a);
@@ -555,4 +563,48 @@ void TwoDimRD::apply_mask() {
             }
         }
     }
+}
+
+/**
+ * @brief      Special instructions for cuda variant
+ */
+void TwoDimRD::update_cuda() {
+    // perform step
+    this->cuda_integrator->update_step();
+
+    // copy results
+    unsigned int ncells = width * height;
+    const float* _a = this->cuda_integrator->get_a();
+    const float* _b = this->cuda_integrator->get_b();
+
+    for(unsigned int i=0; i<ncells; i++) {
+        *(this->a.data() + i) = (double)*(_a + i);
+    }
+
+    for(unsigned int i=0; i<ncells; i++) {
+        *(this->b.data() + i) = (double)*(_b + i);
+    }
+
+}
+
+/**
+ * @brief      Special instructions for cuda variant of initialization
+ */
+void TwoDimRD::init_cuda() {
+    // build object
+    this->cuda_integrator = std::make_unique<RD2D_CUDA>();
+
+    // initialize values
+    unsigned int ncells = width * height;
+    std::vector<float> values_a(ncells);
+    std::vector<float> values_b(ncells);
+    for(unsigned int i=0; i<ncells; i++) {
+        values_a[i] = (float)*(this->a.data() + i);
+    }
+
+    for(unsigned int i=0; i<ncells; i++) {
+        values_b[i] = (float)*(this->b.data() + i);
+    }
+
+    this->cuda_integrator->initialize_variables(values_a, values_b);
 }

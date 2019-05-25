@@ -130,6 +130,9 @@ TwoDimRD* InputTab::build_reaction_system() {
         reaction_system->set_mask(this->maze->get_mask(this->mask_cell_size));
     }
 
+    reaction_system->set_do_cuda(this->compute_device->currentIndex() > 0 ? true : false);
+
+    // !! always do this at the very end !!
     reaction_system->set_parameters(this->reaction_settings->get_parameter_string());
 
     return reaction_system;

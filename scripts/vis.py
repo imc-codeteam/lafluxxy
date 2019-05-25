@@ -54,6 +54,7 @@ with open(sys.argv[1], "rb") as f:
     print("vmax2 = %f" % vmax2)
 
     # read concentrations
+    dpi = 72*2
     for i in range(0, nframes):
         a = np.fromfile(f, dtype=np.dtype("float64"), count=cols * rows)
         b = np.fromfile(f, dtype=np.dtype("float64"), count=cols * rows)
@@ -61,9 +62,9 @@ with open(sys.argv[1], "rb") as f:
         ap = a.reshape((rows, cols))
         bp = b.reshape((rows, cols))
 
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,4))
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(1920/dpi,(1920/12*4)/dpi))
 
-        im1 = ax1.imshow(ap, origin='lower', interpolation='bicubic', vmin=vmin1, vmax=vmax1)
+        im1 = ax1.imshow(ap, origin='lower', interpolation='bicubic', vmin=vmin1, vmax=vmax1, cmap='Spectral')
         plt.colorbar(im1, ax=ax1)
 
         im2 = ax2.imshow(bp, origin='lower', interpolation='bicubic', vmin=vmin2, vmax=vmax2, cmap='PiYG')
@@ -73,5 +74,5 @@ with open(sys.argv[1], "rb") as f:
         ax2.set_title('Concentration B')
         filename = '%04i.png' % i
         print("Writing image: %s" % filename)
-        plt.savefig(filename, dpi=72)
+        plt.savefig(filename, dpi=dpi)
         plt.close()

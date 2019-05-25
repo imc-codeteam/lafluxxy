@@ -112,6 +112,7 @@ HEADERS += vendor/mazebuilder/src/cell.h \
 
 linux {
     INCLUDEPATH += /usr/include/eigen3
+    LIBS += -lboost_filesystem -lboost_system
 }
 
 win32 {

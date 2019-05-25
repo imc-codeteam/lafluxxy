@@ -309,7 +309,16 @@ void MovieTab::rebuild_graphs() {
  * @brief      Saves images.
  */
 void MovieTab::save_images() {
-    QDir output_folder = QFileDialog::getExistingDirectory(0, ("Select Output Folder"), QDir::currentPath());
+    QFileDialog dialog_store_folder;
+    dialog_store_folder.setFileMode(QFileDialog::Directory);
+    dialog_store_folder.exec();
+    QStringList selected_directory = dialog_store_folder.selectedFiles();
+
+    if(selected_directory.isEmpty()) {
+        return;
+    }
+
+    QDir output_folder(selected_directory[0]);
 
     for(unsigned int i=0; i<this->renderarea_X->get_num_graphs(); i++) {
         QString filename_A = output_folder.filePath((boost::format("A%03i.png") % i).str().c_str());
@@ -326,5 +335,44 @@ void MovieTab::save_images() {
  * @brief      Saves raw concentration data
  */
 void MovieTab::save_raw_data() {
+    if(this->concentrations_X.size() == 0 || this->concentrations_X.size() != this->concentrations_Y.size()) {
+        return;
+    }
 
+    // QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("LaFluxxy Datapack (*.lfd)"));
+    QFileDialog dialog_save_file;
+    dialog_save_file.setDefaultSuffix(".lfd");
+    dialog_save_file.setFileMode(QFileDialog::AnyFile);
+    dialog_save_file.setAcceptMode(QFileDialog::AcceptSave);
+    dialog_save_file.setLabelText(QFileDialog::LookIn ,tr("Select file to save simulation results to"));
+    dialog_save_file.exec();
+    QStringList selected_files = dialog_save_file.selectedFiles();
+
+    if(selected_files.isEmpty()) {
+        return;
+    }
+
+    boost::filesystem::path p(selected_files[0].toStdString());
+    if(p.extension() == "") {
+        p += ".lfd";
+    }
+
+    std::ofstream out(p.string());
+
+    unsigned int rows = this->concentrations_X[0].rows();
+    unsigned int cols = this->concentrations_X[0].cols();
+
+    out << "# Datapack created in " << PROGRAM_NAME << " " << PROGRAM_VERSION << std::endl;
+    out << "nframes = " << this->concentrations_X.size() << std::endl;
+    out << "rows = " << rows << std::endl;
+    out << "columns = " << cols << std::endl;
+    out << "floatsize = " << (sizeof(MatrixXXd::Scalar) * 8) << std::endl;
+    out << "end_header" << std::endl;
+
+    for(unsigned int i=0; i<this->concentrations_X.size(); i++) {
+        out.write((char*)this->concentrations_X[i].data(), rows * cols * sizeof(typename MatrixXXd::Scalar));
+        out.write((char*)this->concentrations_Y[i].data(), rows * cols * sizeof(typename MatrixXXd::Scalar));
+    }
+
+    out.close();
 }

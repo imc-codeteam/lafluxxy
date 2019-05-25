@@ -35,10 +35,13 @@
 #include <QComboBox>
 #include <QDir>
 
+#include <fstream>
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
 
 #include "two_dim_rd.h"
 #include "renderarea.h"
+#include "config.h"
 
 class MovieTab : public QWidget {
     Q_OBJECT

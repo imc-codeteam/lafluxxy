@@ -620,9 +620,9 @@ void TwoDimRD::init_cuda() {
 
     this->cuda_integrator->set_dimensions(this->width, this->height);
     this->cuda_integrator->set_integration_variables(this->dt, this->dx, this->steps, this->tsteps);
-    this->cuda_integrator->set_kinetic_variables(reinterpret_cast<ReactionGrayScott*>(this->reaction_system.get())->get_f(),
-                                                 reinterpret_cast<ReactionGrayScott*>(this->reaction_system.get())->get_k());
+    this->cuda_integrator->set_kinetic_variables(this->reaction_system->get_kinetic_parameters());
     this->cuda_integrator->set_diffusion_parameters(this->Da, this->Db);
     this->cuda_integrator->set_zeroflux(!this->pbc);
+    this->cuda_integrator->set_reacttype(this->reaction_system->get_reacttype());
     this->cuda_integrator->initialize_variables(values_a, values_b);
 }

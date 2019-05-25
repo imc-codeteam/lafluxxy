@@ -25,7 +25,7 @@
  * @brief      Constructs the object.
  */
 ReactionLotkaVolterra::ReactionLotkaVolterra() {
-
+    this->reacttype = KINETICS::LOTKA_VOLTERRA;
 }
 
 /**
@@ -93,4 +93,13 @@ void ReactionLotkaVolterra::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionLotkaVolterra::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, this->gamma, this->delta};
 }

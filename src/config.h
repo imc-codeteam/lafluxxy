@@ -25,13 +25,22 @@
 #define PROGRAM_NAME "LaFluxxy"
 #define PROGRAM_VERSION "0.7.1.0"
 
-enum {
+enum class KINETICS {
     NONE,
     LOTKA_VOLTERRA,
     GRAY_SCOTT,
     FITZHUGH_NAGUMO,
     BRUSSELATOR,
     BARKLEY
+};
+
+static const std::vector<KINETICS> kinetic_types = {
+    KINETICS::NONE,
+    KINETICS::LOTKA_VOLTERRA,
+    KINETICS::GRAY_SCOTT,
+    KINETICS::FITZHUGH_NAGUMO,
+    KINETICS::BRUSSELATOR,
+    KINETICS::BARKLEY
 };
 
 #endif // CONFIG_H

@@ -1,15 +1,15 @@
- /*************************************************************************
- *   This file is part of Wavefuse                                        *
- *   https://gitlab.tue.nl/ifilot/Wavefuse                                *
+ /**************************************************************************
+ *   This file is part of LaFluxxy                                        *
+ *   https://github.com/imc-codeteam/lafluxxy                             *
  *                                                                        *
  *   Author: Ivo Filot <i.a.w.filot@tue.nl>                               *
  *                                                                        *
- *   Wavefuse is free software: you can redistribute it and/or modify     *
+ *   LaFluxxy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
  *   by the Free Software Foundation, either version 3 of the License,    *
  *   or (at your option) any later version.                               *
  *                                                                        *
- *   Wavefuse is distributed in the hope that it will be useful,          *
+ *   LaFluxxy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty          *
  *   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.              *
  *   See the GNU General Public License for more details.                 *

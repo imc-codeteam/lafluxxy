@@ -47,7 +47,7 @@ public:
      * @param      ra    Pointer to reaction term for A
      * @param      rb    Pointer to reaction term for B
      */
-    void reaction(double a, double b, double *ra, double *rb) const;
+    void reaction(double a, double b, double *ra, double *rb) const override;
 
     /**
      * @brief      Initialize the system
@@ -55,14 +55,21 @@ public:
      * @param      a     Concentration matrix A
      * @param      b     Concentration matrix B
      */
-    void init(MatrixXXd& a, MatrixXXd& b) const;
+    void init(MatrixXXd& a, MatrixXXd& b) const override;
 
     /**
      * @brief      Sets the parameters.
      *
      * @param[in]  params  The parameters
      */
-    void set_parameters(const std::string& params);
+    void set_parameters(const std::string& params) override;
+
+    /**
+     * @brief      Gets the kinetic parameters.
+     *
+     * @return     The kinetic parameters.
+     */
+    std::array<double, 4> get_kinetic_parameters() const override;
 
 private:
 };

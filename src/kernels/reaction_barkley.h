@@ -19,55 +19,25 @@
  *                                                                        *
  **************************************************************************/
 
-#pragma once
-
-#include "reaction_system.h"
+#ifndef _REACTION_BARKLEY
+#define _REACTION_BARKLEY
 
 /**
- * @brief      Class for Brusselator Reaction
- * */
-class ReactionBrusselator : public ReactionSystem {
-private:
-    double alpha = -0.005;
-    double beta = 10.0;
+ * @brief      Calculate gray-scott reaction rate
+ *
+ * @param[in]  fx    pointer to concentration of compound A
+ * @param[in]  fy    pointer to concentration of compound B
+ * @param      drx   pointer to reaction rate of compound A
+ * @param      dry   pointer to reaction rate of compound B
+ */
+__global__ void reaction_barkley(const float *fx, const float *fy, float *drx, float *dry) {
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int stride = blockDim.x * gridDim.x;
 
-public:
-    /**
-     * @brief      Constructs the object.
-     */
-    ReactionBrusselator();
+    for(int i = index; i < d_ncells; i += stride) {
+        drx[i] = d_c3 * fx[i] * (1.0 - fx[i]) * (fx[i] - (fy[i] + d_c2) / d_c1);
+        dry[i] = fx[i] * fx[i] * fx[i] - fy[i];
+    }
+}
 
-    /**
-     * @brief      Initialize the system
-     *
-     * @param      a     Concentration matrix A
-     * @param      b     Concentration matrix B
-     */
-    void init(MatrixXXd& a, MatrixXXd& b) const override;
-
-    /**
-     * @brief      Perform a reaction step
-     *
-     * @param[in]  a     Concentration matrix A
-     * @param[in]  b     Concentration matrix B
-     * @param      ra    Pointer to reaction term for A
-     * @param      rb    Pointer to reaction term for B
-     */
-    void reaction(double a, double b, double *ra, double *rb) const override;
-
-    /**
-     * @brief      Sets the parameters.
-     *
-     * @param[in]  params  The parameters
-     */
-    void set_parameters(const std::string& params) override;
-
-    /**
-     * @brief      Gets the kinetic parameters.
-     *
-     * @return     The kinetic parameters.
-     */
-    std::array<double, 4> get_kinetic_parameters() const override;
-
-private:
-};
+#endif // _REACTION_BARKLEY

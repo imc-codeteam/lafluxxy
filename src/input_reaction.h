@@ -43,7 +43,7 @@ private:
     QPushButton *button_set_defaults;
 
 protected:
-    unsigned int reaction_type;
+    KINETICS reaction_type;
 
     QVBoxLayout* layout;
     QLabel* reaction_label;
@@ -64,7 +64,7 @@ public:
      *
      * @return     The reaction type.
      */
-    inline unsigned int get_reaction_type() const {
+    inline KINETICS get_reaction_type() const {
         return this->reaction_type;
     }
 

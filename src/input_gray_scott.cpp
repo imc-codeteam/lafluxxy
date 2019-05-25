@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = GRAY_SCOTT;
+    this->reaction_type = KINETICS::GRAY_SCOTT;
     this->input_names = {"f", "k"};
     this->input_labels = {"f", "k"};
     this->input_default_values = {0.029500, 0.056100};

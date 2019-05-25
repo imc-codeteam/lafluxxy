@@ -22,7 +22,7 @@
 #include "reaction_brusselator.h"
 
 ReactionBrusselator::ReactionBrusselator() {
-
+    this->reacttype = KINETICS::BRUSSELATOR;
 }
 
 void ReactionBrusselator::init(MatrixXXd& a, MatrixXXd& b) const {
@@ -30,7 +30,7 @@ void ReactionBrusselator::init(MatrixXXd& a, MatrixXXd& b) const {
 }
 
 void ReactionBrusselator::reaction(double a, double b, double *ra, double *rb) const {
-    *ra = this->alpha - (this->beta + 1) * a + (a * a * b);
+    *ra = this->alpha - (this->beta + 1.0) * a + (a * a * b);
     *rb = (this->beta * a) - (a * a * b);
 }
 
@@ -62,4 +62,13 @@ void ReactionBrusselator::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionBrusselator::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, 0.0, 0.0};
 }

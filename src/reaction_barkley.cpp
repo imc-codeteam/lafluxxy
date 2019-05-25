@@ -22,7 +22,7 @@
 #include "reaction_barkley.h"
 
 ReactionBarkley::ReactionBarkley() {
-
+    this->reacttype = KINETICS::BARKLEY;
 }
 
 void ReactionBarkley::init(MatrixXXd& a, MatrixXXd& b) const {
@@ -74,4 +74,13 @@ void ReactionBarkley::set_parameters(const std::string& params) {
     //     }
 
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionBarkley::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, this->epsilon, 0.0};
 }

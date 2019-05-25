@@ -101,20 +101,21 @@ TwoDimRD* InputTab::build_reaction_system() {
                                              this->input_tsteps->value());
     reaction_system->set_cores(this->input_ncores->value());
 
-    switch(this->reaction_selector->currentIndex()) {
-        case LOTKA_VOLTERRA:
+    KINETICS reacttype = kinetic_types[this->reaction_selector->currentIndex()];
+    switch(reacttype) {
+        case KINETICS::LOTKA_VOLTERRA:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
         break;
-        case GRAY_SCOTT:
+        case KINETICS::GRAY_SCOTT:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionGrayScott()));
         break;
-        case BARKLEY:
+        case KINETICS::BARKLEY:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBarkley()));
         break;
-        case FITZHUGH_NAGUMO:
+        case KINETICS::FITZHUGH_NAGUMO:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionFitzhughNagumo()));
         break;
-        case BRUSSELATOR:
+        case KINETICS::BRUSSELATOR:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBrusselator()));
         break;
         default:
@@ -359,20 +360,21 @@ void InputTab::set_reaction_input(int reactype) {
         this->reaction_settings = nullptr;
     }
 
-    switch(reactype) {
-        case LOTKA_VOLTERRA:
+    KINETICS kinetic_system = kinetic_types[reactype];
+    switch(kinetic_system) {
+        case KINETICS::LOTKA_VOLTERRA:
             this->reaction_settings = new InputLotkaVolterra();
         break;
-        case GRAY_SCOTT:
+        case KINETICS::GRAY_SCOTT:
             this->reaction_settings = new InputGrayScott();
         break;
-        case FITZHUGH_NAGUMO:
+        case KINETICS::FITZHUGH_NAGUMO:
             this->reaction_settings = new InputFitzhughNagumo();
         break;
-        case BARKLEY:
+        case KINETICS::BARKLEY:
             this->reaction_settings = new InputBarkley();
         break;
-        case BRUSSELATOR:
+        case KINETICS::BRUSSELATOR:
             this->reaction_settings = new InputBrusselator();
         break;
         default:

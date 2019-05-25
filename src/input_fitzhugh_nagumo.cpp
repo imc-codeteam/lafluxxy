@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputFitzhughNagumo::InputFitzhughNagumo(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = FITZHUGH_NAGUMO;
+    this->reaction_type = KINETICS::FITZHUGH_NAGUMO;
     this->input_names = {"alpha", "beta"};
     this->input_labels = {"&alpha;", "&beta;"};
     this->input_default_values = {-0.005, 10.0};

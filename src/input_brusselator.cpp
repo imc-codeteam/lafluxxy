@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputBrusselator::InputBrusselator(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = BRUSSELATOR;
+    this->reaction_type = KINETICS::BRUSSELATOR;
     this->input_names = {"alpha", "beta"};
     this->input_labels = {"&alpha;", "&beta;"};
     this->input_default_values = {4.50, 7.50};

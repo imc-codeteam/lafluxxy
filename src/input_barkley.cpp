@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputBarkley::InputBarkley(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = BARKLEY;
+    this->reaction_type = KINETICS::BARKLEY;
     this->input_names = {"alpha", "beta", "epsilon"};
     this->input_labels = {"&alpha;", "&beta;", "&epsilon;"};
     this->input_default_values = {0.75, 0.06, 50.0};

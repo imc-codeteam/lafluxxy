@@ -19,13 +19,15 @@
  *                                                                        *
  **************************************************************************/
 
+#include <array>
+
 // add auxiliary cuda functions
 #include "check_cuda.h"
 #include "cuda_events.h"
 
 // include kernels
 #include "kernels/laplacians.h"
-#include "kernels/reaction_gray_scott.h"
+#include "kernels/reaction_kinetics.h"
 #include "kernels/update.h"
 
 // other includes
@@ -135,7 +137,28 @@ void RD2D_CUDA::update_step() {
 
         // calculate reaction
         start_event(&startEventKernel);
-        reaction_gray_scott<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+
+        // execute reaction kinetics step
+        switch(this->reacttype) {
+            case KINETICS::GRAY_SCOTT:
+                reaction_gray_scott<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+            break;
+            case KINETICS::BRUSSELATOR:
+                reaction_brusselator<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+            break;
+            case KINETICS::BARKLEY:
+                reaction_barkley<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+            break;
+            case KINETICS::LOTKA_VOLTERRA:
+                reaction_lotka_volterra<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+            break;
+            case KINETICS::FITZHUGH_NAGUMO:
+                reaction_fitzhugh_nagumo<<<grid,block>>>(d_a, d_b, d_ra, d_rb);
+            break;
+            default:
+                throw std::runtime_error("Invalid reaction type");
+        }
+
         this->reaction_times += stop_event(&startEventKernel, &stopEventKernel);;
 
         // update
@@ -223,8 +246,10 @@ void RD2D_CUDA::initialize_variables(const std::vector<float>& _a, const std::ve
     checkCuda( cudaMemcpyToSymbol(d_my, &this->my, sizeof(unsigned int)) );
     checkCuda( cudaMemcpyToSymbol(d_pencils, &this->pencils, sizeof(unsigned int)) );
     checkCuda( cudaMemcpyToSymbol(d_ncells, &this->ncells, sizeof(unsigned int)) );
-    checkCuda( cudaMemcpyToSymbol(d_f, &this->f, sizeof(float)) );
-    checkCuda( cudaMemcpyToSymbol(d_k, &this->k, sizeof(float)) );
+    checkCuda( cudaMemcpyToSymbol(d_c1, &this->c1, sizeof(float)) );
+    checkCuda( cudaMemcpyToSymbol(d_c2, &this->c2, sizeof(float)) );
+    checkCuda( cudaMemcpyToSymbol(d_c3, &this->c3, sizeof(float)) );
+    checkCuda( cudaMemcpyToSymbol(d_c4, &this->c4, sizeof(float)) );
     // std::cout << donestring << std::endl;
 
     // std::cout << "All ready for time-integration." << std::endl << std::endl;

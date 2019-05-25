@@ -19,55 +19,19 @@
  *                                                                        *
  **************************************************************************/
 
-#pragma once
+#ifndef _REACTION_KINETICS_H
+#define _REACTION_KINETICS_H
 
-#include "reaction_system.h"
+// constant variables on device
+__device__ __constant__ float d_c1;
+__device__ __constant__ float d_c2;
+__device__ __constant__ float d_c3;
+__device__ __constant__ float d_c4;
 
-/**
- * @brief      Class for Brusselator Reaction
- * */
-class ReactionBrusselator : public ReactionSystem {
-private:
-    double alpha = -0.005;
-    double beta = 10.0;
+#include "reaction_brusselator.h"
+#include "reaction_barkley.h"
+#include "reaction_gray_scott.h"
+#include "reaction_fitzhugh_nagumo.h"
+#include "reaction_lotka_volterra.h"
 
-public:
-    /**
-     * @brief      Constructs the object.
-     */
-    ReactionBrusselator();
-
-    /**
-     * @brief      Initialize the system
-     *
-     * @param      a     Concentration matrix A
-     * @param      b     Concentration matrix B
-     */
-    void init(MatrixXXd& a, MatrixXXd& b) const override;
-
-    /**
-     * @brief      Perform a reaction step
-     *
-     * @param[in]  a     Concentration matrix A
-     * @param[in]  b     Concentration matrix B
-     * @param      ra    Pointer to reaction term for A
-     * @param      rb    Pointer to reaction term for B
-     */
-    void reaction(double a, double b, double *ra, double *rb) const override;
-
-    /**
-     * @brief      Sets the parameters.
-     *
-     * @param[in]  params  The parameters
-     */
-    void set_parameters(const std::string& params) override;
-
-    /**
-     * @brief      Gets the kinetic parameters.
-     *
-     * @return     The kinetic parameters.
-     */
-    std::array<double, 4> get_kinetic_parameters() const override;
-
-private:
-};
+#endif // _REACTION_KINETICS_H

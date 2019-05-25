@@ -22,7 +22,7 @@
 #include "reaction_fitzhugh_nagumo.h"
 
 ReactionFitzhughNagumo::ReactionFitzhughNagumo() {
-
+    this->reacttype = KINETICS::FITZHUGH_NAGUMO;
 }
 
 void ReactionFitzhughNagumo::init(MatrixXXd& a, MatrixXXd& b) const {
@@ -62,4 +62,13 @@ void ReactionFitzhughNagumo::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionFitzhughNagumo::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, 0.0, 0.0};
 }

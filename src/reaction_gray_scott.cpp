@@ -22,7 +22,7 @@
 #include "reaction_gray_scott.h"
 
 ReactionGrayScott::ReactionGrayScott() {
-
+    this->reacttype = KINETICS::GRAY_SCOTT;
 }
 
 
@@ -65,4 +65,13 @@ void ReactionGrayScott::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionGrayScott::get_kinetic_parameters() const {
+    return {this->f, this->k, 0.0, 0.0};
 }

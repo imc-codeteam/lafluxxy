@@ -117,10 +117,16 @@ HEADERS += src/card_manager.h \
            src/cuda_events.h
 
 unix {
-    # set cuda stuff
-    CUDA_DIR = /usr/local/cuda-10.1
-    CUDA_LIBS =
-    CUDA_LIBRT = /usr/local/cuda-10.1/lib64/libcudart_static.a
+    exists(/usr/local/cuda-10.0/bin/nvcc) {
+        CUDA_DIR = /usr/local/cuda-10.0
+        CUDA_LIBRT = /usr/local/cuda-10.0/lib64/libcudart_static.a
+    }
+
+    exists(/usr/local/cuda-10.1/bin/nvcc) {
+        CUDA_DIR = /usr/local/cuda-10.1
+        CUDA_LIBRT = /usr/local/cuda-10.1/lib64/libcudart_static.a
+    }
+
     # CUDA_ARCH = compute_52
     NVCCFLAGS = -use_fast_math --compile -cudart static -O3
 

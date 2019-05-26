@@ -37,6 +37,7 @@ InputFitzhughNagumo::InputFitzhughNagumo(QWidget *parent) : InputReaction(parent
 
 void InputFitzhughNagumo::set_label() {
     this->reaction_label->setText(tr("<i>Fitzhugh-Nagumo kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_fitzhugh_nagumo.png");
 }
 
 /**

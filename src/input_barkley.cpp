@@ -37,6 +37,7 @@ InputBarkley::InputBarkley(QWidget *parent) : InputReaction(parent) {
 
 void InputBarkley::set_label() {
     this->reaction_label->setText(tr("<i>Barkley kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_barkley.png");
 }
 
 /**

@@ -29,6 +29,18 @@ void ReactionFitzhughNagumo::init(MatrixXXd& a, MatrixXXd& b) const {
     this->init_half_screen(a, b, 1.0, 0.1);
 }
 
+/**
+ * @brief      reaction kinetics for Fitzhugh-Nagumo
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = X(1- X^{2}) - Y + \alpha \\
+ * \frac{\partial Y}{\partial t} = \beta(X - Y)
+ */
 void ReactionFitzhughNagumo::reaction(double a, double b, double *ra, double *rb) const {
     *ra = a - (a * a * a) - b + this->alpha;
     *rb = (a - b) * this->beta;

@@ -38,6 +38,7 @@ InputBrusselator::InputBrusselator(QWidget *parent) : InputReaction(parent) {
 
 void InputBrusselator::set_label() {
     this->reaction_label->setText(tr("<i>Brusselator kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_brusselator.png");
 }
 
 /**

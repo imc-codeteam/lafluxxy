@@ -30,6 +30,9 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QComboBox>
+#include <QPixmap>
+#include <QDir>
+
 #include <unordered_map>
 
 #include "config.h"
@@ -46,6 +49,7 @@ protected:
     KINETICS reaction_type;
 
     QVBoxLayout* layout;
+    QLabel* label_reaction_equation;
     QLabel* reaction_label;
     QGridLayout *default_sets_gridlayout;
     std::vector<std::string> input_names;
@@ -96,6 +100,13 @@ protected:
      * @brief      Builds input boxes.
      */
     void build_input_boxes();
+
+    /**
+     * @brief      Shows the reaction equation.
+     *
+     * @param[in]  name  Name of the reaction
+     */
+    void show_reaction_equation(const QString& name);
 
 private:
     /**

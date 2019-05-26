@@ -26,6 +26,19 @@ ReactionGrayScott::ReactionGrayScott() {
 }
 
 
+/**
+ * @brief      reaction kinetics for Gray-Scott
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = -XY^{2} + f (1 - X) \\
+ * \frac{\partial Y}{\partial t} = XY^{2} - (f + k)Y
+ *
+ */
 void ReactionGrayScott::reaction(double a, double b, double *ra, double *rb) const {
     double r = a * b * b;
     *ra = -r + this->f * (1.0 - a);

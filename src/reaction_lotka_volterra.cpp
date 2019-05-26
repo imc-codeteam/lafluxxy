@@ -35,6 +35,10 @@ ReactionLotkaVolterra::ReactionLotkaVolterra() {
  * @param[in]  b     Concentration matrix B
  * @param      ra    Pointer to reaction term for A
  * @param      rb    Pointer to reaction term for B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = \alpha X - \beta X Y \\
+ * \frac{\partial Y}{\partial t} = -\gamma Y + \delta XY
  */
 void ReactionLotkaVolterra::reaction(double a, double b, double *ra, double *rb) const {
     *ra = this->alpha * a - this->beta * a * b;

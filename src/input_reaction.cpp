@@ -29,6 +29,10 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     this->reaction_label = new QLabel();
     this->layout->addWidget(this->reaction_label);
 
+    // set reaction equation label
+    this->label_reaction_equation = new QLabel();
+    this->layout->addWidget(this->label_reaction_equation);
+
     // build grid layout for the input boxes
     QWidget *kinetic_param_widget = new QWidget();
     layout->addWidget(kinetic_param_widget);
@@ -85,4 +89,14 @@ std::string InputReaction::get_parameter_string() const {
     parameter_string.pop_back();
 
     return parameter_string;
+}
+
+/**
+ * @brief      Shows the reaction equation.
+ *
+ * @param[in]  name  Name of the reaction
+ */
+void InputReaction::show_reaction_equation(const QString& name) {
+    QPixmap pixmap_reaction_equation(QDir::currentPath() + "/../img/" + name);
+    this->label_reaction_equation->setPixmap(pixmap_reaction_equation.scaledToHeight(75, Qt::SmoothTransformation));
 }

@@ -37,6 +37,7 @@ InputLotkaVolterra::InputLotkaVolterra(QWidget *parent) : InputReaction(parent) 
 
 void InputLotkaVolterra::set_label() {
     this->reaction_label->setText(tr("<i>Lotka-Volterra kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_lotka_volterra.png");
 }
 
 /**

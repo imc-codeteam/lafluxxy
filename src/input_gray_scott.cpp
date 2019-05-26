@@ -38,6 +38,7 @@ InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
 
 void InputGrayScott::set_label() {
     this->reaction_label->setText(tr("<i>Gray-Scott kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_gray_scott.png");
 }
 
 /**

@@ -29,6 +29,7 @@
 #include <QDoubleSpinBox>
 #include <unordered_map>
 #include <iostream>
+#include <array>
 
 #include <boost/format.hpp>
 

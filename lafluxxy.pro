@@ -135,12 +135,32 @@ unix {
 
     cuda.input = CUDA_SOURCES
     cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
-    QMAKE_EXTRA_COMPILERS += cuda
 }
 
 win32 {
+    #QMAKE_LFLAGS_RELEASE = /NODEFAULTLIB:msvcrt.lib
+    QMAKE_CXXFLAGS += /MD
+
+    CUDA_DIR = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1"            # Path to cuda toolkit install
+    SYSTEM_NAME = x64
+    SYSTEM_TYPE = 64
+    NVCC_OPTIONS = --use_fast_math -O3 -Xcompiler /MD
+
+    QMAKE_LIBDIR += $$CUDA_DIR/lib/$$SYSTEM_NAME \
+                    $$CUDA_SDK/common/lib/$$SYSTEM_NAME \
+                    $$CUDA_SDK/../shared/lib/$$SYSTEM_NAME
+
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
     INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
+    CUDA_OBJECTS_DIR = release/cuda
+    CUDA_INC = $$join(INCLUDEPATH,'" -I"','-I"','"')
 
-    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib -lboost_filesystem-vc141-mt-1_64 -lboost_system-vc141-mt-1_64
+    cuda.input = CUDA_SOURCES
+    cuda.output = $$CUDA_OBJECTS_DIR/${QMAKE_FILE_BASE}_cuda.o
+    cuda.commands = $$CUDA_DIR/bin/nvcc.exe $$NVCC_OPTIONS $$CUDA_INC $$LIBS --machine $$SYSTEM_TYPE -c -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
+    cuda.dependency_type = TYPE_C
+
+    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib -lboost_filesystem-vc141-mt-1_64 -lboost_system-vc141-mt-1_64 -lcuda -lcudart
 }
+
+QMAKE_EXTRA_COMPILERS += cuda

@@ -109,9 +109,26 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->button_copy_to_movie->setEnabled(false);
 
     // show integration time statistics
-    main_layout->addWidget(new QLabel(tr("<b>Integration time</b>")));
-    this->label_integration_time = new QLabel;
-    main_layout->addWidget(this->label_integration_time);
+    QWidget *time_integration_widget = new QWidget();
+    time_integration_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    this->layout_integration_times = new QGridLayout();
+    this->layout_integration_times->setColumnStretch(1, 10);
+    time_integration_widget->setLayout(this->layout_integration_times);
+    main_layout->addWidget(time_integration_widget);
+    this->layout_integration_times->addWidget(new QLabel("<html><b>Integration time</b></html>"), 0, 0);
+    this->layout_integration_times->addWidget(new QLabel("Last frame:"), 1, 0);
+    this->layout_integration_times->addWidget(new QLabel("Average:"), 2, 0);
+    this->layout_integration_times->addWidget(new QLabel("Total time:"), 3, 0);
+    this->layout_integration_times->addWidget(new QLabel("Estimated remaining:"), 4, 0);
+
+    this->label_time_last_frame = new QLabel();
+    this->label_time_average = new QLabel();
+    this->label_time_remaining = new QLabel();
+    this->label_time_total = new QLabel();
+    this->layout_integration_times->addWidget(this->label_time_last_frame, 1, 1);
+    this->layout_integration_times->addWidget(this->label_time_average, 2, 1);
+    this->layout_integration_times->addWidget(this->label_time_total, 3, 1);
+    this->layout_integration_times->addWidget(this->label_time_remaining, 4, 1);
 
     // set up progress bar
     main_layout->addWidget(new QLabel("<b>Simulation progress</b>"));
@@ -158,10 +175,13 @@ void ResultsTab::add_frame(unsigned int i, double dt) {
     // update running time
     if(i != 0) {
         this->dts.push_back(dt);
+        this->total_t += dt;
         double avg = std::accumulate(this->dts.begin(), this->dts.end(), 0.0) / (double)dts.size();
         double remaining = avg * (this->progress_bar->maximum() - this->progress_bar->value());
-        this->label_integration_time->setText(tr("Last frame:\t\t") + QString::number(this->dts.back()) + tr(" sec\nAverage:\t\t") +
-                                              QString::number(avg) + tr(" sec\n") + tr("Estimated remaining:\t") + QString::number(remaining) + tr(" sec\n"));
+        this->label_time_last_frame->setText(QString::number(this->dts.back()) + tr(" sec"));
+        this->label_time_average->setText(QString::number(avg) + tr(" sec"));
+        this->label_time_remaining->setText(QString::number(remaining) + tr(" sec"));
+        this->label_time_total->setText(QString::number(this->total_t) + tr(" sec"));
     }
 
     // update slider
@@ -176,10 +196,13 @@ void ResultsTab::add_frame(unsigned int i, double dt) {
  */
 void ResultsTab::clear() {
     this->dts.clear();
+    this->total_t = 0.0;
     this->renderarea_X->clear();
     this->renderarea_Y->clear();
-    this->label_frame->setText("");
-    this->label_integration_time->setText("");
+    this->label_time_last_frame->setText("");
+    this->label_time_average->setText("");
+    this->label_time_remaining->setText("");
+    this->label_time_total->setText("");
     this->button_copy_to_movie->setEnabled(false);
 }
 

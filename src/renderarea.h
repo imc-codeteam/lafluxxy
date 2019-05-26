@@ -96,10 +96,15 @@ public:
     /**
      * @brief      Adds a graph.
      *
-     * @param[in]  X     Concentrations
+     * @param[in]  data  Raw concentration data
      * @param[in]  mask  The mask
+     *
+     * Note: Pass the data object NOT as a const reference, but as a copy!
+     *       Due to the multi-threaded nature of the application, the vector
+     *       containing the original data can be resized, while the data
+     *       still needs to be parsed!
      */
-    void add_graph(const MatrixXXd& X, const MatrixXXi& mask);
+    void add_graph(MatrixXXd data, const MatrixXXi& mask);
 
     /**
      * @brief      Saves an image from the graph

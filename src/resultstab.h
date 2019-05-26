@@ -57,11 +57,18 @@ private:
     QPushButton *button_copy_to_movie;
 
     QToolButton *button_stop;
-    QLabel *label_integration_time;
+
+    // integration time statistics
+    QGridLayout *layout_integration_times;
+    QLabel *label_time_last_frame;
+    QLabel *label_time_average;
+    QLabel *label_time_remaining;
+    QLabel *label_time_total;
 
     TwoDimRD* reaction_system;
 
     std::vector<double> dts;
+    double total_t = 0.0;
 
 public:
     /**

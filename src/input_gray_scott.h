@@ -29,6 +29,8 @@
 #include <QDoubleSpinBox>
 #include <unordered_map>
 
+#include <array>
+
 #include "input_reaction.h"
 
 class InputGrayScott : public InputReaction {

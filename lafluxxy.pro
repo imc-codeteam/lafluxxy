@@ -112,8 +112,8 @@ CUDA_SOURCES += src/card_manager.cu \
 
 # cuda headers
 HEADERS += src/card_manager.h \
-           src/rd2d_cuda.h
-           src/check_cuda.h
+           src/rd2d_cuda.h \
+           src/check_cuda.h \
            src/cuda_events.h
 
 unix {
@@ -132,13 +132,15 @@ unix {
     INCLUDEPATH += $$CUDA_DIR/include /usr/include/eigen3
     LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt
     QMAKE_LIBDIR += $$CUDA_DIR/lib64
+
+    cuda.input = CUDA_SOURCES
+    cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
+    QMAKE_EXTRA_COMPILERS += cuda
 }
 
 win32 {
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
     INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
-}
 
-cuda.input = CUDA_SOURCES
-cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
-QMAKE_EXTRA_UNIX_COMPILERS += cuda
+    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib -lboost_filesystem-vc141-mt-1_64 -lboost_system-vc141-mt-1_64
+}

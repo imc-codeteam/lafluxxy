@@ -5,12 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-# set boundaries for cmap
-vmin1 = float(sys.argv[2])
-vmax1 = float(sys.argv[3])
-vmin2 = float(sys.argv[4])
-vmax2 = float(sys.argv[5])
-
 # open file
 with open(sys.argv[1], "rb") as f:
     # read header
@@ -32,6 +26,10 @@ with open(sys.argv[1], "rb") as f:
     nframes = 0
     cols = 0
     rows =0
+    vmin1 = 0
+    vmax1 = 0
+    vmin2 = 0
+    vmax2 = 0
 
     # grab info from keyword-value pairs
     for line in lines:
@@ -46,6 +44,18 @@ with open(sys.argv[1], "rb") as f:
 
         if keyword == "columns":
             cols = int(pieces[1])
+
+        if keyword == "vmin1":
+            vmin1 = float(pieces[1])
+
+        if keyword == "vmin2":
+            vmin2 = float(pieces[1])
+
+        if keyword == "vmax1":
+            vmax1 = float(pieces[1])
+
+        if keyword == "vmax2":
+            vmax2 = float(pieces[1])
 
     print("%i x %i x %i" % (nframes, rows, cols))
     print("vmin1 = %f" % vmin1)

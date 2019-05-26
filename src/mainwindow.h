@@ -32,6 +32,7 @@
 #include <QMenu>
 
 #include <iostream>
+#include <thread>
 
 #include "inputtab.h"
 #include "resultstab.h"

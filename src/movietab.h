@@ -36,6 +36,7 @@
 #include <QDir>
 
 #include <fstream>
+#include <mutex>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 

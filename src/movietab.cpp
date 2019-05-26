@@ -367,6 +367,10 @@ void MovieTab::save_raw_data() {
     out << "rows = " << rows << std::endl;
     out << "columns = " << cols << std::endl;
     out << "floatsize = " << (sizeof(MatrixXXd::Scalar) * 8) << std::endl;
+    out << "vmin1 = " << this->value_min_x->value() << std::endl;
+    out << "vmax1 = " << this->value_max_x->value() << std::endl;
+    out << "vmin2 = " << this->value_min_y->value() << std::endl;
+    out << "vmax2 = " << this->value_max_x->value() << std::endl;
     out << "end_header" << std::endl;
 
     for(unsigned int i=0; i<this->concentrations_X.size(); i++) {

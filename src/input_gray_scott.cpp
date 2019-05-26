@@ -77,18 +77,18 @@ void InputGrayScott::build_default_sets() {
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson lambda pattern"));
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson mu pattern"));
     #else
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson α pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson β pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson γ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson δ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson ε pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson ζ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson η pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson θ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson ι pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson κ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson λ pattern"));
-    this->combobox_default_sets->addItem(QString::fromWCharArray(tr"Pearson μ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson α pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson β pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson γ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson δ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ε pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ζ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson η pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson θ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson ι pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson κ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson λ pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson μ pattern"));
     #endif
     this->combobox_default_sets->setCurrentIndex(0);
 

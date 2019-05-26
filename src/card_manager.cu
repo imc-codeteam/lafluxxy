@@ -21,6 +21,8 @@
 
 #include "card_manager.h"
 
+#include "check_cuda.h"
+
 /**
  * @brief      Constructs the object.
  */
@@ -28,8 +30,12 @@ CardManager::CardManager() {
     int nDevices;
     char buffer[100];
 
-    cudaGetDeviceCount(&nDevices);
-    for (int i = 0; i < nDevices; i++) {
+    auto status = checkCuda(cudaGetDeviceCount(&nDevices));
+    if(status != cudaSuccess) {
+        return;
+    }
+
+    for(int i = 0; i < nDevices; i++) {
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
         int length = sprintf(buffer, "%s (device %i)", prop.name, i);

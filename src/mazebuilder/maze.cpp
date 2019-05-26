@@ -41,7 +41,7 @@ algo_type(_type)
 
     // set neighbors
     #pragma omp parallel for
-    for(int row = 0; row < this->mrows; row++ ) {
+    for(int row = 0; row < (int)this->mrows; row++ ) {
         for(unsigned int col = 0; col < this->mcols; col++) {
             Cell* north = nullptr;
             Cell* east  = nullptr;
@@ -52,7 +52,7 @@ algo_type(_type)
                 south = &this->cells[(row - 1) * this->mcols + col];
             }
 
-            if(row < (this->mrows - 1)) {
+            if(row < ((int)this->mrows - 1)) {
                 north = &this->cells[(row + 1) * this->mcols + col];
             }
 

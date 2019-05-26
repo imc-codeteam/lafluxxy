@@ -45,8 +45,8 @@ Maze* MazeAlgorithmPrimsSimplified::build_maze(unsigned int rows, unsigned int c
     while (incorporated.size() > 0) {
         unsigned int index = this->get_random_number_uint(incorporated.size() - 1);
 
-        int cell_number = incorporated[index];
-        int row = 0;
+        unsigned int cell_number = incorporated[index];
+        unsigned int row = 0;
         while (cell_number >= cols) {
             cell_number = cell_number - cols;
             row = row + 1;

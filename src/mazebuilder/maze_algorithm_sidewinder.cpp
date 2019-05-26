@@ -36,7 +36,7 @@ MazeAlgorithmSidewinder::MazeAlgorithmSidewinder() {}
  */
 Maze* MazeAlgorithmSidewinder::build_maze(unsigned int rows, unsigned int cols) {
     Maze* maze = new Maze(rows, cols, MazeAlgorithmType::ALGO_SIDEWINDER);
-    bool north;
+    bool north = false;
 
     for(unsigned int row = 0; row < maze->rows(); row++) {
         std::vector<Cell*> run;  // stores current run

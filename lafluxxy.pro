@@ -60,7 +60,16 @@ SOURCES += src/main.cpp\
            src/mazerenderer.cpp \
            src/mazeholder.cpp \
            src/movietab.cpp \
-           src/colorscheme.cpp
+           src/colorscheme.cpp \
+           src/mazebuilder/cell.cpp \
+           src/mazebuilder/maze.cpp \
+           src/mazebuilder/maze_algorithm.cpp \
+           src/mazebuilder/maze_algorithm_aldous_broder.cpp \
+           src/mazebuilder/maze_algorithm_binary_tree.cpp \
+           src/mazebuilder/maze_algorithm_prims_simplified.cpp \
+           src/mazebuilder/maze_algorithm_sidewinder.cpp \
+           src/mazebuilder/maze_builder.cpp \
+           src/mazebuilder/maze_statistics.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
@@ -86,29 +95,16 @@ HEADERS  += src/mainwindow.h \
             src/mazeholder.h \
             src/matrices.h \
             src/movietab.h \
-            src/colorscheme.h
-
-# files from external library mazebuilder
-SOURCES += vendor/mazebuilder/src/cell.cpp \
-           vendor/mazebuilder/src/maze.cpp \
-           vendor/mazebuilder/src/maze_algorithm.cpp \
-           vendor/mazebuilder/src/maze_algorithm_aldous_broder.cpp \
-           vendor/mazebuilder/src/maze_algorithm_binary_tree.cpp \
-           vendor/mazebuilder/src/maze_algorithm_prims_simplified.cpp \
-           vendor/mazebuilder/src/maze_algorithm_sidewinder.cpp \
-           vendor/mazebuilder/src/maze_builder.cpp \
-           vendor/mazebuilder/src/maze_statistics.cpp
-
-# files from external library mazebuilder
-HEADERS += vendor/mazebuilder/src/cell.h \
-           vendor/mazebuilder/src/maze.h \
-           vendor/mazebuilder/src/maze_algorithm.h \
-           vendor/mazebuilder/src/maze_algorithm_aldous_broder.h \
-           vendor/mazebuilder/src/maze_algorithm_binary_tree.h \
-           vendor/mazebuilder/src/maze_algorithm_prims_simplified.h \
-           vendor/mazebuilder/src/maze_algorithm_sidewinder.h \
-           vendor/mazebuilder/src/maze_builder.h \
-           vendor/mazebuilder/src/maze_statistics.h
+            src/colorscheme.h \
+            src/mazebuilder/cell.h \
+            src/mazebuilder/maze.h \
+            src/mazebuilder/maze_algorithm.h \
+            src/mazebuilder/maze_algorithm_aldous_broder.h \
+            src/mazebuilder/maze_algorithm_binary_tree.h \
+            src/mazebuilder/maze_algorithm_prims_simplified.h \
+            src/mazebuilder/maze_algorithm_sidewinder.h \
+            src/mazebuilder/maze_builder.h \
+            src/mazebuilder/maze_statistics.h
 
 # cuda sources
 CUDA_SOURCES += src/card_manager.cu \

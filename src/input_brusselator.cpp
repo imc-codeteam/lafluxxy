@@ -33,6 +33,7 @@ InputBrusselator::InputBrusselator(QWidget *parent) : InputReaction(parent) {
 
     this->set_label();
     this->build_input_boxes();
+    this->build_default_sets();
 }
 
 void InputBrusselator::set_label() {
@@ -45,5 +46,28 @@ void InputBrusselator::set_label() {
  * @return     The default parameter settings.
  */
 std::string InputBrusselator::get_default_parameter_settings() {
-    return std::string("dX=2;dY=16;dx=1.0;dt=0.005;width=256;height=256;steps=20;tsteps=1000;pbc=1");
+    // obtain default kinetic parameters
+    unsigned int set_idx = this->combobox_default_sets->currentIndex();
+    if(set_idx > 0 && set_idx <= this->kinetic_values_sets.size()) {
+        this->input_default_values = {this->kinetic_values_sets[set_idx-1][0], this->kinetic_values_sets[set_idx-1][1]};
+        this->build_input_boxes();
+        return (boost::format("dX=%.1f;dY=10;dx=1.0;dt=0.005;width=256;height=256;steps=20;tsteps=1000;pbc=1") % this->kinetic_values_sets[set_idx-1][2]).str();
+    } else {
+        return std::string("dX=2;dY=16;dx=1.0;dt=0.005;width=256;height=256;steps=20;tsteps=1000;pbc=1");
+    }
+}
+
+/**
+ * @brief      Add dropdown menu with default integration settings
+ */
+void InputBrusselator::build_default_sets() {
+    this->combobox_default_sets = new QComboBox();
+
+    this->combobox_default_sets->addItem(tr("Please select a default set..."));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Hexagons pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Stripes pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Transition pattern"));
+    this->combobox_default_sets->setCurrentIndex(0);
+
+    this->default_sets_gridlayout->addWidget(this->combobox_default_sets, 0, 0);
 }

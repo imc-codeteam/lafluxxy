@@ -127,7 +127,7 @@ void RenderArea::decrease_size() {
  */
 void RenderArea::paintEvent(QPaintEvent * /* event */) {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     painter.setPen(palette().dark().color());
     painter.setBrush(Qt::NoBrush);
     if(this->graphs.size() > 0) {

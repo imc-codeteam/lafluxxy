@@ -43,6 +43,11 @@ private:
     double graphs_minval = 0.0;
     double graphs_maxval = 0.0;
 
+    unsigned int sizex = 256;
+    unsigned int sizey = 256;
+    unsigned int sizexmin = 128;
+    unsigned int sizeymin = 128;
+
 public:
     /**
      * @brief      Constructs the object.
@@ -156,6 +161,16 @@ public:
     inline void use_boundary_values(bool _boundary_values) {
         this->flag_boundary_values = _boundary_values;
     }
+
+    /**
+     * @brief      Increase the widget size
+     */
+    void increase_size();
+
+    /**
+     * @brief      Decrease the widget size
+     */
+    void decrease_size();
 
 protected:
     /**

@@ -30,6 +30,7 @@
 #include "colorschemes/plasma.h"
 #include "colorschemes/inferno.h"
 #include "colorschemes/piyg.h"
+#include "colorschemes/spectral.h"
 
 class ColorScheme {
 private:

@@ -35,11 +35,11 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
 }
 
 QSize RenderArea::sizeHint() const {
-    return QSize(512, 512);
+    return QSize(this->sizex, this->sizey);
 }
 
 QSize RenderArea::minimumSizeHint() const {
-    return QSize(256, 256);
+    return QSize(this->sizexmin, this->sizeymin);
 }
 
 /**
@@ -100,6 +100,24 @@ void RenderArea::save_image(unsigned int graph_id, const QString& filename) {
     } else {
         throw std::logic_error("Invalid graph save request; graph id exceeds vector size.");
     }
+}
+
+/**
+ * @brief      Increase the widget size
+ */
+void RenderArea::increase_size() {
+    this->sizex = std::min(this->sizex * 2, (uint)1024);
+    this->sizey = std::min(this->sizey * 2, (uint)1024);
+    this->resize(this->sizex, this->sizey);
+}
+
+/**
+ * @brief      Decrease the widget size
+ */
+void RenderArea::decrease_size() {
+    this->sizex = std::max(this->sizex / 2, this->sizexmin);
+    this->sizey = std::max(this->sizey / 2, this->sizeymin);
+    this->resize(this->sizex, this->sizey);
 }
 
 /**

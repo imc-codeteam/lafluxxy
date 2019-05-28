@@ -55,6 +55,9 @@ private:
     QToolButton *button_first;
     QToolButton *button_last;
 
+    QToolButton *button_increase_size;
+    QToolButton *button_decrease_size;
+
     QSlider *slider_frame;
 
     QProgressBar *progress_bar;
@@ -156,6 +159,11 @@ private:
      * @param[in]  img   The image
      */
     void save_image(const QPixmap& img);
+
+    /**
+     * @brief      Construct Fourier Transform
+     */
+    void construct_ft(MatrixXXd data, RenderArea* destination);
 
 private slots:
     /**

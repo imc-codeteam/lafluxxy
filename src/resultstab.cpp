@@ -68,6 +68,16 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     concentrations_layout->addWidget(this->button_save_image_Y, 2, 1);
     connect(this->button_save_image_Y, SIGNAL(clicked()), this, SLOT(save_concentration_Y()));
 
+    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation X")), 3, 0);
+    this->renderarea_ft_X = new RenderArea();
+    this->renderarea_ft_X->set_color_scheme("spectral");
+    concentrations_layout->addWidget(this->renderarea_ft_X, 4, 0);
+
+    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation Y")), 3, 1);
+    this->renderarea_ft_Y = new RenderArea();
+    this->renderarea_ft_Y->set_color_scheme("spectral");
+    concentrations_layout->addWidget(this->renderarea_ft_Y, 4, 1);
+
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
     main_layout->addWidget(this->slider_frame);
@@ -170,19 +180,8 @@ void ResultsTab::add_frame(unsigned int i, double dt) {
     this->renderarea_Y->add_graph(data_Y, this->reaction_system->get_mask());
 
     // create Fourier transforms
-    fftw_complex *data_x_1d_arr = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data_X.rows() * data_X.cols());
-    fftw_complex *data_y_1d_arr = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data_Y.rows() * data_Y.cols());
-
-    fftw_plan plan_x = fftw_plan_dft_r2c_2d(data_X.cols(), data_X.rows(), data_X.data(), data_x_1d_arr, FFTW_ESTIMATE);
-    fftw_execute(plan_x);
-    fftw_plan plan_y = fftw_plan_dft_r2c_2d(data_X.cols(), data_X.rows(), data_X.data(), data_x_1d_arr, FFTW_ESTIMATE);
-    fftw_execute(plan_y);
-
-    // clean up fftw structures
-    fftw_destroy_plan(plan_x);
-    fftw_destroy_plan(plan_y);
-    fftw_free(data_x_1d_arr);
-    fftw_free(data_y_1d_arr);
+    this->construct_ft(data_X, this->renderarea_ft_X);
+    this->construct_ft(data_Y, this->renderarea_ft_Y);
 
     // update render area
     if(i == 0) {
@@ -282,6 +281,8 @@ void ResultsTab::next_img() {
 void ResultsTab::prev_img() {
     this->renderarea_X->prev_img();
     this->renderarea_Y->prev_img();
+    this->renderarea_ft_X->prev_img();
+    this->renderarea_ft_Y->prev_img();
     this->update_frame_label();
     this->update_slider_frame();
 }
@@ -292,6 +293,8 @@ void ResultsTab::prev_img() {
 void ResultsTab::goto_first() {
     this->renderarea_X->set_ctr(0);
     this->renderarea_Y->set_ctr(0);
+    this->renderarea_ft_X->set_ctr(0);
+    this->renderarea_ft_Y->set_ctr(0);
     this->update_frame_label();
     this->update_slider_frame();
 }
@@ -302,6 +305,8 @@ void ResultsTab::goto_first() {
 void ResultsTab::goto_last() {
     this->renderarea_X->set_ctr(this->renderarea_X->get_num_graphs()-1);
     this->renderarea_Y->set_ctr(this->renderarea_Y->get_num_graphs()-1);
+    this->renderarea_ft_X->set_ctr(this->renderarea_ft_X->get_num_graphs()-1);
+    this->renderarea_ft_Y->set_ctr(this->renderarea_ft_Y->get_num_graphs()-1);
     this->update_frame_label();
     this->update_slider_frame();
 }
@@ -312,6 +317,8 @@ void ResultsTab::goto_last() {
 void ResultsTab::slider_moved(int value) {
     this->renderarea_X->set_ctr(value - 1);
     this->renderarea_Y->set_ctr(value - 1);
+    this->renderarea_ft_X->set_ctr(value - 1);
+    this->renderarea_ft_Y->set_ctr(value - 1);
     this->update_frame_label();
 }
 
@@ -335,4 +342,42 @@ void ResultsTab::save_concentration_Y() {
     } catch(const std::exception& e) {
         return;
     }
+}
+
+/**
+ * @brief      Construct Fourier Transform
+ *
+ * @param[in]  data         The data
+ * @param      destination  The destination
+ */
+void ResultsTab::construct_ft(MatrixXXd data, RenderArea* destination) {
+    unsigned int rowsize = data.rows();
+    unsigned int colsize = data.cols();
+    unsigned int halfrowsize = rowsize / 2;
+    unsigned int halfcolsize = colsize / 2;
+    unsigned int ftcolsize = colsize / 2 + 1;
+
+    fftw_complex *ft_data = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data.rows() * data.cols());
+    fftw_plan plan = fftw_plan_dft_r2c_2d(data.cols(), data.rows(), data.data(), ft_data, FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    MatrixXXd ft_data_mat(data.cols(), data.rows());
+
+    // copy absolute values of FT to matrix for concentration X and transform the data
+    for(unsigned int i=0; i < rowsize; i++) {
+        for(unsigned int j=0; j < halfcolsize; j++) {
+            double xreal = ft_data[i * ftcolsize + j][0];
+            double xcomplex = ft_data[i * ftcolsize + j][1];
+            ft_data_mat(std::fmod(i + halfrowsize, rowsize), halfcolsize - j - 1) = xreal * xreal + xcomplex * xcomplex;
+            ft_data_mat(std::fmod(i + halfrowsize, rowsize), j + halfcolsize) = xreal * xreal + xcomplex * xcomplex;
+        }
+    }
+
+    destination->set_minval(0.0);
+    destination->set_maxval((double)(data.cols() * data.rows()));
+    destination->use_boundary_values(true);
+    destination->add_graph(ft_data_mat, MatrixXXi::Zero(data.cols(), data.rows()));
+
+    fftw_destroy_plan(plan);
+    fftw_free(ft_data);
 }

@@ -33,6 +33,8 @@
 #include <QFileDialog>
 #include <QPushButton>
 
+#include <fftw3.h>
+
 #include "renderarea.h"
 
 class ResultsTab : public QWidget {
@@ -41,6 +43,9 @@ class ResultsTab : public QWidget {
 private:
     RenderArea *renderarea_X;
     RenderArea *renderarea_Y;
+
+    RenderArea *renderarea_ft_X;
+    RenderArea *renderarea_ft_Y;
 
     QToolButton *button_save_image_X;
     QToolButton *button_save_image_Y;

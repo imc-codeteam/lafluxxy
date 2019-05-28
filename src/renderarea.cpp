@@ -70,13 +70,8 @@ void RenderArea::prev_img() {
  *
  * @param[in]  data  Raw concentration data
  * @param[in]  mask  The mask
- *
- * Note: Pass the data object NOT as a const reference, but as a copy!
- *       Due to the multi-threaded nature of the application, the vector
- *       containing the original data can be resized, while the data
- *       still needs to be parsed!
  */
-void RenderArea::add_graph(MatrixXXd data, const MatrixXXi& mask) {
+void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
     std::vector<uint8_t> graph_data;
     if(mask.cols() != data.cols() || mask.rows() != data.rows()) {
         graph_data = this->convert_data(data, MatrixXXi::Zero(data.rows(), data.cols()));

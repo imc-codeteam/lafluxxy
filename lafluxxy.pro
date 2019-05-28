@@ -136,7 +136,7 @@ unix {
 
     # other libraries
     INCLUDEPATH += $$CUDA_DIR/include /usr/include/eigen3
-    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt
+    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt -lfftw3
     QMAKE_LIBDIR += $$CUDA_DIR/lib64
 
     cuda.input = CUDA_SOURCES

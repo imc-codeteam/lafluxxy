@@ -163,13 +163,34 @@ void ResultsTab::update_progress(unsigned int i, unsigned int total) {
  * @param[in]  dt    Wall clock integration time
  */
 void ResultsTab::add_frame(unsigned int i, double dt) {
-    this->renderarea_X->add_graph(this->reaction_system->get_concentration_matrix(i, true), this->reaction_system->get_mask());
-    this->renderarea_Y->add_graph(this->reaction_system->get_concentration_matrix(i, false), this->reaction_system->get_mask());
+    auto data_X = this->reaction_system->get_concentration_matrix(i, true);
+    auto data_Y = this->reaction_system->get_concentration_matrix(i, false);
+
+    this->renderarea_X->add_graph(data_X, this->reaction_system->get_mask());
+    this->renderarea_Y->add_graph(data_Y, this->reaction_system->get_mask());
+
+    // create Fourier transforms
+    fftw_complex *data_x_1d_arr = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data_X.rows() * data_X.cols());
+    fftw_complex *data_y_1d_arr = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * data_Y.rows() * data_Y.cols());
+
+    fftw_plan plan_x = fftw_plan_dft_r2c_2d(data_X.cols(), data_X.rows(), data_X.data(), data_x_1d_arr, FFTW_ESTIMATE);
+    fftw_execute(plan_x);
+    fftw_plan plan_y = fftw_plan_dft_r2c_2d(data_X.cols(), data_X.rows(), data_X.data(), data_x_1d_arr, FFTW_ESTIMATE);
+    fftw_execute(plan_y);
+
+    // clean up fftw structures
+    fftw_destroy_plan(plan_x);
+    fftw_destroy_plan(plan_y);
+    fftw_free(data_x_1d_arr);
+    fftw_free(data_y_1d_arr);
 
     // update render area
     if(i == 0) {
         this->renderarea_X->update();
         this->renderarea_Y->update();
+
+        this->renderarea_ft_X->update();
+        this->renderarea_ft_Y->update();
     }
 
     // update running time

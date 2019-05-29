@@ -33,6 +33,8 @@
 #include <QFileDialog>
 #include <QPushButton>
 
+#include <fftw3.h>
+
 #include "renderarea.h"
 
 class ResultsTab : public QWidget {
@@ -42,6 +44,9 @@ private:
     RenderArea *renderarea_X;
     RenderArea *renderarea_Y;
 
+    RenderArea *renderarea_ft_X;
+    RenderArea *renderarea_ft_Y;
+
     QToolButton *button_save_image_X;
     QToolButton *button_save_image_Y;
 
@@ -49,6 +54,9 @@ private:
     QToolButton *button_prev;
     QToolButton *button_first;
     QToolButton *button_last;
+
+    QToolButton *button_increase_size;
+    QToolButton *button_decrease_size;
 
     QSlider *slider_frame;
 
@@ -151,6 +159,11 @@ private:
      * @param[in]  img   The image
      */
     void save_image(const QPixmap& img);
+
+    /**
+     * @brief      Construct Fourier Transform
+     */
+    void construct_ft(MatrixXXd data, RenderArea* destination);
 
 private slots:
     /**

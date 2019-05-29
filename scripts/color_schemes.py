@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 
-color_scheme = cm.get_cmap('PiYG')
+color_scheme = cm.get_cmap('Spectral')
 x = np.linspace(0, 1, 256)
 color_values = color_scheme(x)
 

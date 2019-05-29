@@ -35,11 +35,11 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
 }
 
 QSize RenderArea::sizeHint() const {
-    return QSize(512, 512);
+    return QSize(this->sizex, this->sizey);
 }
 
 QSize RenderArea::minimumSizeHint() const {
-    return QSize(256, 256);
+    return QSize(this->sizexmin, this->sizeymin);
 }
 
 /**
@@ -70,13 +70,8 @@ void RenderArea::prev_img() {
  *
  * @param[in]  data  Raw concentration data
  * @param[in]  mask  The mask
- *
- * Note: Pass the data object NOT as a const reference, but as a copy!
- *       Due to the multi-threaded nature of the application, the vector
- *       containing the original data can be resized, while the data
- *       still needs to be parsed!
  */
-void RenderArea::add_graph(MatrixXXd data, const MatrixXXi& mask) {
+void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
     std::vector<uint8_t> graph_data;
     if(mask.cols() != data.cols() || mask.rows() != data.rows()) {
         graph_data = this->convert_data(data, MatrixXXi::Zero(data.rows(), data.cols()));
@@ -108,13 +103,31 @@ void RenderArea::save_image(unsigned int graph_id, const QString& filename) {
 }
 
 /**
+ * @brief      Increase the widget size
+ */
+void RenderArea::increase_size() {
+    this->sizex = std::min(this->sizex * 2, (uint)1024);
+    this->sizey = std::min(this->sizey * 2, (uint)1024);
+    this->resize(this->sizex, this->sizey);
+}
+
+/**
+ * @brief      Decrease the widget size
+ */
+void RenderArea::decrease_size() {
+    this->sizex = std::max(this->sizex / 2, this->sizexmin);
+    this->sizey = std::max(this->sizey / 2, this->sizeymin);
+    this->resize(this->sizex, this->sizey);
+}
+
+/**
  * @brief      Perform paint event call
  *
  * @param      event  The paint event
  */
 void RenderArea::paintEvent(QPaintEvent * /* event */) {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     painter.setPen(palette().dark().color());
     painter.setBrush(Qt::NoBrush);
     if(this->graphs.size() > 0) {

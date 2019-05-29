@@ -43,6 +43,11 @@ private:
     double graphs_minval = 0.0;
     double graphs_maxval = 0.0;
 
+    unsigned int sizex = 256;
+    unsigned int sizey = 256;
+    unsigned int sizexmin = 128;
+    unsigned int sizeymin = 128;
+
 public:
     /**
      * @brief      Constructs the object.
@@ -98,13 +103,8 @@ public:
      *
      * @param[in]  data  Raw concentration data
      * @param[in]  mask  The mask
-     *
-     * Note: Pass the data object NOT as a const reference, but as a copy!
-     *       Due to the multi-threaded nature of the application, the vector
-     *       containing the original data can be resized, while the data
-     *       still needs to be parsed!
      */
-    void add_graph(MatrixXXd data, const MatrixXXi& mask);
+    void add_graph(const MatrixXXd& data, const MatrixXXi& mask);
 
     /**
      * @brief      Saves an image from the graph
@@ -161,6 +161,16 @@ public:
     inline void use_boundary_values(bool _boundary_values) {
         this->flag_boundary_values = _boundary_values;
     }
+
+    /**
+     * @brief      Increase the widget size
+     */
+    void increase_size();
+
+    /**
+     * @brief      Decrease the widget size
+     */
+    void decrease_size();
 
 protected:
     /**

@@ -136,7 +136,7 @@ unix {
 
     # other libraries
     INCLUDEPATH += $$CUDA_DIR/include /usr/include/eigen3
-    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt
+    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt -lfftw3
     QMAKE_LIBDIR += $$CUDA_DIR/lib64
 
     cuda.input = CUDA_SOURCES
@@ -164,6 +164,7 @@ win32 {
 
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
     INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
+    INCLUDEPATH += ../../../Libraries/fftw-3.3.8-win-x64/include
     CUDA_OBJECTS_DIR = release/cuda
     CUDA_INC = $$join(INCLUDEPATH,'" -I"','-I"','"')
 
@@ -172,7 +173,13 @@ win32 {
     cuda.commands = $$CUDA_DIR/bin/nvcc.exe $$NVCC_OPTIONS $$CUDA_INC $$LIBS --machine $$SYSTEM_TYPE -c -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
     cuda.dependency_type = TYPE_C
 
-    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib -lboost_filesystem-vc141-mt-1_64 -lboost_system-vc141-mt-1_64 -lcuda -lcudart_static
+    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib \
+            -L../../../Libraries/fftw-3.3.8-win-x64/lib \
+            -lboost_filesystem-vc141-mt-1_64 \
+            -lboost_system-vc141-mt-1_64 \
+            -lfftw3 \
+            -lcuda \
+            -lcudart_static
 }
 
 QMAKE_EXTRA_COMPILERS += cuda

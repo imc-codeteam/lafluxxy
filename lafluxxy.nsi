@@ -2,7 +2,7 @@
 ;
 ; This script constructs the Veevee installer for Windows
  
-!define setup "lafluxxy_installer_win64.exe"
+!define setup "lafluxxy_VERSION_installer_win64.exe"
  
 ; change this to wherever the files to be packaged reside
 !define srcdir "."

@@ -219,6 +219,7 @@ QComboBox* MovieTab::build_color_scheme_selector() {
     selector->addItem("Plasma");
     selector->addItem("Inferno");
     selector->addItem("PiYG");
+    selector->addItem("Spectral");
 
     return selector;
 }

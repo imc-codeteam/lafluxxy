@@ -83,6 +83,11 @@ private slots:
     void about();
 
     /**
+     * @brief      Gives Acknowledgements pop-up window
+     */
+    void acknowledgements();
+
+    /**
      * @brief      Launch an RD simulation
      */
     void launch_calculation();

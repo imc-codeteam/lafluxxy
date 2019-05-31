@@ -23,7 +23,7 @@
 #define CONFIG_H
 
 #define PROGRAM_NAME "LaFluxxy"
-#define PROGRAM_VERSION "0.8.1.0"
+#define PROGRAM_VERSION "0.8.1.1"
 
 enum class KINETICS {
     NONE,

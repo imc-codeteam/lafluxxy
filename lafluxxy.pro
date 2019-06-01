@@ -116,6 +116,9 @@ HEADERS += src/card_manager.h \
            src/check_cuda.h \
            src/cuda_events.h
 
+
+RESOURCES += assets.qrc
+
 unix {
     exists(/usr/local/cuda-10.0/bin/nvcc) {
         CUDA_DIR = /usr/local/cuda-10.0

@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/icons/default/index.theme</file>
+        <file>assets/icons/default/scalable/document-save.svg</file>
+        <file>assets/icons/default/scalable/view-list-symbolic.svg</file>
+        <file>assets/reaction_equations/reaction_equation_barkley.png</file>
+        <file>assets/reaction_equations/reaction_equation_brusselator.png</file>
+        <file>assets/reaction_equations/reaction_equation_fitzhugh_nagumo.png</file>
+        <file>assets/reaction_equations/reaction_equation_gray_scott.png</file>
+        <file>assets/reaction_equations/reaction_equation_lotka_volterra.png</file>
+    </qresource>
+</RCC>

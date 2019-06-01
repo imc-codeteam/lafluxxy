@@ -49,6 +49,7 @@ public:
      * @brief      Probe the available GPU units
      */
     void probe_cards();
+
 private:
     /**
      * @brief      Get the total number of cores on the GPU

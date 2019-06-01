@@ -45,8 +45,7 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     this->default_sets_gridlayout = new QGridLayout();
     default_settings_widget->setLayout(this->default_sets_gridlayout);
     this->button_set_defaults = new QPushButton(" Set default integration settings");
-    QIcon icon_button_set_defaults = style()->standardIcon(QStyle::SP_ArrowDown);
-    this->button_set_defaults->setIcon(icon_button_set_defaults);
+    this->button_set_defaults->setIcon(QIcon::fromTheme("view-list-symbolic"));
     this->button_set_defaults->setToolTip("Overwrite the integration settings below with default settings for this kinetic system.");
     this->default_sets_gridlayout->addWidget(this->button_set_defaults, 0, 1);
 }
@@ -97,6 +96,6 @@ std::string InputReaction::get_parameter_string() const {
  * @param[in]  name  Name of the reaction
  */
 void InputReaction::show_reaction_equation(const QString& name) {
-    QPixmap pixmap_reaction_equation(QDir::currentPath() + "/../img/" + name);
+    QPixmap pixmap_reaction_equation(":/assets/reaction_equations/" + name);
     this->label_reaction_equation->setPixmap(pixmap_reaction_equation.scaledToHeight(75, Qt::SmoothTransformation));
 }

@@ -21,10 +21,16 @@
 
 #include "mainwindow.h"
 #include <QApplication>
+#include <QIcon>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QIcon::setThemeName("default");
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths() << ":custom-icons");
+
     MainWindow w;
     w.show();
 

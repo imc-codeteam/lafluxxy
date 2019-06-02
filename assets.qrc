@@ -3,6 +3,8 @@
         <file>assets/icons/default/index.theme</file>
         <file>assets/icons/default/scalable/document-save.svg</file>
         <file>assets/icons/default/scalable/view-list-symbolic.svg</file>
+        <file>assets/icons/default/scalable/settings.svg</file>
+        <file>assets/icons/default/scalable/floppy.svg</file>
         <file>assets/reaction_equations/reaction_equation_barkley.png</file>
         <file>assets/reaction_equations/reaction_equation_brusselator.png</file>
         <file>assets/reaction_equations/reaction_equation_fitzhugh_nagumo.png</file>

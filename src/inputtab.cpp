@@ -81,6 +81,7 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
 
     // set launch button
     this->button_submit = new QPushButton("Launch calculation");
+    this->button_submit->setIcon(QIcon(":/assets/icons/16/execute.png"));
     layout->addWidget(this->button_submit);
     this->button_submit->setEnabled(false);
 
@@ -312,7 +313,7 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
         }
     }
     gridlayout->addWidget(new QLabel("Number of computing cores in OpenMP parallelization"), row, 2);
-    QIcon icon_cores_info = style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    QIcon icon_cores_info = QIcon(":/assets/icons/16/warning.png");
     QPixmap pixmap_cores_info = icon_cores_info.pixmap(QSize(16, 16));
     QLabel *label_cores_info = new QLabel;
     label_cores_info->setPixmap(pixmap_cores_info);
@@ -335,7 +336,8 @@ void InputTab::build_maze_parameters(QGridLayout* gridlayout) {
     gridlayout->addWidget(new QLabel("(Optional) Introduce tortuosity in the simulation by setting a maze."), row, 0, row, 2);
     row++;
 
-    this->button_maze_select = new QPushButton("Build and select maze");
+    this->button_maze_select = new QPushButton(" Build and select maze");
+    this->button_maze_select->setIcon(QIcon(":/assets/icons/16/maze.png"));
     gridlayout->addWidget(this->button_maze_select, row, 0);
     row++;
 

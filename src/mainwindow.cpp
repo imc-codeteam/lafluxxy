@@ -187,15 +187,19 @@ void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
     this->tabs->addTab(this->input_tab, tr("Input"));
+    this->tabs->setTabIcon(0, QIcon(":/assets/icons/16/formula.png"));
 
     this->maze_tab = new MazeTab();
     this->tabs->addTab(this->maze_tab, tr("Maze"));
+    this->tabs->setTabIcon(1, QIcon(":/assets/icons/16/maze.png"));
 
     this->results_tab = new ResultsTab();
     this->tabs->addTab(this->results_tab, tr("Results"));
+    this->tabs->setTabIcon(2, QIcon(":/assets/icons/16/binary.png"));
 
     this->movie_tab = new MovieTab();
     this->tabs->addTab(this->movie_tab, tr("Movie"));
+    this->tabs->setTabIcon(3, QIcon(":/assets/icons/16/video.png"));
 }
 
 /**

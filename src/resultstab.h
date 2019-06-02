@@ -49,6 +49,8 @@ private:
 
     QToolButton *button_save_image_X;
     QToolButton *button_save_image_Y;
+    QToolButton *button_save_ftimage_X;
+    QToolButton *button_save_ftimage_Y;
 
     QToolButton *button_next;
     QToolButton *button_prev;
@@ -200,6 +202,16 @@ private slots:
      * @brief      Save the concentration profile of X to a file
      */
     void save_concentration_Y();
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_ft_X();
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_ft_Y();
 };
 
 #endif // _RESULTSTAB_H

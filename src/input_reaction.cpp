@@ -44,8 +44,8 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     layout->addWidget(default_settings_widget);
     this->default_sets_gridlayout = new QGridLayout();
     default_settings_widget->setLayout(this->default_sets_gridlayout);
-    this->button_set_defaults = new QPushButton(" Set default integration settings");
-    this->button_set_defaults->setIcon(QIcon::fromTheme("settings"));
+    this->button_set_defaults = new QPushButton(" Load integration settings");
+    this->button_set_defaults->setIcon(QIcon(":/assets/icons/16/download.png"));
     this->button_set_defaults->setToolTip("Overwrite the integration settings below with default settings for this kinetic system.");
     this->default_sets_gridlayout->addWidget(this->button_set_defaults, 0, 1);
 }

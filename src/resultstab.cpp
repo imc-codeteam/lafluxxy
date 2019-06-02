@@ -53,30 +53,40 @@ ResultsTab::ResultsTab(QWidget *parent) : QWidget(parent) {
     this->renderarea_X->set_color_scheme("viridis");
     concentrations_layout->addWidget(this->renderarea_X, 1, 0);
 
-    concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 1);
+    concentrations_layout->addWidget(new QLabel(tr("Concentration Y")), 0, 2);
     this->renderarea_Y = new RenderArea();
     this->renderarea_Y->set_color_scheme("piyg");
-    concentrations_layout->addWidget(this->renderarea_Y, 1, 1);
+    concentrations_layout->addWidget(this->renderarea_Y, 1, 2);
 
     this->button_save_image_X = new QToolButton(this);
     this->button_save_image_X->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-    concentrations_layout->addWidget(this->button_save_image_X, 2, 0);
+    concentrations_layout->addWidget(this->button_save_image_X, 1, 1);
     connect(this->button_save_image_X, SIGNAL(clicked()), this, SLOT(save_concentration_X()));
 
     this->button_save_image_Y = new QToolButton(this);
     this->button_save_image_Y->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-    concentrations_layout->addWidget(this->button_save_image_Y, 2, 1);
+    concentrations_layout->addWidget(this->button_save_image_Y, 1, 3);
     connect(this->button_save_image_Y, SIGNAL(clicked()), this, SLOT(save_concentration_Y()));
 
-    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation X")), 3, 0);
+    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation X")), 2, 0);
     this->renderarea_ft_X = new RenderArea();
     this->renderarea_ft_X->set_color_scheme("spectral");
-    concentrations_layout->addWidget(this->renderarea_ft_X, 4, 0);
+    concentrations_layout->addWidget(this->renderarea_ft_X, 3, 0);
 
-    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation Y")), 3, 1);
+    concentrations_layout->addWidget(new QLabel(tr("Fourier Transformation Y")), 2, 2);
     this->renderarea_ft_Y = new RenderArea();
     this->renderarea_ft_Y->set_color_scheme("spectral");
-    concentrations_layout->addWidget(this->renderarea_ft_Y, 4, 1);
+    concentrations_layout->addWidget(this->renderarea_ft_Y, 3, 2);
+
+    this->button_save_ftimage_X = new QToolButton(this);
+    this->button_save_ftimage_X->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+    concentrations_layout->addWidget(this->button_save_ftimage_X, 3, 1);
+    connect(this->button_save_ftimage_X, SIGNAL(clicked()), this, SLOT(save_ft_X()));
+
+    this->button_save_ftimage_Y = new QToolButton(this);
+    this->button_save_ftimage_Y->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+    concentrations_layout->addWidget(this->button_save_ftimage_Y, 3, 3);
+    connect(this->button_save_ftimage_Y, SIGNAL(clicked()), this, SLOT(save_ft_Y()));
 
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
@@ -339,6 +349,28 @@ void ResultsTab::save_concentration_X() {
 void ResultsTab::save_concentration_Y() {
     try {
         this->save_image(this->renderarea_Y->get_current_image());
+    } catch(const std::exception& e) {
+        return;
+    }
+}
+
+/**
+ * @brief      Save the ft profile of X to a file
+ */
+void ResultsTab::save_ft_X() {
+    try {
+        this->save_image(this->renderarea_ft_X->get_current_image());
+    } catch(const std::exception& e) {
+        return;
+    }
+}
+
+/**
+ * @brief      Save the ft profile of X to a file
+ */
+void ResultsTab::save_ft_Y() {
+    try {
+        this->save_image(this->renderarea_ft_Y->get_current_image());
     } catch(const std::exception& e) {
         return;
     }

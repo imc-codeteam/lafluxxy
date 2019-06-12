@@ -103,7 +103,7 @@ void MainWindow::acknowledgements() {
     message_box.setText(tr("Acknowledgments"));
     message_box.setIcon(QMessageBox::Information);
     message_box.setText(tr("<html><h1>Acknowledgments</h1><p>The following people are gratefully acknowledged for contributing to ") + PROGRAM_NAME +
-                               tr("</p><p><b>Beta testing & feedback</b><ul><li>Bart Zijlstra</li><li>Robin Broos</li></ul></p>") +
+                               tr("</p><p><b>Beta testing & feedback</b><ul><li>Bart Zijlstra</li><li>Robin Broos</li><li>Jasper Bouwman</li></ul></p>") +
                                tr("<p><b>Exploration of open-source software licenses</b></p>")+
                                tr("<ul><li>Stacey Fun</li><li>Frank van Hertrooij</li><li>Esmee de Korver</li><li>Chantal Petit</li><li>Lisa Cattenstart</li></ul>") +
                                tr("</html>"));

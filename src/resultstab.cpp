@@ -229,6 +229,8 @@ void ResultsTab::clear() {
     this->total_t = 0.0;
     this->renderarea_X->clear();
     this->renderarea_Y->clear();
+    this->renderarea_ft_X->clear();
+    this->renderarea_ft_Y->clear();
     this->label_time_last_frame->setText("");
     this->label_time_average->setText("");
     this->label_time_remaining->setText("");
@@ -281,6 +283,8 @@ void ResultsTab::save_image(const QPixmap& img) {
 void ResultsTab::next_img() {
     this->renderarea_X->next_img();
     this->renderarea_Y->next_img();
+    this->renderarea_ft_X->next_img();
+    this->renderarea_ft_Y->next_img();
     this->update_frame_label();
     this->update_slider_frame();
 }

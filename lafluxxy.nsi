@@ -103,7 +103,6 @@ Section
 ; package all files, recursively, preserving attributes
 ; assume files are in the correct places
 File /a /r "${srcdir}\bin"
-File /a /r "${srcdir}\img"
  
   WriteUninstaller "${uninstaller}"
  

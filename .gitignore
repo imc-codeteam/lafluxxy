@@ -47,3 +47,4 @@ bin/*
 build/*
 scripts/*.inc
 scripts/*.txt
+*.zip

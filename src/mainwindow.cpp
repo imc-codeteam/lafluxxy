@@ -80,16 +80,33 @@ void MainWindow::exit() {
  */
 void MainWindow::about() {
     QMessageBox message_box;
-    message_box.setText(tr(PROGRAM_NAME) + tr(" ") + tr(PROGRAM_VERSION) +
-                        tr("\n\nAuthors:\nIvo Filot\n") +
-                        tr("Anouk de Leeuw den Bouter\n") +
-                        tr("Roos Krösschell\n") +
-                        tr("Fabiënne Lucas\n") +
-                        tr("\n") + tr(PROGRAM_NAME) + tr(" is licensed under the GPLv3 license.\n") +
-                        tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3.\n\n") +
-                        tr("Color schemes have been obtained from Matplotlib - https://matplotlib.org/index.html."));
+    message_box.setText(tr("<html><h2>") +
+                        tr(PROGRAM_NAME) + tr(" ") + tr(PROGRAM_VERSION) +
+                        tr("</h2><p><b>Authors:</b><ul><li>Ivo Filot</li>") +
+                        tr("<li>Anouk de Leeuw den Bouter</li>") +
+                        tr("<li>Roos Krösschell</li>") +
+                        tr("<li>Fabiënne Lucas</li>") +
+                        tr("</ul></p><p>") + tr(PROGRAM_NAME) + tr(" is licensed under the GPLv3 license.</p>") +
+                        tr("<p>") + tr(PROGRAM_NAME) + tr(" is dynamically linked to Qt, which is licensed under LGPLv3.</p>") +
+                        tr("<p>Color schemes have been obtained from Matplotlib - <a href=\"https://matplotlib.org/index.html\">https://matplotlib.org/index.html</a>.</p>") +
+                        tr("</html>"));
     message_box.setIcon(QMessageBox::Information);
     message_box.setWindowTitle(tr("About ") + tr(PROGRAM_NAME));
+    message_box.exec();
+}
+
+/**
+ * @brief      Gives About pop-up window
+ */
+void MainWindow::acknowledgements() {
+    QMessageBox message_box;
+    message_box.setText(tr("Acknowledgments"));
+    message_box.setIcon(QMessageBox::Information);
+    message_box.setText(tr("<html><h1>Acknowledgments</h1><p>The following people are gratefully acknowledged for contributing to ") + PROGRAM_NAME +
+                               tr("</p><p><b>Beta testing & feedback</b><ul><li>Bart Zijlstra</li><li>Robin Broos</li><li>Jasper Bouwman</li></ul></p>") +
+                               tr("<p><b>Exploration of open-source software licenses</b></p>")+
+                               tr("<ul><li>Stacey Fun</li><li>Frank van Hertrooij</li><li>Esmee de Korver</li><li>Chantal Petit</li><li>Lisa Cattenstart</li></ul>") +
+                               tr("</html>"));
     message_box.exec();
 }
 
@@ -170,15 +187,19 @@ void MainWindow::create_tabs() {
     this->tabs = new QTabWidget();
     this->input_tab = new InputTab();
     this->tabs->addTab(this->input_tab, tr("Input"));
+    this->tabs->setTabIcon(0, QIcon(":/assets/icons/16/formula.png"));
 
     this->maze_tab = new MazeTab();
     this->tabs->addTab(this->maze_tab, tr("Maze"));
+    this->tabs->setTabIcon(1, QIcon(":/assets/icons/16/maze.png"));
 
     this->results_tab = new ResultsTab();
     this->tabs->addTab(this->results_tab, tr("Results"));
+    this->tabs->setTabIcon(2, QIcon(":/assets/icons/16/binary.png"));
 
     this->movie_tab = new MovieTab();
     this->tabs->addTab(this->movie_tab, tr("Movie"));
+    this->tabs->setTabIcon(3, QIcon(":/assets/icons/16/video.png"));
 }
 
 /**
@@ -195,6 +216,7 @@ void MainWindow::build_menu() {
     QAction *action_save = new QAction(menuFile);
     QAction *action_quit = new QAction(menuFile);
     QAction *action_about = new QAction(menuHelp);
+    QAction *action_acknowledgements = new QAction(menuHelp);
 
     // define actions
     action_open->setText(tr("Open"));
@@ -208,15 +230,20 @@ void MainWindow::build_menu() {
 
     action_about->setText(tr("About"));
 
+    action_acknowledgements->setText(tr("Acknowledgements"));
+
     // add options to menu
-    menuFile->addAction(action_open);
-    menuFile->addAction(action_save);
+    // menuFile->addAction(action_open);
+    // menuFile->addAction(action_save);
     menuFile->addAction(action_quit);
+    menuHelp->addAction(action_acknowledgements);
+    menuHelp->addSeparator();
     menuHelp->addAction(action_about);
 
     // connect actions
     connect(action_quit, &QAction::triggered, this, &MainWindow::exit);
     connect(action_about, &QAction::triggered, this, &MainWindow::about);
+    connect(action_acknowledgements, &QAction::triggered, this, &MainWindow::acknowledgements);
 
     setMenuBar(menuBar);
 }

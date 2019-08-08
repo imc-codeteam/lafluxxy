@@ -35,11 +35,11 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent) {
 }
 
 QSize RenderArea::sizeHint() const {
-    return QSize(512, 512);
+    return QSize(this->sizex, this->sizey);
 }
 
 QSize RenderArea::minimumSizeHint() const {
-    return QSize(256, 256);
+    return QSize(this->sizexmin, this->sizeymin);
 }
 
 /**
@@ -69,6 +69,7 @@ void RenderArea::prev_img() {
  * @brief      Adds a graph.
  *
  * @param[in]  data  Raw concentration data
+ * @param[in]  mask  The mask
  */
 void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
     std::vector<uint8_t> graph_data;
@@ -86,13 +87,47 @@ void RenderArea::add_graph(const MatrixXXd& data, const MatrixXXi& mask) {
 }
 
 /**
+ * @brief      Saves an image from the graph
+ *
+ * @param[in]  graph_id  The graph identifier
+ * @param[in]  filename  The filename
+ */
+void RenderArea::save_image(unsigned int graph_id, const QString& filename) {
+    if(graph_id < this->graphs.size()) {
+        QFile file(filename);
+        file.open(QIODevice::WriteOnly);
+        this->graphs[graph_id].save(&file, "PNG");
+    } else {
+        throw std::logic_error("Invalid graph save request; graph id exceeds vector size.");
+    }
+}
+
+/**
+ * @brief      Increase the widget size
+ */
+void RenderArea::increase_size() {
+    this->sizex = std::min(this->sizex * 2, (uint)1024);
+    this->sizey = std::min(this->sizey * 2, (uint)1024);
+    this->resize(this->sizex, this->sizey);
+}
+
+/**
+ * @brief      Decrease the widget size
+ */
+void RenderArea::decrease_size() {
+    this->sizex = std::max(this->sizex / 2, this->sizexmin);
+    this->sizey = std::max(this->sizey / 2, this->sizeymin);
+    this->resize(this->sizex, this->sizey);
+}
+
+/**
  * @brief      Perform paint event call
  *
  * @param      event  The paint event
  */
 void RenderArea::paintEvent(QPaintEvent * /* event */) {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     painter.setPen(palette().dark().color());
     painter.setBrush(Qt::NoBrush);
     if(this->graphs.size() > 0) {

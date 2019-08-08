@@ -22,13 +22,25 @@
 #include "reaction_barkley.h"
 
 ReactionBarkley::ReactionBarkley() {
-
+    this->reacttype = KINETICS::BARKLEY;
 }
 
 void ReactionBarkley::init(MatrixXXd& a, MatrixXXd& b) const {
     this->init_half_screen(a, b, 1.0, this->alpha / 2.0);
 }
 
+/**
+ * @brief      reaction kinetics Barkley
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = \epsilon X \left(1 - X\right) \cdot \left(X - \frac{Y + \beta}{\alpha} \right ) \\
+ * \frac{\partial Y}{\partial t} = X^{3} - Y
+ */
 void ReactionBarkley::reaction(double a, double b, double *ra, double *rb) const {
     *ra = epsilon * a * (1.0 - a) * (a - (b + this->beta)/this->alpha);
     *rb = a*a*a - b;
@@ -74,4 +86,13 @@ void ReactionBarkley::set_parameters(const std::string& params) {
     //     }
 
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionBarkley::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, this->epsilon, 0.0};
 }

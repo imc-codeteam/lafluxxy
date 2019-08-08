@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputLotkaVolterra::InputLotkaVolterra(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = LOTKA_VOLTERRA;
+    this->reaction_type = KINETICS::LOTKA_VOLTERRA;
     this->input_names = {"alpha", "beta", "gamma", "delta"};
     this->input_labels = {"&alpha;", "&beta;", "&gamma;", "&delta;"};
     this->input_default_values = {2.3333, 2.6666, 1.0, 1.0};
@@ -37,6 +37,7 @@ InputLotkaVolterra::InputLotkaVolterra(QWidget *parent) : InputReaction(parent) 
 
 void InputLotkaVolterra::set_label() {
     this->reaction_label->setText(tr("<i>Lotka-Volterra kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_lotka_volterra.png");
 }
 
 /**

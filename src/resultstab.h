@@ -33,6 +33,8 @@
 #include <QFileDialog>
 #include <QPushButton>
 
+#include <fftw3.h>
+
 #include "renderarea.h"
 
 class ResultsTab : public QWidget {
@@ -42,13 +44,21 @@ private:
     RenderArea *renderarea_X;
     RenderArea *renderarea_Y;
 
+    RenderArea *renderarea_ft_X;
+    RenderArea *renderarea_ft_Y;
+
     QToolButton *button_save_image_X;
     QToolButton *button_save_image_Y;
+    QToolButton *button_save_ftimage_X;
+    QToolButton *button_save_ftimage_Y;
 
     QToolButton *button_next;
     QToolButton *button_prev;
     QToolButton *button_first;
     QToolButton *button_last;
+
+    QToolButton *button_increase_size;
+    QToolButton *button_decrease_size;
 
     QSlider *slider_frame;
 
@@ -57,11 +67,18 @@ private:
     QPushButton *button_copy_to_movie;
 
     QToolButton *button_stop;
-    QLabel *label_integration_time;
+
+    // integration time statistics
+    QGridLayout *layout_integration_times;
+    QLabel *label_time_last_frame;
+    QLabel *label_time_average;
+    QLabel *label_time_remaining;
+    QLabel *label_time_total;
 
     TwoDimRD* reaction_system;
 
     std::vector<double> dts;
+    double total_t = 0.0;
 
 public:
     /**
@@ -145,6 +162,11 @@ private:
      */
     void save_image(const QPixmap& img);
 
+    /**
+     * @brief      Construct Fourier Transform
+     */
+    void construct_ft(MatrixXXd data, RenderArea* destination);
+
 private slots:
     /**
      * @brief      Show next time frame
@@ -180,6 +202,16 @@ private slots:
      * @brief      Save the concentration profile of X to a file
      */
     void save_concentration_Y();
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_ft_X();
+
+    /**
+     * @brief      Save the concentration profile of X to a file
+     */
+    void save_ft_Y();
 };
 
 #endif // _RESULTSTAB_H

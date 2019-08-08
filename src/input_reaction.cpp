@@ -29,6 +29,10 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     this->reaction_label = new QLabel();
     this->layout->addWidget(this->reaction_label);
 
+    // set reaction equation label
+    this->label_reaction_equation = new QLabel();
+    this->layout->addWidget(this->label_reaction_equation);
+
     // build grid layout for the input boxes
     QWidget *kinetic_param_widget = new QWidget();
     layout->addWidget(kinetic_param_widget);
@@ -40,9 +44,8 @@ InputReaction::InputReaction(QWidget *parent) : QWidget(parent) {
     layout->addWidget(default_settings_widget);
     this->default_sets_gridlayout = new QGridLayout();
     default_settings_widget->setLayout(this->default_sets_gridlayout);
-    this->button_set_defaults = new QPushButton(" Set default integration settings");
-    QIcon icon_button_set_defaults = style()->standardIcon(QStyle::SP_ArrowDown);
-    this->button_set_defaults->setIcon(icon_button_set_defaults);
+    this->button_set_defaults = new QPushButton(" Load integration settings");
+    this->button_set_defaults->setIcon(QIcon(":/assets/icons/16/download.png"));
     this->button_set_defaults->setToolTip("Overwrite the integration settings below with default settings for this kinetic system.");
     this->default_sets_gridlayout->addWidget(this->button_set_defaults, 0, 1);
 }
@@ -85,4 +88,14 @@ std::string InputReaction::get_parameter_string() const {
     parameter_string.pop_back();
 
     return parameter_string;
+}
+
+/**
+ * @brief      Shows the reaction equation.
+ *
+ * @param[in]  name  Name of the reaction
+ */
+void InputReaction::show_reaction_equation(const QString& name) {
+    QPixmap pixmap_reaction_equation(":/assets/reaction_equations/" + name);
+    this->label_reaction_equation->setPixmap(pixmap_reaction_equation.scaledToHeight(75, Qt::SmoothTransformation));
 }

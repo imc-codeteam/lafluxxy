@@ -47,6 +47,11 @@ ColorScheme::ColorScheme(const std::string& name) {
         return;
     }
 
+    if(name == "spectral") {
+        this->colors = color_scheme_spectral;
+        return;
+    }
+
     throw std::runtime_error("Unknown color scheme \"" + name + "\" requested.");
 }
 

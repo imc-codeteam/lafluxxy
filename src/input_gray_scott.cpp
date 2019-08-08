@@ -26,7 +26,7 @@
  * @param parent widget
  */
 InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
-    this->reaction_type = GRAY_SCOTT;
+    this->reaction_type = KINETICS::GRAY_SCOTT;
     this->input_names = {"f", "k"};
     this->input_labels = {"f", "k"};
     this->input_default_values = {0.029500, 0.056100};
@@ -38,6 +38,7 @@ InputGrayScott::InputGrayScott(QWidget *parent) : InputReaction(parent) {
 
 void InputGrayScott::set_label() {
     this->reaction_label->setText(tr("<i>Gray-Scott kinetic parameters</i>"));
+    this->show_reaction_equation("reaction_equation_gray_scott.png");
 }
 
 /**
@@ -63,6 +64,20 @@ void InputGrayScott::build_default_sets() {
     this->combobox_default_sets = new QComboBox();
 
     this->combobox_default_sets->addItem(tr("Please select a default set..."));
+    #ifdef _WIN32
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson alpha pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson beta pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson gamma pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson delta pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson epsilon pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson zeta pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson eta pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson theta pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson iota pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson kappa pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson lambda pattern"));
+    this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson mu pattern"));
+    #else
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson α pattern"));
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson β pattern"));
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson γ pattern"));
@@ -75,6 +90,7 @@ void InputGrayScott::build_default_sets() {
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson κ pattern"));
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson λ pattern"));
     this->combobox_default_sets->addItem(QString::fromWCharArray(L"Pearson μ pattern"));
+    #endif
     this->combobox_default_sets->setCurrentIndex(0);
 
     this->default_sets_gridlayout->addWidget(this->combobox_default_sets, 0, 0);

@@ -30,6 +30,7 @@ void WorkerThread::run() {
     for(unsigned int i=0; i<this->reaction_system->get_num_steps(); i++) {
 
         if(this->continue_running == false) {
+            this->reaction_system->clean();
             emit simulation_cancelled();
             return;
         }
@@ -42,5 +43,6 @@ void WorkerThread::run() {
         emit step_finished(i, elapsed_seconds.count());
     }
 
+    this->reaction_system->clean();
     emit simulation_finished();
 }

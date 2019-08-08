@@ -81,12 +81,14 @@ InputTab::InputTab(QWidget *parent) : QWidget(parent), reaction_settings(nullptr
 
     // set launch button
     this->button_submit = new QPushButton("Launch calculation");
+    this->button_submit->setIcon(QIcon(":/assets/icons/16/execute.png"));
     layout->addWidget(this->button_submit);
     this->button_submit->setEnabled(false);
 
     // connect signals
     connect(this->reaction_selector, SIGNAL(currentIndexChanged(int)), SLOT(set_reaction_input(int)));
     connect(this->checkbox_enable_maze, SIGNAL(stateChanged(int)), SLOT(action_enable_maze(int)));
+    connect(this->compute_device, SIGNAL(currentIndexChanged(int)), SLOT(select_computer_device(int)));
 }
 
 TwoDimRD* InputTab::build_reaction_system() {
@@ -100,20 +102,21 @@ TwoDimRD* InputTab::build_reaction_system() {
                                              this->input_tsteps->value());
     reaction_system->set_cores(this->input_ncores->value());
 
-    switch(this->reaction_selector->currentIndex()) {
-        case LOTKA_VOLTERRA:
+    KINETICS reacttype = kinetic_types[this->reaction_selector->currentIndex()];
+    switch(reacttype) {
+        case KINETICS::LOTKA_VOLTERRA:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionLotkaVolterra()));
         break;
-        case GRAY_SCOTT:
+        case KINETICS::GRAY_SCOTT:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionGrayScott()));
         break;
-        case BARKLEY:
+        case KINETICS::BARKLEY:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBarkley()));
         break;
-        case FITZHUGH_NAGUMO:
+        case KINETICS::FITZHUGH_NAGUMO:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionFitzhughNagumo()));
         break;
-        case BRUSSELATOR:
+        case KINETICS::BRUSSELATOR:
             reaction_system->set_reaction(dynamic_cast<ReactionSystem*>(new ReactionBrusselator()));
         break;
         default:
@@ -129,6 +132,9 @@ TwoDimRD* InputTab::build_reaction_system() {
         reaction_system->set_mask(this->maze->get_mask(this->mask_cell_size));
     }
 
+    reaction_system->set_do_cuda(this->compute_device->currentIndex() > 0 ? true : false);
+
+    // !! always do this at the very end !!
     reaction_system->set_parameters(this->reaction_settings->get_parameter_string());
 
     return reaction_system;
@@ -285,6 +291,16 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
     gridlayout->addWidget(new QLabel("Whether to implement periodic boundary conditions (checked) or no-flux conditions (unchecked)"), row, 2);
     row++;
 
+    this->compute_device = new QComboBox();
+    this->compute_device->addItem("CPU");
+    for(const auto& name : this->cm.get_gpu_names()) {
+        this->compute_device->addItem(name.c_str());
+    }
+    gridlayout->addWidget(new QLabel("compute device"), row, 0);
+    gridlayout->addWidget(this->compute_device, row, 1);
+    gridlayout->addWidget(new QLabel("Which computing device to use (CPU or CUDA-GPU)"), row, 2);
+    row++;
+
     gridlayout->addWidget(new QLabel("ncores"), row, 0);
     gridlayout->addWidget(this->input_ncores, row, 1);
     this->input_ncores->setMinimum(1);
@@ -297,7 +313,7 @@ void InputTab::build_general_parameters(QGridLayout *gridlayout) {
         }
     }
     gridlayout->addWidget(new QLabel("Number of computing cores in OpenMP parallelization"), row, 2);
-    QIcon icon_cores_info = style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    QIcon icon_cores_info = QIcon(":/assets/icons/16/warning.png");
     QPixmap pixmap_cores_info = icon_cores_info.pixmap(QSize(16, 16));
     QLabel *label_cores_info = new QLabel;
     label_cores_info->setPixmap(pixmap_cores_info);
@@ -320,7 +336,8 @@ void InputTab::build_maze_parameters(QGridLayout* gridlayout) {
     gridlayout->addWidget(new QLabel("(Optional) Introduce tortuosity in the simulation by setting a maze."), row, 0, row, 2);
     row++;
 
-    this->button_maze_select = new QPushButton("Build and select maze");
+    this->button_maze_select = new QPushButton(" Build and select maze");
+    this->button_maze_select->setIcon(QIcon(":/assets/icons/16/maze.png"));
     gridlayout->addWidget(this->button_maze_select, row, 0);
     row++;
 
@@ -345,20 +362,21 @@ void InputTab::set_reaction_input(int reactype) {
         this->reaction_settings = nullptr;
     }
 
-    switch(reactype) {
-        case LOTKA_VOLTERRA:
+    KINETICS kinetic_system = kinetic_types[reactype];
+    switch(kinetic_system) {
+        case KINETICS::LOTKA_VOLTERRA:
             this->reaction_settings = new InputLotkaVolterra();
         break;
-        case GRAY_SCOTT:
+        case KINETICS::GRAY_SCOTT:
             this->reaction_settings = new InputGrayScott();
         break;
-        case FITZHUGH_NAGUMO:
+        case KINETICS::FITZHUGH_NAGUMO:
             this->reaction_settings = new InputFitzhughNagumo();
         break;
-        case BARKLEY:
+        case KINETICS::BARKLEY:
             this->reaction_settings = new InputBarkley();
         break;
-        case BRUSSELATOR:
+        case KINETICS::BRUSSELATOR:
             this->reaction_settings = new InputBrusselator();
         break;
         default:
@@ -483,5 +501,18 @@ void InputTab::action_enable_maze(int state) {
         this->input_height->setEnabled(true);
 
         this->mask_cell_size = 0;
+    }
+}
+
+/**
+ * @brief      Select a compute device
+ *
+ * @param[in]  state  The state
+ */
+void InputTab::select_computer_device(int state) {
+    if(state == 0) {
+        this->input_ncores->setEnabled(true);
+    } else {
+        this->input_ncores->setEnabled(false);
     }
 }

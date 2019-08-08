@@ -60,7 +60,16 @@ SOURCES += src/main.cpp\
            src/mazerenderer.cpp \
            src/mazeholder.cpp \
            src/movietab.cpp \
-           src/colorscheme.cpp
+           src/colorscheme.cpp \
+           src/mazebuilder/cell.cpp \
+           src/mazebuilder/maze.cpp \
+           src/mazebuilder/maze_algorithm.cpp \
+           src/mazebuilder/maze_algorithm_aldous_broder.cpp \
+           src/mazebuilder/maze_algorithm_binary_tree.cpp \
+           src/mazebuilder/maze_algorithm_prims_simplified.cpp \
+           src/mazebuilder/maze_algorithm_sidewinder.cpp \
+           src/mazebuilder/maze_builder.cpp \
+           src/mazebuilder/maze_statistics.cpp
 
 HEADERS  += src/mainwindow.h \
             src/config.h \
@@ -86,35 +95,94 @@ HEADERS  += src/mainwindow.h \
             src/mazeholder.h \
             src/matrices.h \
             src/movietab.h \
-            src/colorscheme.h
+            src/colorscheme.h \
+            src/mazebuilder/cell.h \
+            src/mazebuilder/maze.h \
+            src/mazebuilder/maze_algorithm.h \
+            src/mazebuilder/maze_algorithm_aldous_broder.h \
+            src/mazebuilder/maze_algorithm_binary_tree.h \
+            src/mazebuilder/maze_algorithm_prims_simplified.h \
+            src/mazebuilder/maze_algorithm_sidewinder.h \
+            src/mazebuilder/maze_builder.h \
+            src/mazebuilder/maze_statistics.h
 
-# files from external library mazebuilder
-SOURCES += vendor/mazebuilder/src/cell.cpp \
-           vendor/mazebuilder/src/maze.cpp \
-           vendor/mazebuilder/src/maze_algorithm.cpp \
-           vendor/mazebuilder/src/maze_algorithm_aldous_broder.cpp \
-           vendor/mazebuilder/src/maze_algorithm_binary_tree.cpp \
-           vendor/mazebuilder/src/maze_algorithm_prims_simplified.cpp \
-           vendor/mazebuilder/src/maze_algorithm_sidewinder.cpp \
-           vendor/mazebuilder/src/maze_builder.cpp \
-           vendor/mazebuilder/src/maze_statistics.cpp
+# cuda sources
+CUDA_SOURCES += src/card_manager.cu \
+                src/rd2d_cuda.cu
 
-# files from external library mazebuilder
-HEADERS += vendor/mazebuilder/src/cell.h \
-           vendor/mazebuilder/src/maze.h \
-           vendor/mazebuilder/src/maze_algorithm.h \
-           vendor/mazebuilder/src/maze_algorithm_aldous_broder.h \
-           vendor/mazebuilder/src/maze_algorithm_binary_tree.h \
-           vendor/mazebuilder/src/maze_algorithm_prims_simplified.h \
-           vendor/mazebuilder/src/maze_algorithm_sidewinder.h \
-           vendor/mazebuilder/src/maze_builder.h \
-           vendor/mazebuilder/src/maze_statistics.h
+# cuda headers
+HEADERS += src/card_manager.h \
+           src/rd2d_cuda.h \
+           src/check_cuda.h \
+           src/cuda_events.h
 
-linux {
-    INCLUDEPATH += /usr/include/eigen3
+
+RESOURCES += assets.qrc
+
+unix {
+    exists(/usr/local/cuda-10.0/bin/nvcc) {
+        CUDA_DIR = /usr/local/cuda-10.0
+        CUDA_LIBRT = /usr/local/cuda-10.0/lib64/libcudart_static.a
+    }
+
+    exists(/usr/local/cuda-10.1/bin/nvcc) {
+        CUDA_DIR = /usr/local/cuda-10.1
+        CUDA_LIBRT = /usr/local/cuda-10.1/lib64/libcudart_static.a
+    }
+
+    # CUDA_ARCH = compute_52
+    NVCCFLAGS = -use_fast_math --compile -cudart static -O3
+
+    cuda.commands = $$CUDA_DIR/bin/nvcc -m64 -c $$NVCCFLAGS $$LIBS  ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
+    cuda.dependency_type = TYPE_C
+    cuda.depend_command = $$CUDA_DIR/bin/nvcc -M $$CUDA_INC $$NVCCFLAGS ${QMAKE_FILE_NAME}
+
+    # other libraries
+    INCLUDEPATH += $$CUDA_DIR/include /usr/include/eigen3
+    LIBS += $$CUDA_LIBS $$CUDA_LIBRT -lboost_filesystem -lboost_system -ldl -lrt -lfftw3
+    QMAKE_LIBDIR += $$CUDA_DIR/lib64
+
+    cuda.input = CUDA_SOURCES
+    cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
 }
 
 win32 {
+    QMAKE_CXXFLAGS += /MD
+
+    CUDA_DIR = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1"
+    SYSTEM_NAME = x64
+    SYSTEM_TYPE = 64
+    NVCC_OPTIONS = --use_fast_math -Xcompiler /MD -arch=sm_50 \
+                   -gencode=arch=compute_50,code=sm_50 \
+                   -gencode=arch=compute_52,code=sm_52 \
+                   -gencode=arch=compute_60,code=sm_60 \
+                   -gencode=arch=compute_61,code=sm_61 \
+                   -gencode=arch=compute_70,code=sm_70 \
+                   -gencode=arch=compute_75,code=sm_75 \
+                   -gencode=arch=compute_75,code=compute_75
+
+    QMAKE_LIBDIR += $$CUDA_DIR/lib/$$SYSTEM_NAME \
+                    $$CUDA_SDK/common/lib/$$SYSTEM_NAME \
+                    $$CUDA_SDK/../shared/lib/$$SYSTEM_NAME
+
     INCLUDEPATH += ../../../Libraries/boost-1.64.0-win-x64/include
     INCLUDEPATH += ../../../Libraries/eigen-3.3.3-win-x64
+    INCLUDEPATH += ../../../Libraries/fftw-3.3.8-win-x64/include
+    CUDA_OBJECTS_DIR = release/cuda
+    CUDA_INC = $$join(INCLUDEPATH,'" -I"','-I"','"')
+
+    cuda.input = CUDA_SOURCES
+    cuda.output = $$CUDA_OBJECTS_DIR/${QMAKE_FILE_BASE}_cuda.o
+    cuda.commands = $$CUDA_DIR/bin/nvcc.exe $$NVCC_OPTIONS $$CUDA_INC $$LIBS --machine $$SYSTEM_TYPE -c -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
+    cuda.dependency_type = TYPE_C
+
+    LIBS += -L../../../Libraries/boost-1.64.0-win-x64/lib \
+            -L../../../Libraries/fftw-3.3.8-win-x64/lib \
+            -lboost_filesystem-vc141-mt-1_64 \
+            -lboost_system-vc141-mt-1_64 \
+            -lfftw3 \
+            -lcuda \
+            -lcudart_static
 }
+
+QMAKE_EXTRA_COMPILERS += cuda

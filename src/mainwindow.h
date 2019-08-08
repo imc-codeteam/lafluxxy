@@ -32,6 +32,7 @@
 #include <QMenu>
 
 #include <iostream>
+#include <thread>
 
 #include "inputtab.h"
 #include "resultstab.h"
@@ -40,6 +41,7 @@
 
 #include "two_dim_rd.h"
 #include "worker_thread.h"
+#include "card_manager.h"
 
 namespace Ui {
 class MainWindow;
@@ -79,6 +81,11 @@ private slots:
      * @brief      Gives About pop-up window
      */
     void about();
+
+    /**
+     * @brief      Gives Acknowledgements pop-up window
+     */
+    void acknowledgements();
 
     /**
      * @brief      Launch an RD simulation

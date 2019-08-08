@@ -19,7 +19,7 @@ git submodule init
 
 and to update the modules
 ```
-git submodule init
+git submodule update --recursive
 ```
 
 ### Debian

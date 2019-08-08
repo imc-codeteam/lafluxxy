@@ -22,13 +22,25 @@
 #include "reaction_fitzhugh_nagumo.h"
 
 ReactionFitzhughNagumo::ReactionFitzhughNagumo() {
-
+    this->reacttype = KINETICS::FITZHUGH_NAGUMO;
 }
 
 void ReactionFitzhughNagumo::init(MatrixXXd& a, MatrixXXd& b) const {
     this->init_half_screen(a, b, 1.0, 0.1);
 }
 
+/**
+ * @brief      reaction kinetics for Fitzhugh-Nagumo
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = X(1- X^{2}) - Y + \alpha \\
+ * \frac{\partial Y}{\partial t} = \beta(X - Y)
+ */
 void ReactionFitzhughNagumo::reaction(double a, double b, double *ra, double *rb) const {
     *ra = a - (a * a * a) - b + this->alpha;
     *rb = (a - b) * this->beta;
@@ -62,4 +74,13 @@ void ReactionFitzhughNagumo::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionFitzhughNagumo::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, 0.0, 0.0};
 }

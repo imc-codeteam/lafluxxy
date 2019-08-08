@@ -29,7 +29,7 @@
 #include <QRadioButton>
 
 #include "mazerenderer.h"
-#include "vendor/mazebuilder/src/maze_builder.h"
+#include "mazebuilder/maze_builder.h"
 
 class MazeHolder : public QWidget {
     Q_OBJECT

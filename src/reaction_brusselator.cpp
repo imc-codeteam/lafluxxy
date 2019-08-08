@@ -22,15 +22,28 @@
 #include "reaction_brusselator.h"
 
 ReactionBrusselator::ReactionBrusselator() {
-
+    this->reacttype = KINETICS::BRUSSELATOR;
 }
 
 void ReactionBrusselator::init(MatrixXXd& a, MatrixXXd& b) const {
     this->init_random(a, b, this->alpha, this->beta / this->alpha, 0.3);
 }
 
+/**
+ * @brief      Brusselator reaction equation
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = \alpha - \left(1 + \beta \right )\cdot X + X^{2}Y \\
+ * \frac{\partial Y}{\partial t} = \beta X - X^{2}Y
+ *
+ */
 void ReactionBrusselator::reaction(double a, double b, double *ra, double *rb) const {
-    *ra = this->alpha - (this->beta + 1) * a + (a * a * b);
+    *ra = this->alpha - (this->beta + 1.0) * a + (a * a * b);
     *rb = (this->beta * a) - (a * a * b);
 }
 
@@ -55,11 +68,13 @@ void ReactionBrusselator::set_parameters(const std::string& params) {
     } else {
         throw std::runtime_error("Cannot find parameter beta");
     }
+}
 
-    // std::vector<std::string> paramlist = {"alpha", "beta"};
-    // std::cout << "Succesfully loaded the following parameters" << std::endl;
-    // for(const std::string& variable : paramlist) {
-    //     auto got = map.find(variable);
-    //     std::cout << "    " << variable << " = " << got->second << std::endl;
-    // }
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionBrusselator::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, 0.0, 0.0};
 }

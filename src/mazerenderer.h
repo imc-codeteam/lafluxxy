@@ -26,9 +26,9 @@
 #include <array>
 #include <memory>
 
-#include "vendor/mazebuilder/src/maze.h"
+#include "mazebuilder/maze.h"
 #include "colorscheme.h"
-#include "vendor/mazebuilder/src/maze_statistics.h"
+#include "mazebuilder/maze_statistics.h"
 
 class MazeRenderer {
 private:

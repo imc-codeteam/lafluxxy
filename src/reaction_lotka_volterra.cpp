@@ -25,7 +25,7 @@
  * @brief      Constructs the object.
  */
 ReactionLotkaVolterra::ReactionLotkaVolterra() {
-
+    this->reacttype = KINETICS::LOTKA_VOLTERRA;
 }
 
 /**
@@ -35,6 +35,10 @@ ReactionLotkaVolterra::ReactionLotkaVolterra() {
  * @param[in]  b     Concentration matrix B
  * @param      ra    Pointer to reaction term for A
  * @param      rb    Pointer to reaction term for B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = \alpha X - \beta X Y \\
+ * \frac{\partial Y}{\partial t} = -\gamma Y + \delta XY
  */
 void ReactionLotkaVolterra::reaction(double a, double b, double *ra, double *rb) const {
     *ra = this->alpha * a - this->beta * a * b;
@@ -93,4 +97,13 @@ void ReactionLotkaVolterra::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionLotkaVolterra::get_kinetic_parameters() const {
+    return {this->alpha, this->beta, this->gamma, this->delta};
 }

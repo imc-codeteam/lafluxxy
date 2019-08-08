@@ -49,12 +49,15 @@
 #include "reaction_brusselator.h"
 
 #include "mazerenderer.h"
+#include "card_manager.h"
 
 class InputTab : public QWidget {
     Q_OBJECT
 
 private:
     QComboBox* reaction_selector;       // set reaction type
+    QComboBox* compute_device;          // set reaction type
+
     InputReaction* reaction_settings;   // widget that holds reaction settings
 
     QDoubleSpinBox* input_diffusion_X;  // set diffusion of component X
@@ -80,6 +83,8 @@ private:
     MazeRenderer mz;
     unsigned int mask_cell_size = 0;
     QCheckBox* checkbox_enable_maze;
+
+    CardManager cm;
 
 public:
     /**
@@ -144,6 +149,13 @@ private slots:
      * @brief      Action to enable maze
      */
     void action_enable_maze(int state);
+
+    /**
+     * @brief      Select a compute device
+     *
+     * @param[in]  state  The state
+     */
+    void select_computer_device(int state);
 };
 
 #endif // INPUTTAB_H

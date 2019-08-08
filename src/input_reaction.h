@@ -30,6 +30,9 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QComboBox>
+#include <QPixmap>
+#include <QDir>
+
 #include <unordered_map>
 
 #include "config.h"
@@ -43,9 +46,10 @@ private:
     QPushButton *button_set_defaults;
 
 protected:
-    unsigned int reaction_type;
+    KINETICS reaction_type;
 
     QVBoxLayout* layout;
+    QLabel* label_reaction_equation;
     QLabel* reaction_label;
     QGridLayout *default_sets_gridlayout;
     std::vector<std::string> input_names;
@@ -64,7 +68,7 @@ public:
      *
      * @return     The reaction type.
      */
-    inline unsigned int get_reaction_type() const {
+    inline KINETICS get_reaction_type() const {
         return this->reaction_type;
     }
 
@@ -96,6 +100,13 @@ protected:
      * @brief      Builds input boxes.
      */
     void build_input_boxes();
+
+    /**
+     * @brief      Shows the reaction equation.
+     *
+     * @param[in]  name  Name of the reaction
+     */
+    void show_reaction_equation(const QString& name);
 
 private:
     /**

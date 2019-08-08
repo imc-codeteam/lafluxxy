@@ -81,10 +81,6 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     concentrations_layout->addWidget(this->color_scheme_y, 6, 1);
     this->color_scheme_y->setCurrentText("PiYG");
 
-    this->button_rebuild_graphs = new QPushButton("Rebuild graphs");
-    main_layout->addWidget(this->button_rebuild_graphs);
-    connect(this->button_rebuild_graphs, SIGNAL(released()), this, SLOT(rebuild_graphs()));
-
     // set up frame interface
     this->slider_frame = new QSlider(Qt::Horizontal);
     main_layout->addWidget(this->slider_frame);
@@ -92,6 +88,36 @@ MovieTab::MovieTab(QWidget* parent) : QWidget(parent) {
     this->slider_frame->setMaximum(0);
     this->slider_frame->setTickPosition(QSlider::TicksBelow);
     connect(this->slider_frame, SIGNAL(valueChanged(int)), this, SLOT(slider_moved(int)));
+
+    // add button container
+    QWidget* button_widget = new QWidget();
+    main_layout->addWidget(button_widget);
+    QHBoxLayout* button_layout = new QHBoxLayout();
+    button_widget->setLayout(button_layout);
+
+    // add button to rebuild all graphs
+    this->button_rebuild_graphs = new QPushButton(" Rebuild graphs");
+    QIcon icon_button_rebuild_graphs = style()->standardIcon(QStyle::SP_BrowserReload);
+    this->button_rebuild_graphs->setIcon(icon_button_rebuild_graphs);
+    this->button_rebuild_graphs->setToolTip("Rebuild all graphs using custom color schemes.");
+    button_layout->addWidget(this->button_rebuild_graphs);
+    connect(this->button_rebuild_graphs, SIGNAL(released()), this, SLOT(rebuild_graphs()));
+
+    // add button to save all movie files
+    this->button_save_image_files = new QPushButton(" Save images");
+    QIcon icon_button_save_image_files = style()->standardIcon(QStyle::SP_DialogSaveButton);
+    this->button_save_image_files->setIcon(icon_button_save_image_files);
+    this->button_save_image_files->setToolTip("Save all image files to custom folder.");
+    button_layout->addWidget(this->button_save_image_files);
+    connect(this->button_save_image_files, SIGNAL(released()), this, SLOT(save_images()));
+
+    // add button to save raw data
+    this->button_save_raw_data = new QPushButton(" Save raw data");
+    QIcon icon_button_save_raw_data = style()->standardIcon(QStyle::SP_FileIcon);
+    this->button_save_raw_data->setIcon(icon_button_save_raw_data);
+    this->button_save_raw_data->setToolTip("Save raw data file (compressed file format).");
+    button_layout->addWidget(this->button_save_raw_data);
+    connect(this->button_save_raw_data, SIGNAL(released()), this, SLOT(save_raw_data()));
 
     QWidget *gridwidget = new QWidget;
     QGridLayout *gridlayout = new QGridLayout;
@@ -193,6 +219,7 @@ QComboBox* MovieTab::build_color_scheme_selector() {
     selector->addItem("Plasma");
     selector->addItem("Inferno");
     selector->addItem("PiYG");
+    selector->addItem("Spectral");
 
     return selector;
 }
@@ -277,4 +304,80 @@ void MovieTab::rebuild_graphs() {
 
     this->goto_first();
     this->update_frame_label();
+}
+
+/**
+ * @brief      Saves images.
+ */
+void MovieTab::save_images() {
+    QFileDialog dialog_store_folder;
+    dialog_store_folder.setFileMode(QFileDialog::Directory);
+    dialog_store_folder.exec();
+    QStringList selected_directory = dialog_store_folder.selectedFiles();
+
+    if(selected_directory.isEmpty()) {
+        return;
+    }
+
+    QDir output_folder(selected_directory[0]);
+
+    for(unsigned int i=0; i<this->renderarea_X->get_num_graphs(); i++) {
+        QString filename_A = output_folder.filePath((boost::format("A%03i.png") % i).str().c_str());
+        this->renderarea_X->save_image(i, filename_A);
+    }
+
+    for(unsigned int i=0; i<this->renderarea_Y->get_num_graphs(); i++) {
+        QString filename_B = output_folder.filePath((boost::format("B%03i.png") % i).str().c_str());
+        this->renderarea_Y->save_image(i, filename_B);
+    }
+}
+
+/**
+ * @brief      Saves raw concentration data
+ */
+void MovieTab::save_raw_data() {
+    if(this->concentrations_X.size() == 0 || this->concentrations_X.size() != this->concentrations_Y.size()) {
+        return;
+    }
+
+    // QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("LaFluxxy Datapack (*.lfd)"));
+    QFileDialog dialog_save_file;
+    dialog_save_file.setDefaultSuffix(".lfd");
+    dialog_save_file.setFileMode(QFileDialog::AnyFile);
+    dialog_save_file.setAcceptMode(QFileDialog::AcceptSave);
+    dialog_save_file.setLabelText(QFileDialog::LookIn ,tr("Select file to save simulation results to"));
+    dialog_save_file.exec();
+    QStringList selected_files = dialog_save_file.selectedFiles();
+
+    if(selected_files.isEmpty()) {
+        return;
+    }
+
+    boost::filesystem::path p(selected_files[0].toStdString());
+    if(p.extension() == "") {
+        p += ".lfd";
+    }
+
+    std::ofstream out(p.string(), std::ios::binary);
+
+    unsigned int rows = this->concentrations_X[0].rows();
+    unsigned int cols = this->concentrations_X[0].cols();
+
+    out << "# Datapack created in " << PROGRAM_NAME << " " << PROGRAM_VERSION << std::endl;
+    out << "nframes = " << this->concentrations_X.size() << std::endl;
+    out << "rows = " << rows << std::endl;
+    out << "columns = " << cols << std::endl;
+    out << "floatsize = " << (sizeof(MatrixXXd::Scalar) * 8) << std::endl;
+    out << "vmin1 = " << this->value_min_x->value() << std::endl;
+    out << "vmax1 = " << this->value_max_x->value() << std::endl;
+    out << "vmin2 = " << this->value_min_y->value() << std::endl;
+    out << "vmax2 = " << this->value_max_x->value() << std::endl;
+    out << "end_header" << std::endl;
+
+    for(unsigned int i=0; i<this->concentrations_X.size(); i++) {
+        out.write((char*)this->concentrations_X[i].data(), rows * cols * sizeof(typename MatrixXXd::Scalar));
+        out.write((char*)this->concentrations_Y[i].data(), rows * cols * sizeof(typename MatrixXXd::Scalar));
+    }
+
+    out.close();
 }

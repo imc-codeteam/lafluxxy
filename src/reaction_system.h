@@ -30,10 +30,12 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include "config.h"
 #include "matrices.h"
 
 class ReactionSystem {
-private:
+protected:
+    KINETICS reacttype = KINETICS::NONE;
 
 public:
     /**
@@ -65,6 +67,22 @@ public:
      * @param[in]  params  The parameters
      */
     virtual void set_parameters(const std::string& params) = 0;
+
+    /**
+     * @brief      Gets the kinetic parameters.
+     *
+     * @return     The kinetic parameters.
+     */
+    virtual std::array<double, 4> get_kinetic_parameters() const = 0;
+
+    /**
+     * @brief      Get the kinetic system type
+     *
+     * @return     The kinetic system type
+     */
+    inline KINETICS get_reacttype() const {
+        return this->reacttype;
+    }
 
 protected:
     /**

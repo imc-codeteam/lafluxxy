@@ -28,14 +28,13 @@
 
 #include "matrices.h"
 #include "reaction_system.h"
+#include "reaction_gray_scott.h"
+#include "rd2d_cuda.h"
 
 class TwoDimRD {
 private:
     double Da;              //!< Diffusion coefficient of compound A
     double Db;              //!< Diffusion coefficient of compound B
-
-    double alpha;           //!< Alpha value in reaction equation
-    double beta;            //!< Beta value in reaction equation
 
     unsigned int width;     //!< width of the system
     unsigned int height;    //!< height of the system
@@ -55,6 +54,7 @@ private:
     double t;   //!< Total time t
 
     std::unique_ptr<ReactionSystem> reaction_system;    //!< Pointer to reaction system
+    std::unique_ptr<RD2D_CUDA> cuda_integrator;         //!< Pointer to reaction system
 
     bool pbc = true;    //!< Whether to employ periodic boundary conditions
     bool mask = false;  //!< Whether to employ a diffusivity mask (internal no-flux walls)
@@ -62,6 +62,7 @@ private:
     MatrixXXi matmask;          //!< Matrix to store the mask
 
     unsigned int ncores;
+    bool do_cuda = false;
 
 public:
     /**
@@ -86,6 +87,15 @@ public:
      * @param      _reaction_system  The reaction system
      */
     void set_reaction(ReactionSystem* _reaction_system);
+
+    /**
+     * @brief      Set whether to do time-integration using CUDA
+     *
+     * @param[in]  _do_cuda  whether to do time-integration using CUDA
+     */
+    inline void set_do_cuda(bool _do_cuda) {
+        this->do_cuda = _do_cuda;
+    }
 
     /**
      * @brief      Set whether system has periodic boundary conditions
@@ -180,6 +190,11 @@ public:
         return this->matmask;
     }
 
+    /**
+     * @brief      Clean-up any variables that need to be explicitly removed from memory
+     */
+    void clean();
+
 private:
     /**
      * @brief      Initialize the system
@@ -268,4 +283,13 @@ private:
      */
     void apply_mask();
 
+    /**
+     * @brief      Special instructions for cuda variant of time update
+     */
+    void update_cuda();
+
+    /**
+     * @brief      Special instructions for cuda variant of initialization
+     */
+    void init_cuda();
 };

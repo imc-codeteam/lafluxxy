@@ -21,3 +21,6 @@ if exist C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe (
 if exist D:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe (
     D:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe bin\lafluxxy.exe --release --force
 )
+xcopy ..\..\Libraries\boost-1.64.0-win-x64\lib\boost_filesystem-vc141-mt-1_64.dll bin
+xcopy ..\..\Libraries\boost-1.64.0-win-x64\lib\boost_system-vc141-mt-1_64.dll bin
+xcopy ..\..\Libraries\fftw-3.3.8-win-x64\lib\fftw3.dll bin

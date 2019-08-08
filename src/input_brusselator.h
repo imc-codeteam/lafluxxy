@@ -28,6 +28,10 @@
 #include <QLabel>
 #include <QDoubleSpinBox>
 #include <unordered_map>
+#include <iostream>
+#include <array>
+
+#include <boost/format.hpp>
 
 #include "config.h"
 #include "input_reaction.h"
@@ -35,6 +39,14 @@
 class InputBrusselator : public InputReaction {
 
 private:
+    QComboBox* combobox_default_sets;
+
+    // set default kinetic parameters
+    const std::vector<std::array<double, 3> > kinetic_values_sets = {
+        {3.0, 10.5, 5.5},   // hexagons
+        {3.0, 8.5, 3.0},    // stripes
+        {3.0, 10.0, 3.0}    // transition pattern
+    };
 
 public:
     /**
@@ -52,6 +64,11 @@ public:
 
 private:
     void set_label() override;
+
+    /**
+     * @brief      Add dropdown menu with default integration settings
+     */
+    void build_default_sets();
 
 private slots:
 

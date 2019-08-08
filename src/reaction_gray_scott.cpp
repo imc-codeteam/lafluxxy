@@ -22,10 +22,23 @@
 #include "reaction_gray_scott.h"
 
 ReactionGrayScott::ReactionGrayScott() {
-
+    this->reacttype = KINETICS::GRAY_SCOTT;
 }
 
 
+/**
+ * @brief      reaction kinetics for Gray-Scott
+ *
+ * @param[in]  a     concentration of A
+ * @param[in]  b     concentration of B
+ * @param      ra    reaction rate of A
+ * @param      rb    reaction rate of B
+ *
+ * LATEX:
+ * \frac{\partial X}{\partial t} = -XY^{2} + f (1 - X) \\
+ * \frac{\partial Y}{\partial t} = XY^{2} - (f + k)Y
+ *
+ */
 void ReactionGrayScott::reaction(double a, double b, double *ra, double *rb) const {
     double r = a * b * b;
     *ra = -r + this->f * (1.0 - a);
@@ -65,4 +78,13 @@ void ReactionGrayScott::set_parameters(const std::string& params) {
     //     auto got = map.find(variable);
     //     std::cout << "    " << variable << " = " << got->second << std::endl;
     // }
+}
+
+/**
+ * @brief      Gets the kinetic parameters.
+ *
+ * @return     The kinetic parameters.
+ */
+std::array<double, 4> ReactionGrayScott::get_kinetic_parameters() const {
+    return {this->f, this->k, 0.0, 0.0};
 }

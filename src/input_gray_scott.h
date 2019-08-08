@@ -29,6 +29,8 @@
 #include <QDoubleSpinBox>
 #include <unordered_map>
 
+#include <array>
+
 #include "input_reaction.h"
 
 class InputGrayScott : public InputReaction {
@@ -41,16 +43,15 @@ private:
         {0.0175, 0.0504},   // alpha
         {0.0180, 0.0460},   // beta
         {0.0250, 0.0560},   // gamma
-        {0.0300, 0.0560},   // delta
+        {0.0310, 0.0550},   // delta
         {0.0208, 0.0576},   // epsilon
-        {0.0250, 0.0060},   // zeta
+        {0.0250, 0.0600},   // zeta
         {0.0404, 0.0638},   // eta
         {0.0295, 0.0561},   // theta
         {0.0500, 0.0600},   // iota
         {0.0400, 0.0620},   // kappa
         {0.0392, 0.0649},   // lambda
         {0.0416, 0.0625}    // mu
-
     };
 
 public:

@@ -358,7 +358,7 @@ void MovieTab::save_raw_data() {
         p += ".lfd";
     }
 
-    std::ofstream out(p.string());
+    std::ofstream out(p.string(), std::ios::binary);
 
     unsigned int rows = this->concentrations_X[0].rows();
     unsigned int cols = this->concentrations_X[0].cols();
